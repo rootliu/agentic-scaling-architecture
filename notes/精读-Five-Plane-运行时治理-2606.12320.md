@@ -51,10 +51,10 @@
 
 ### 2. 直接支撑 C6（分层 NFR）并提供"科学化"范式
 - 本研究最担心"工程而非科学"。Five-Plane 给出了**示范**：它不止分面，还定义 **6 个 interruption primitives + 4 个 correctness invariants**，并证明**封堵 7 种威胁** —— 这是"把工程分层提升为带不变量与可证明性质的科学主张"的范本。
-- → 本架构应仿此：为三层定义**不变量 + 可验证性质**（见 [[01-C5-双扩展解耦形式化与命题]] P3），而非仅描述职责。
+- → 本架构应仿此：为三层定义**不变量 + 可验证性质**（见 [01-C5-双扩展解耦形式化与命题](01-C5-%E5%8F%8C%E6%89%A9%E5%B1%95%E8%A7%A3%E8%80%A6%E5%BD%A2%E5%BC%8F%E5%8C%96%E4%B8%8E%E5%91%BD%E9%A2%98.md) P3），而非仅描述职责。
 
 ### 3. "composite principals + capability attenuation" 呼应 P3
-- 与 [[精读-Benign-in-Isolation-技能组合风险-2606.15242]] 的组合风险呼应：复合主体的权限沿委托链衰减，正是防止"组合越权"的机制。
+- 与 [精读-Benign-in-Isolation-技能组合风险-2606.15242](%E7%B2%BE%E8%AF%BB-Benign-in-Isolation-%E6%8A%80%E8%83%BD%E7%BB%84%E5%90%88%E9%A3%8E%E9%99%A9-2606.15242.md) 的组合风险呼应：复合主体的权限沿委托链衰减，正是防止"组合越权"的机制。
 - → 可作为本架构 **P3（组合性不变量）中 capability containment** 的具体实现机制。
 
 ### 4. "风险在 workflow 内部合成"再次印证逻辑扩展的代价
@@ -67,5 +67,5 @@
 - 引其"6 interruption primitives + 4 invariants + 7 threats foreclosed"作为"分层可被赋予可证明性质"的范式参照。
 
 ## 待办
-- [ ] 把 Five-Plane 作为本架构 C6 安全横切层的候选实现写入 [[00-讨论记录与原始构想]]
+- [ ] 把 Five-Plane 作为本架构 C6 安全横切层的候选实现写入 [00-讨论记录与原始构想](00-%E8%AE%A8%E8%AE%BA%E8%AE%B0%E5%BD%95%E4%B8%8E%E5%8E%9F%E5%A7%8B%E6%9E%84%E6%83%B3.md)
 - [ ] 仿其"primitives + invariants + threats"结构，为本架构补 correctness invariants

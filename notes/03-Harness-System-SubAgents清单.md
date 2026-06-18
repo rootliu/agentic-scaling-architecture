@@ -1,8 +1,8 @@
 # 03 — Harness System Sub-Agents 清单（文献支撑）
 
 > **来源**: 2026-06-18 arXiv 检索 + vault 笔记对照
-> **类型**: 机制目录 / 支撑 S1–S3（[[00-讨论记录与原始构想]] 架构精化）
-> **定位**: 论证"system skills 属于 Harness、且走物理轴"——回应 [[原始构想-用户原话]] I-3/I-4
+> **类型**: 机制目录 / 支撑 S1–S3（[00-讨论记录与原始构想](00-%E8%AE%A8%E8%AE%BA%E8%AE%B0%E5%BD%95%E4%B8%8E%E5%8E%9F%E5%A7%8B%E6%9E%84%E6%83%B3.md) 架构精化）
+> **定位**: 论证"system skills 属于 Harness、且走物理轴"——回应 [原始构想-用户原话](%E5%8E%9F%E5%A7%8B%E6%9E%84%E6%83%B3-%E7%94%A8%E6%88%B7%E5%8E%9F%E8%AF%9D.md) I-3/I-4
 
 ---
 
@@ -76,4 +76,4 @@
 | Externalization in LLM Agents: Memory, Skills, Protocols and Harness Engineering | 2604.08224 | Harness 四类 externalization 综述 |
 | From Storage to Experience: Evolution of LLM Agent Memory Mechanisms | 2605.06716 | 记忆维护机制分类（已在 vault） |
 
-相关：[[00-讨论记录与原始构想]] · [[01-C5-双扩展解耦形式化与命题]] · [[02-2026相关论文清单]] · [[04-研究时间线]] · [[论文-LLMAgent记忆机制演进综述-2605.06716]] · [[Agent Harness 参考架构调研报告]]
+相关：[00-讨论记录与原始构想](00-%E8%AE%A8%E8%AE%BA%E8%AE%B0%E5%BD%95%E4%B8%8E%E5%8E%9F%E5%A7%8B%E6%9E%84%E6%83%B3.md) · [01-C5-双扩展解耦形式化与命题](01-C5-%E5%8F%8C%E6%89%A9%E5%B1%95%E8%A7%A3%E8%80%A6%E5%BD%A2%E5%BC%8F%E5%8C%96%E4%B8%8E%E5%91%BD%E9%A2%98.md) · [02-2026相关论文清单](02-2026%E7%9B%B8%E5%85%B3%E8%AE%BA%E6%96%87%E6%B8%85%E5%8D%95.md) · [04-研究时间线](04-%E7%A0%94%E7%A9%B6%E6%97%B6%E9%97%B4%E7%BA%BF.md) · 论文-LLMAgent记忆机制演进综述-2605.06716 · Agent Harness 参考架构调研报告

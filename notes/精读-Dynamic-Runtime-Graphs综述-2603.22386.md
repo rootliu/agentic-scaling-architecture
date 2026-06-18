@@ -31,7 +31,7 @@
 
 ### 1. 术语对齐（重要）
 - 本综述用 **"workflow scaffold"** 指"部署前固定的可复用工作流骨架"——这与本架构的 **Scaffold（执行/隔离层）** 是**不同含义**！⚠️
-- → **命名风险**：本架构的 "Scaffold" 与该综述的 "scaffold" 语义冲突（它指 workflow 模板，本架构指 microVM 执行沙盒）。论文中必须**明确定义并区分**，或考虑改名（见 [[00-讨论记录与原始构想]] 命名建议）。
+- → **命名风险**：本架构的 "Scaffold" 与该综述的 "scaffold" 语义冲突（它指 workflow 模板，本架构指 microVM 执行沙盒）。论文中必须**明确定义并区分**，或考虑改名（见 [00-讨论记录与原始构想](00-%E8%AE%A8%E8%AE%BA%E8%AE%B0%E5%BD%95%E4%B8%8E%E5%8E%9F%E5%A7%8B%E6%9E%84%E6%83%B3.md) 命名建议）。
 
 ### 2. 三层结构区分可借用
 - 它的 "template / realized graph / trace" 三分，可映射到本架构：
@@ -41,7 +41,7 @@
 - → 这给本架构提供了一个**已被 survey 认可的"设计 vs 运行时实例 vs 实际行为"分离视角**，可强化分层的合理性论证。
 
 ### 3. structure-aware evaluation 支撑 C5 度量
-- 它主张用 graph-level properties + execution cost + robustness 评估 → 与 [[01-C5-双扩展解耦形式化与命题]] 的吞吐/延迟/能力覆盖度量方向一致，可引为评估方法论依据。
+- 它主张用 graph-level properties + execution cost + robustness 评估 → 与 [01-C5-双扩展解耦形式化与命题](01-C5-%E5%8F%8C%E6%89%A9%E5%B1%95%E8%A7%A3%E8%80%A6%E5%BD%A2%E5%BC%8F%E5%8C%96%E4%B8%8E%E5%91%BD%E9%A2%98.md) 的吞吐/延迟/能力覆盖度量方向一致，可引为评估方法论依据。
 
 ### 4. 定位价值
 - 作为 survey，是本架构 related work 中"workflow optimization"分支的**定位锚点**和 vocabulary 来源。
@@ -54,5 +54,5 @@
 - 引其 structure-aware evaluation 作为 C5 度量的方法论支撑。
 
 ## 待办
-- [ ] **解决命名冲突**：本架构 "Scaffold" vs 该综述 "workflow scaffold" —— 在 [[00]] 命名决策中明确
+- [ ] **解决命名冲突**：本架构 "Scaffold" vs 该综述 "workflow scaffold" —— 在 [00-讨论记录与原始构想](00-%E8%AE%A8%E8%AE%BA%E8%AE%B0%E5%BD%95%E4%B8%8E%E5%8E%9F%E5%A7%8B%E6%9E%84%E6%83%B3.md) 命名决策中明确
 - [ ] 把 template/realized-graph/trace 三分纳入本架构层次说明

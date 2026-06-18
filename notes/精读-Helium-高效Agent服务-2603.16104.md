@@ -27,12 +27,12 @@
 ## 与本研究的对照
 
 ### 1. 直接支撑 C5 的"物理扩展"维度
-- 本架构主张物理扩展 = 增加 Scaffold → 提升 throughput（[[00-讨论记录与原始构想]] C5 / [[01-C5-双扩展解耦形式化与命题]] 定义 2、命题 P1）。
+- 本架构主张物理扩展 = 增加 Scaffold → 提升 throughput（[00-讨论记录与原始构想](00-%E8%AE%A8%E8%AE%BA%E8%AE%B0%E5%BD%95%E4%B8%8E%E5%8E%9F%E5%A7%8B%E6%9E%84%E6%83%B3.md) C5 / [01-C5-双扩展解耦形式化与命题](01-C5-%E5%8F%8C%E6%89%A9%E5%B1%95%E8%A7%A3%E8%80%A6%E5%BD%A2%E5%BC%8F%E5%8C%96%E4%B8%8E%E5%91%BD%E9%A2%98.md) 定义 2、命题 P1）。
 - Helium 证明：**agent serving 的吞吐可通过 workflow 级优化系统性提升**——为本架构"Scaffold 层是 throughput 杠杆"提供方法学依据。
 - 阶段 2 的"物理轴吞吐曲线"实验，可把 Helium / vLLM 作为 **baseline**。
 
 ### 2. "把 LLM 调用当 first-class operator"对 Harness 设计有启发
-- 与 [[精读-Policy-Driven-Runtime-Layer-2605.27744]] 的"agent-aware 中间层"呼应：都主张在 serving 层引入对 agent/workflow 结构的感知。
+- 与 [精读-Policy-Driven-Runtime-Layer-2605.27744](%E7%B2%BE%E8%AF%BB-Policy-Driven-Runtime-Layer-2605.27744.md) 的"agent-aware 中间层"呼应：都主张在 serving 层引入对 agent/workflow 结构的感知。
 - 本架构 Harness 可借鉴"query plan"抽象：把 Skills 产生的 intent 编译成可优化的执行计划下发给 Scaffold —— 这能强化 P2（契约层）的工程可行性。
 
 ### 3. 边界区分
