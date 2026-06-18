@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>时间线 · Agentic Runtime</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="bar"><div class="inner">
+  <span class="brand">Agentic Runtime</span>
+  <a href="index.html">概览</a>
+  <a href="architecture.html">架构 & 主线</a>
+  <a href="references.html">文献</a>
+  <a href="timeline.html" class="active">时间线</a>
+  <a href="input.html">原始构想</a>
+</div></nav>
+
+<header class="hero wrap" style="padding:72px 0 36px">
+  <div class="kicker fade">Timeline · 研究变化主线</div>
+  <h1 class="fade" style="font-size:46px">关键里程碑</h1>
+  <p class="lead fade" style="font-size:20px">M1 → M13 · 每个结构性变化的时间、内容与产出</p>
+</header>
+
+<section class="wrap" style="padding-top:8px">
+  <div class="tl">
+    <div class="tl-item fade">
+      <div class="tl-date">2026-06-17 · M1</div>
+      <div class="tl-title">研究启动</div>
+      <div class="tl-body">确定方向 = agentic runtime；定位为学术研究 + 文献综述期 + 文献对照验证。<span class="mut">产出：研究设定确认。</span></div>
+    </div>
+    <div class="tl-item fade">
+      <div class="tl-date">2026-06-17 · M2</div>
+      <div class="tl-title">arXiv 检索打通</div>
+      <div class="tl-body">curl 失败 → 改用 Python urllib；按 4 主题方向检索。<span class="mut">产出：检索脚本可用。</span></div>
+    </div>
+    <div class="tl-item fade">
+      <div class="tl-date">2026-06-17 · M3</div>
+      <div class="tl-title">原始架构提出</div>
+      <div class="tl-body">用户提出三层架构 Scaffold→Harness→Skills + 逻辑/物理双扩展。<span class="mut">产出：<a class="inline" href="input.html">原始构想 I-1 / I-2</a>。</span></div>
+    </div>
+    <div class="tl-item star fade">
+      <div class="tl-date">2026-06-17 · M4</div>
+      <div class="tl-title">命题分解 ★</div>
+      <div class="tl-body">拆为 C1–C6；确认 <b>C5（双扩展解耦）= 核心 novelty</b>；最大风险 = 工程 vs 科学。<span class="mut">产出：C1–C6 命题表。</span></div>
+    </div>
+    <div class="tl-item fade">
+      <div class="tl-date">2026-06-17 · M5</div>
+      <div class="tl-title">文献对照</div>
+      <div class="tl-body">检索 + 精读 7 篇 2026 论文；确认 C5 基本空白。<span class="mut">产出：<a class="inline" href="references.html">文献映射表</a> + 三发"科学化"弹药。</span></div>
+    </div>
+    <div class="tl-item fade">
+      <div class="tl-date">2026-06-17 · M6</div>
+      <div class="tl-title">记录入库</div>
+      <div class="tl-body">建研究目录；写 00 / 01 / 02 + 7 篇精读笔记。<span class="mut">产出：Obsidian 目录成型。</span></div>
+    </div>
+    <div class="tl-item fade">
+      <div class="tl-date">2026-06-17 · M7</div>
+      <div class="tl-title">同步 GitHub</div>
+      <div class="tl-body">rebase 解决远端分叉后推送。<span class="mut">产出：commit 0e3bd61。</span></div>
+    </div>
+    <div class="tl-item fade">
+      <div class="tl-date">2026-06-17 · M8</div>
+      <div class="tl-title">Zotero 导入</div>
+      <div class="tl-body">发现仅建了笔记未入库 → 下载 6 PDF + 写 DB。<span class="mut">产出：library 1291 → 1297。</span></div>
+    </div>
+    <div class="tl-item fade">
+      <div class="tl-date">2026-06-18 · M9</div>
+      <div class="tl-title">vault 复用盘点</div>
+      <div class="tl-body">Explore 已有笔记；得 Binding-Constraint / KV Cache / 6pp / 9 维 SOP / ETCLOVG。<span class="mut">产出：实验设计 + 论文修订素材。</span></div>
+    </div>
+    <div class="tl-item fade">
+      <div class="tl-date">2026-06-18 · M10</div>
+      <div class="tl-title">二手数据核实</div>
+      <div class="tl-body">确认 10× 来自 TMLR under-review survey 转引 → 仅作动机 + 自复现。<span class="mut">产出：<a class="inline" href="references.html">二手数据安全用法表</a>。</span></div>
+    </div>
+    <div class="tl-item star fade">
+      <div class="tl-date">2026-06-18 · M11</div>
+      <div class="tl-title">架构精化 ★</div>
+      <div class="tl-body">system skills 归 Harness；维护子系统走物理轴；SaaS/SSR framing；ClawVM 证据。<span class="mut">产出：<a class="inline" href="architecture.html#newpoints">S1–S7 七条</a>，融入 00 / 01。</span></div>
+    </div>
+    <div class="tl-item fade">
+      <div class="tl-date">2026-06-18 · M12</div>
+      <div class="tl-title">sub-agents 检索</div>
+      <div class="tl-body">列出 Harness 常用 system sub-agents（A–E 五类）。<span class="mut">产出：03-Harness-System-SubAgents 清单。</span></div>
+    </div>
+    <div class="tl-item fade">
+      <div class="tl-date">2026-06-18 · M13</div>
+      <div class="tl-title">可视化 + worktree</div>
+      <div class="tl-body">架构图 + HTML 站点（landing / references / mainline / timeline / input）。<span class="mut">产出：本 HTML worktree。</span></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section class="wrap">
+  <h2 class="sec">主线演进（叙事）</h2>
+  <div class="grid g3">
+    <div class="card fade"><h3>阶段一 · 立论 <span class="mut" style="font-size:13px">M1–M6</span></h3><p class="mut">从"研究 agentic runtime"出发，提炼三层参考架构与双扩展维度，锁定 C5 为 novelty 内核，用 7 篇 2026 文献交叉验证其空白性。</p></div>
+    <div class="card fade"><h3>阶段二 · 夯实 <span class="mut" style="font-size:13px">M7–M10</span></h3><p class="mut">把讨论沉淀进 Obsidian 与 Zotero；盘点 vault 素材并完成二手数据可引用性核实——确立"科学性靠自复现、不靠二手引用"的底线。</p></div>
+    <div class="card fade"><h3>阶段三 · 精化 <span class="mut" style="font-size:13px">M11–M13</span></h3><p class="mut">补充"system skills 属 Harness + 维护子系统走物理轴 + SaaS 前端类比"，使 C5 从"分层主张"升级为带机制解释与可证伪前提的命题。</p></div>
+  </div>
+</section>
+
+<section class="wrap" style="padding-top:0">
+  <h2 class="sec">关键判断的演化</h2>
+  <div class="card fade">
+  <table>
+    <tr><th>判断</th><th>早期</th><th>现在</th></tr>
+    <tr><td>C5 性质</td><td class="mut">"分层架构"（易被批工程）</td><td class="ok">三轴解耦的充要条件 + 可证伪判据（SaaS delta）</td></tr>
+    <tr><td>Skills</td><td class="mut">同质集合</td><td class="ok">task / system 二分</td></tr>
+    <tr><td>Harness</td><td class="mut">契约翻译层</td><td class="ok">契约翻译 + 能力供给 + 维护子系统</td></tr>
+    <tr><td>物理扩展</td><td class="mut">加 sandbox</td><td class="ok">加 Scaffold（隔离+算力）+ 配套廉价维护推理</td></tr>
+    <tr><td>10× 数据</td><td class="mut">拟直接引</td><td class="warn">仅动机 + 自复现（二手转引规避）</td></tr>
+  </table>
+  </div>
+</section>
+
+<footer>
+  <a href="index.html">← 概览</a> · <a href="architecture.html">架构</a> · <a href="references.html">文献</a> · <a href="input.html">原始构想</a>
+</footer>
+<script>
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.1});
+document.querySelectorAll('.fade').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>

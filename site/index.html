@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agentic Runtime 参考架构</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="bar"><div class="inner">
+  <span class="brand">Agentic Runtime</span>
+  <a href="index.html" class="active">概览</a>
+  <a href="architecture.html">架构 & 主线</a>
+  <a href="references.html">文献</a>
+  <a href="timeline.html">时间线</a>
+  <a href="input.html">原始构想</a>
+</div></nav>
+
+<header class="hero wrap">
+  <div class="kicker fade">学术研究 · 文献综述期 · 文献对照验证</div>
+  <h1 class="fade">逻辑与物理，<br>本可解耦。</h1>
+  <p class="lead fade">一个 agentic runtime 的三层参考架构 —— Scaffold · Harness · Skills。
+  我们主张：agent 的<b>逻辑可扩展性</b>与<b>物理可扩展性</b >可以正交解耦，解耦点是层间的显式契约。</p>
+  <div class="pills fade">
+    <span class="pill contract">核心 novelty = C5</span>
+    <span class="pill logic">逻辑扩展 = Skills</span>
+    <span class="pill phys">物理扩展 = Scaffold</span>
+  </div>
+  <div class="btnrow fade">
+    <a class="btn" href="architecture.html">查看架构 →</a>
+    <a class="btn ghost" href="references.html">文献证据</a>
+  </div>
+</header>
+
+<hr class="divider">
+
+<section class="wrap">
+  <div class="kicker center">三层栈</div>
+  <h2 class="sec">三个平面，一条契约。</h2>
+  <p class="sub">自底向上，每一层各司其职，对应互联网部署的"虚机 / 框架运行时 / 前端运行时"。</p>
+  <div class="grid g3">
+    <div class="card fade">
+      <span class="pill logic">L3 · 逻辑轴</span>
+      <h3 style="margin-top:14px">Skills</h3>
+      <p class="mut">Specification Plane。specs 描述、I/O schema、调用 / 终止 / 循环条件。职责是组装并迭代推送进 LLM context。仅含 task skills。</p>
+    </div>
+    <div class="card fade">
+      <span class="pill contract">L2 · 契约</span>
+      <h3 style="margin-top:14px">Harness</h3>
+      <p class="mut">Capability / Contract Plane。把上层意图翻译为下层可执行单元。三分：契约翻译 + 能力供给（tool synthesis）+ 维护子系统。</p>
+    </div>
+    <div class="card fade">
+      <span class="pill phys">L1 · 物理轴</span>
+      <h3 style="margin-top:14px">Scaffold</h3>
+      <p class="mut">Execution / Isolation Plane。microVM / sandbox、bash、隔离与算力。宽定义含推理 serving 容量，刻画系统 throughput。</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" style="padding-top:0">
+  <div class="card fade" style="background:var(--bg2);box-shadow:none">
+    <div class="kicker">核心论证（修订版）</div>
+    <blockquote style="background:var(--card);font-size:18px;border-left-color:var(--blue)">
+      现代云应用早已"前端按流量横扩 / 业务按功能纵展 / 后端按算力扩"——三轴解耦是<b>已知工程范式</b>。
+      本研究的 delta：在每层内嵌<b>概率性 LLM 调用</b>的条件下，给出该解耦成立的<b>充要条件（契约层 H）</b>与<b>可证伪判据（P1）</b>。
+    </blockquote>
+    <p class="mut">这把论文主张从"我们提出三层架构"提升为"我们证明在 LLM 不确定性下双扩展维度可以解耦"——回应"工程而非科学"的核心质疑。</p>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section class="wrap">
+  <div class="kicker center">最新精化 <span class="pill new">2026-06-18</span></div>
+  <h2 class="sec">维护子系统，走物理轴。</h2>
+  <p class="sub">system skills（压缩 / 写回 / 反思）功能属 Harness，但扩展性属物理轴 —— 正如 SaaS 的 SSR 前端。</p>
+  <div class="grid g2">
+    <div class="card fade"><h3>Skills 二分</h3><p class="mut">task skills 完成用户任务（L3）；system skills 维护 runtime 自身，归入 Harness。判据：输出是否进入用户可见结果 + 触发源。</p></div>
+    <div class="card fade"><h3>触发 ∝ token 流量</h3><p class="mut">每 32K 压缩、每 128K 写 memory，用 Haiku 级廉价模型、指令固定 → 支持线性扩展，故归物理扩展。</p></div>
+    <div class="card fade"><h3>P1 机制解释</h3><p class="mut">维护子系统吸收"逻辑扩展带来的 context 膨胀"，这正是"加 task skill 不拖垮 throughput"的原因。</p></div>
+    <div class="card fade"><h3>一手证据 ClawVM</h3><p class="mut">2604.10352 把 compaction/writeback 明确定位在 harness layer。差异：它偏确定性规则，本架构偏 LLM 驱动 + 可审计日志。</p></div>
+  </div>
+  <div class="btnrow"><a class="btn ghost" href="architecture.html#newpoints">查看全部 7 条精化 →</a></div>
+</section>
+
+<footer>
+  Agentic Runtime 参考架构 · 研究 worktree ·
+  <a href="architecture.html">架构</a> ·
+  <a href="references.html">文献</a> ·
+  <a href="timeline.html">时间线</a> ·
+  <a href="input.html">原始构想</a><br>
+  目标：学术论文 + 开源 agent 云系统 · 由 Obsidian 研究目录生成
+</footer>
+
+<script>
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+document.querySelectorAll('.fade').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>

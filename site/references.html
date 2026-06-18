@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文献 · Agentic Runtime</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="bar"><div class="inner">
+  <span class="brand">Agentic Runtime</span>
+  <a href="index.html">概览</a>
+  <a href="architecture.html">架构 & 主线</a>
+  <a href="references.html" class="active">文献</a>
+  <a href="timeline.html">时间线</a>
+  <a href="input.html">原始构想</a>
+</div></nav>
+
+<header class="hero wrap" style="padding:72px 0 36px">
+  <div class="kicker fade">References</div>
+  <h1 class="fade" style="font-size:46px">证据与定位</h1>
+  <p class="lead fade" style="font-size:20px">7 篇 2026 精读论文 · Harness system sub-agents · 二手数据安全用法</p>
+</header>
+
+<section class="wrap">
+  <h2 class="sec">7 篇 2026 精读论文</h2>
+  <p class="sub">⭐ 表示与本架构相关度。</p>
+  <div class="card fade">
+  <table>
+    <tr><th>#</th><th>标题</th><th>arXiv</th><th>相关</th><th>与本架构关联</th></tr>
+    <tr><td>1</td><td>A Policy-Driven Runtime Layer for Agentic LLM Serving</td><td><a class="inline" href="https://arxiv.org/abs/2605.27744">2605.27744</a></td><td>⭐⭐⭐</td><td>P2 最强支撑 + novelty 威胁</td></tr>
+    <tr><td>2</td><td>Jagarin: Three-Layer Architecture for Hibernating Duty Agents</td><td><a class="inline" href="https://arxiv.org/abs/2603.05069">2603.05069</a></td><td>⭐⭐</td><td>C1 命名撞车排查</td></tr>
+    <tr><td>3</td><td>Benign in Isolation, Harmful in Composition</td><td><a class="inline" href="https://arxiv.org/abs/2606.15242">2606.15242</a></td><td>⭐⭐⭐</td><td>P3 实证 + C4 必答风险</td></tr>
+    <tr><td>4</td><td>From Static Templates to Dynamic Runtime Graphs (survey)</td><td><a class="inline" href="https://arxiv.org/abs/2603.22386">2603.22386</a></td><td>⭐⭐</td><td>Scaffold 命名冲突</td></tr>
+    <tr><td>5</td><td>Efficient LLM Serving for Agentic Workflows (Helium)</td><td><a class="inline" href="https://arxiv.org/abs/2603.16104">2603.16104</a></td><td>⭐⭐</td><td>C5 物理扩展 baseline</td></tr>
+    <tr><td>6</td><td>Tool Forge: Validation-Carrying Toolchain</td><td><a class="inline" href="https://arxiv.org/abs/2605.28000">2605.28000</a></td><td>⭐⭐⭐</td><td>C3 tool synthesis + P1 缓解</td></tr>
+    <tr><td>7</td><td>A Five-Plane Reference Architecture for Runtime Governance</td><td><a class="inline" href="https://arxiv.org/abs/2606.12320">2606.12320</a></td><td>⭐⭐⭐</td><td>C6 科学化范式 + P3</td></tr>
+  </table>
+  </div>
+</section>
+
+<section class="wrap" style="padding-top:0">
+  <h2 class="sec">命题 × 证据</h2>
+  <div class="card fade">
+  <table>
+    <tr><th>命题</th><th>证据</th><th>关键文献</th><th>判断</th></tr>
+    <tr><td>C1</td><td class="warn">⚠ 表述被占用</td><td>Jagarin、CHRONOS、MediaClaw</td><td>语义独特，需重命名 + 区分表</td></tr>
+    <tr><td>C2</td><td class="ok">✅ 强支撑</td><td>MCP-SandboxScan、ComplexMCP</td><td>已知基础层</td></tr>
+    <tr><td>C3</td><td class="ok">✅ 强支撑</td><td>Tool-Forge、Tool-Genesis</td><td>单层机制已有</td></tr>
+    <tr><td>C4</td><td class="ok">✅ +⚠</td><td>Skills-in-Context；2606.15242</td><td>组合安全是已知坑</td></tr>
+    <tr><td><span class="ok">C5 ★</span></td><td class="ok">✅✅ 基本空白</td><td>Autellix、Policy-Driven 均未拆正交两维</td><td><b>核心贡献</b></td></tr>
+    <tr><td>C6</td><td class="warn">⚠ 易批工程</td><td>Agent-as-a-Service、Five-Plane</td><td>需科学化</td></tr>
+  </table>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section class="wrap">
+  <h2 class="sec">Harness System Sub-Agents</h2>
+  <p class="sub">维护 runtime 自身的机制（A–E）。多为 LLM 驱动但归物理轴。详见 03 笔记。</p>
+  <div class="grid g2">
+    <div class="card fade"><h3>A · 记忆维护 <span class="pill phys">物理轴</span></h3>
+      <ul class="mut">
+        <li>Context Compaction — ClawVM 2604.10352 ✅</li>
+        <li>Writeback/Flush — ClawVM ✅</li>
+        <li>Reflection — 2605.06716 §5 ✅</li>
+        <li>Cross-Trajectory 抽象 — 2605.06716 §6 ✅</li>
+        <li>记忆 GC/遗忘 — 2605.06716 §4.2 ✅</li>
+        <li class="warn">自主检索控制器 — open problem</li>
+      </ul>
+    </div>
+    <div class="card fade"><h3>B · 上下文组织</h3>
+      <ul class="mut"><li>三级 context 管理 — ETCLOVG C 层 ✅</li><li>typed pages / 多分辨率 — ClawVM ✅</li><li>Memory Tool — <span class="warn">待核实</span></li></ul>
+      <h3 style="margin-top:16px">C · 验证/质量</h3>
+      <ul class="mut"><li>Self-Verification — ETCLOVG V 层</li><li>Evaluator-Optimizer — Anthropic #5 ✅</li><li>min-fidelity 校验 — ClawVM ✅</li></ul>
+    </div>
+    <div class="card fade"><h3>D · 编排/生命周期</h3>
+      <ul class="mut"><li>Orchestrator-Workers — Anthropic #4 ✅</li><li>Routing — Anthropic #2 ✅</li><li>Handoff（recall 0.32）— NLAH 2603.25723 ✅</li><li>生命周期编排 — ETCLOVG L 层 ✅</li></ul>
+    </div>
+    <div class="card fade"><h3>E · 工具供给（C3）</h3>
+      <ul class="mut"><li>Tool Synthesis / AutoHarness — 2603.03329 ✅</li><li>capsule / capability contract — Tool-Forge 2605.28000 ✅（省 99.2% context）</li></ul>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section class="wrap">
+  <h2 class="sec">二手数据安全用法</h2>
+  <p class="sub">科学性靠自复现实验，而非引二手数据。</p>
+  <div class="card fade">
+  <table>
+    <tr><th>素材</th><th>性质</th><th>安全用法</th></tr>
+    <tr><td>Binding-Constraint 10× vs 2-4pp</td><td class="warn">二手转引（ETCLOVG survey, TMLR under review）</td><td>仅作动机 + <b>自己复现小实验</b></td></tr>
+    <tr><td>资源配置 6pp (p&lt;0.01)</td><td class="warn">待核实：博客 or 自测</td><td>博客→引博客；自测→方法论贡献。<b>必进实验控制变量章节</b></td></tr>
+    <tr><td>KV Cache 并发数据</td><td class="ok">通用知识</td><td>引 vLLM/PagedAttention 原始论文；用于推 θ 阈值</td></tr>
+  </table>
+  </div>
+</section>
+
+<footer>
+  <a href="index.html">← 概览</a> · <a href="architecture.html">架构</a> · <a href="timeline.html">时间线</a> · <a href="input.html">原始构想</a>
+</footer>
+<script>
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.1});
+document.querySelectorAll('.fade').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
