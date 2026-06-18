@@ -1,0 +1,180 @@
+<mxGraphModel dx="980" dy="620" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="980" pageHeight="600" math="0" shadow="0">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+
+    <mxCell id="l3band" value="" style="rounded=1;arcSize=8;fillColor=#e8f6ee;strokeColor=#1a9c63;strokeWidth=1.5;opacity=100;shadow=1;" vertex="1" parent="1">
+      <mxGeometry x="70" y="44" width="600" height="96" as="geometry"/>
+    </mxCell>
+    <mxCell id="l3badge" value="L3" style="ellipse;fillColor=#1a9c63;strokeColor=none;fontColor=#ffffff;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="85" y="61" width="26" height="26" as="geometry"/>
+    </mxCell>
+    <mxCell id="l3t1" value="Skills · Specification Plane" style="text;html=1;align=left;verticalAlign=middle;fontColor=#127a4c;fontSize=17;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="124" y="58" width="420" height="22" as="geometry"/>
+    </mxCell>
+    <mxCell id="l3t2" value="specs · I/O schema · 调用 / 终止 / 循环条件" style="text;html=1;align=left;verticalAlign=middle;fontColor=#2c5e47;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="124" y="83" width="420" height="18" as="geometry"/>
+    </mxCell>
+    <mxCell id="l3t3" value="职责：组装并迭代推送进 LLM context ｜ 仅含 task skills" style="text;html=1;align=left;verticalAlign=middle;fontColor=#5a7a6b;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="124" y="104" width="500" height="18" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="l2band" value="" style="rounded=1;arcSize=7;fillColor=#f3eefd;strokeColor=#7a4ddb;strokeWidth=1.5;shadow=1;" vertex="1" parent="1">
+      <mxGeometry x="70" y="160" width="600" height="232" as="geometry"/>
+    </mxCell>
+    <mxCell id="l2badge" value="L2" style="ellipse;fillColor=#7a4ddb;strokeColor=none;fontColor=#ffffff;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="85" y="177" width="26" height="26" as="geometry"/>
+    </mxCell>
+    <mxCell id="l2t1" value="Harness · Capability / Contract Plane" style="text;html=1;align=left;verticalAlign=middle;fontColor=#5b34b0;fontSize=17;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="124" y="175" width="460" height="22" as="geometry"/>
+    </mxCell>
+    <mxCell id="l2t2" value="解耦点：契约 H 把意图 𝓘 翻译为可执行单元 𝓔" style="text;html=1;align=left;verticalAlign=middle;fontColor=#6a5a8f;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="124" y="198" width="460" height="18" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="hA" value="" style="rounded=1;arcSize=10;fillColor=#ffffff;strokeColor=#7a4ddb;strokeWidth=1;opacity=70;" vertex="1" parent="1">
+      <mxGeometry x="90" y="224" width="180" height="150" as="geometry"/>
+    </mxCell>
+    <mxCell id="hA1" value="a · 契约翻译" style="text;html=1;align=left;fontColor=#5b34b0;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="104" y="238" width="150" height="18" as="geometry"/>
+    </mxCell>
+    <mxCell id="hA2" value="意图 𝓘 → 执行单元 𝓔&#10;稳定接口（P2）&#10;轻量 · 少调模型" style="text;html=1;align=left;verticalAlign=top;fontColor=#6a5a8f;fontSize=11;spacingTop=2;" vertex="1" parent="1">
+      <mxGeometry x="104" y="262" width="155" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="hA3" value="⟨ 决定 解耦充分性 ⟩" style="text;html=1;align=left;fontColor=#9489a6;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="104" y="348" width="155" height="16" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="hB" value="" style="rounded=1;arcSize=10;fillColor=#ffffff;strokeColor=#7a4ddb;strokeWidth=1;opacity=70;" vertex="1" parent="1">
+      <mxGeometry x="282" y="224" width="176" height="150" as="geometry"/>
+    </mxCell>
+    <mxCell id="hB1" value="b · 能力供给" style="text;html=1;align=left;fontColor=#5b34b0;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="296" y="238" width="150" height="18" as="geometry"/>
+    </mxCell>
+    <mxCell id="hB2" value="内部 / 外部工具&#10;tool synthesis&#10;LLM 生成新工具" style="text;html=1;align=left;verticalAlign=top;fontColor=#6a5a8f;fontSize=11;spacingTop=2;" vertex="1" parent="1">
+      <mxGeometry x="296" y="262" width="155" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="hB3" value="Tool-Forge / AutoHarness" style="text;html=1;align=left;fontColor=#9489a6;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="296" y="348" width="160" height="16" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="hC" value="" style="rounded=1;arcSize=10;fillColor=#fef4ec;strokeColor=#c8651b;strokeWidth=1;opacity=90;" vertex="1" parent="1">
+      <mxGeometry x="470" y="224" width="182" height="150" as="geometry"/>
+    </mxCell>
+    <mxCell id="hC1" value="c · 维护子系统" style="text;html=1;align=left;fontColor=#a8500f;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="484" y="238" width="155" height="18" as="geometry"/>
+    </mxCell>
+    <mxCell id="hC2" value="压缩(32K) · 写回(128K)&#10;reflection · 检索 · GC&#10;固定指令 · Haiku 级" style="text;html=1;align=left;verticalAlign=top;fontColor=#9a5418;fontSize=11;spacingTop=2;" vertex="1" parent="1">
+      <mxGeometry x="484" y="262" width="160" height="58" as="geometry"/>
+    </mxCell>
+    <mxCell id="hC3" value="触发 ∝ token → 物理轴" style="text;html=1;align=left;fontColor=#c8651b;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="484" y="324" width="160" height="16" as="geometry"/>
+    </mxCell>
+    <mxCell id="hC4" value="≈ SaaS / SSR 前端" style="text;html=1;align=left;fontColor=#b08763;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="484" y="344" width="160" height="16" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="l1band" value="" style="rounded=1;arcSize=8;fillColor=#fef4ec;strokeColor=#c8651b;strokeWidth=1.5;shadow=1;" vertex="1" parent="1">
+      <mxGeometry x="70" y="412" width="600" height="96" as="geometry"/>
+    </mxCell>
+    <mxCell id="l1badge" value="L1" style="ellipse;fillColor=#c8651b;strokeColor=none;fontColor=#ffffff;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="85" y="429" width="26" height="26" as="geometry"/>
+    </mxCell>
+    <mxCell id="l1t1" value="Scaffold · Execution / Isolation Plane" style="text;html=1;align=left;verticalAlign=middle;fontColor=#a8500f;fontSize=17;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="124" y="426" width="460" height="22" as="geometry"/>
+    </mxCell>
+    <mxCell id="l1t2" value="microVM / sandbox · bash · 资源 · 隔离 · 推理 serving 容量" style="text;html=1;align=left;verticalAlign=middle;fontColor=#9a5418;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="124" y="451" width="500" height="18" as="geometry"/>
+    </mxCell>
+    <mxCell id="l1t3" value="刻画系统吞吐 Θ ｜ 宽定义 = 隔离 + 算力（含 serving）" style="text;html=1;align=left;verticalAlign=middle;fontColor=#b08763;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="124" y="471" width="500" height="18" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="seam" value="" style="endArrow=none;dashed=1;dashPattern=2 5;strokeColor=#7a4ddb;strokeWidth=1.5;opacity=50;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="92" y="402" as="sourcePoint"/>
+        <mxPoint x="648" y="402" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="cflow1" value="" style="endArrow=classicThin;html=1;strokeColor=#7a4ddb;strokeWidth=2;opacity=55;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="370" y="140" as="sourcePoint"/>
+        <mxPoint x="370" y="158" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="cflow2" value="" style="endArrow=classicThin;html=1;strokeColor=#7a4ddb;strokeWidth=2;opacity=55;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="370" y="392" as="sourcePoint"/>
+        <mxPoint x="370" y="410" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+
+    <mxCell id="axL" value="" style="endArrow=classicThin;html=1;strokeColor=#1a9c63;strokeWidth=2.5;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="708" y="138" as="sourcePoint"/>
+        <mxPoint x="708" y="50" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="axLt1" value="逻辑扩展轴" style="text;html=1;align=left;fontColor=#127a4c;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="724" y="63" width="130" height="18" as="geometry"/>
+    </mxCell>
+    <mxCell id="axLt2" value="+Skill → 覆盖 𝒯↑&#10;∂Θ/∂|S| ≈ 0" style="text;html=1;align=left;verticalAlign=top;fontColor=#1a9c63;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="724" y="84" width="140" height="34" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="axP" value="" style="endArrow=classicThin;html=1;strokeColor=#c8651b;strokeWidth=2.5;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="708" y="414" as="sourcePoint"/>
+        <mxPoint x="708" y="502" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="axPt1" value="物理扩展轴" style="text;html=1;align=left;fontColor=#a8500f;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="724" y="427" width="130" height="18" as="geometry"/>
+    </mxCell>
+    <mxCell id="axPt2" value="+Scaffold → 吞吐 Θ↑&#10;+ 维护推理（线性）&#10;∂𝒯/∂|X| = 0" style="text;html=1;align=left;verticalAlign=top;fontColor=#c8651b;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="724" y="448" width="150" height="50" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="p1box" value="" style="rounded=1;arcSize=12;fillColor=#f1ecfd;strokeColor=#7a4ddb;strokeWidth=1;opacity=80;" vertex="1" parent="1">
+      <mxGeometry x="788" y="238" width="168" height="124" as="geometry"/>
+    </mxCell>
+    <mxCell id="p1title" value="P1 · 两轴正交" style="text;html=1;align=center;fontColor=#5b34b0;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="788" y="254" width="168" height="18" as="geometry"/>
+    </mxCell>
+    <mxCell id="p1ax1" value="" style="endArrow=classicThin;html=1;strokeColor=#1a9c63;strokeWidth=2;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="812" y="318" as="sourcePoint"/>
+        <mxPoint x="888" y="318" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="p1ax2" value="" style="endArrow=classicThin;html=1;strokeColor=#c8651b;strokeWidth=2;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="812" y="318" as="sourcePoint"/>
+        <mxPoint x="812" y="282" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="p1tx" value="𝒯" style="text;html=1;align=left;fontColor=#127a4c;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="890" y="312" width="20" height="14" as="geometry"/>
+    </mxCell>
+    <mxCell id="p1ty" value="Θ" style="text;html=1;align=left;fontColor=#a8500f;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="800" y="270" width="20" height="14" as="geometry"/>
+    </mxCell>
+    <mxCell id="p1cap" value="效果空间 (𝒯, Θ) 解耦" style="text;html=1;align=center;fontColor=#6a5a8f;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="788" y="342" width="168" height="16" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="anchK" value="类比(C1) · 前端运行时" style="text;html=1;align=right;fontColor=#9a9aa0;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="700" y="120" width="270" height="14" as="geometry"/>
+    </mxCell>
+    <mxCell id="anc2" value="框架运行时" style="text;html=1;align=left;fontColor=#9a9aa0;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="880" y="200" width="90" height="14" as="geometry"/>
+    </mxCell>
+    <mxCell id="anc3" value="虚机 / 容器" style="text;html=1;align=left;fontColor=#9a9aa0;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="880" y="468" width="90" height="14" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="footnote" value="横切关注点（按层设计 NFR · C6）：性能 · 可靠性 · 可用性 · 安全 — 组合不变量 Inv(S) ⇒ Inv(S∪{s})（P3）" style="text;html=1;align=left;fontColor=#86868b;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="70" y="532" width="800" height="18" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>
