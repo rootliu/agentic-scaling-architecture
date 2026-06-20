@@ -182,3 +182,53 @@ svg{max-width:100%;height:auto}
 .hero .pills.fade{transition-delay:.24s}
 .hero .btnrow.fade{transition-delay:.32s}
 @media (prefers-reduced-motion: reduce){.fade{transition:none;opacity:1;transform:none}}
+
+/* === interactive plate hero (added) === */
+/* hero where the architecture figure IS the hero */
+.plate-hero{padding:84px 0 64px;text-align:center;position:relative}
+.plate-hero h1{font-family:var(--serif);font-size:62px;line-height:1.02;font-weight:600;
+  margin:0 0 18px;letter-spacing:-.025em;font-optical-sizing:auto}
+.plate-hero .lead{font-size:20px;color:var(--ink2);max-width:660px;margin:0 auto 8px;line-height:1.55}
+.plate-hero .lead b{color:var(--ink);font-weight:600}
+.plate-meta{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+.plate-hint{font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;color:var(--ink2);
+  background:var(--contract-bg);border:1px solid color-mix(in srgb,var(--contract) 22%,transparent);
+  padding:4px 11px;border-radius:6px}
+.plate-hero .figure{margin-top:34px}
+
+/* figure plate emphasis when interactive */
+.figure.interactive svg{border:1px solid color-mix(in srgb,var(--contract) 18%,var(--hair));
+  box-shadow:var(--shadow-lg)}
+.figcap-hint{color:var(--contract);font-weight:600}
+
+/* SVG hot zones — figure as a navigator */
+.hot{cursor:pointer;outline:none}
+.hot rect{transition:stroke-width .2s ease, stroke-opacity .2s ease, filter .2s ease}
+.hot text.go{opacity:0;transition:opacity .22s ease;font-family:var(--mono);font-weight:600}
+/* lift the primary outline rect of each hot zone on hover/focus */
+.hot:hover > rect:first-of-type,
+.hot:focus-visible > rect:first-of-type{stroke-width:2.6px;stroke-opacity:1}
+.hot:hover text.go,
+.hot:focus-visible text.go{opacity:1}
+.hot-logic:hover > rect:first-of-type,.hot-logic:focus-visible > rect:first-of-type{stroke:var(--logic)}
+.hot-phys:hover > rect:first-of-type,.hot-phys:focus-visible > rect:first-of-type{stroke:var(--phys)}
+.hot-contract:hover > rect:first-of-type,.hot-contract:focus-visible > rect:first-of-type{stroke:var(--contract)}
+/* keyboard focus ring (SVG-safe) */
+.hot:focus-visible > rect:first-of-type{filter:drop-shadow(0 0 0 2px var(--card)) drop-shadow(0 0 3px color-mix(in srgb,var(--contract) 70%,transparent))}
+
+/* clickable cards behave like cards but are anchors */
+a.linkcard{display:block;text-decoration:none;color:inherit}
+a.linkcard h3{color:var(--ink)}
+a.linkcard::after{content:"→";position:absolute;bottom:24px;right:26px;
+  font-family:var(--mono);color:var(--ink2);opacity:0;transform:translateX(-6px);
+  transition:opacity .25s ease,transform .25s ease,color .25s ease}
+a.linkcard:hover::after{opacity:1;transform:none;color:var(--contract)}
+
+@media(max-width:820px){
+  .plate-hero h1{font-size:40px}
+  .plate-hero .lead{font-size:17px}
+  .plate-hero{padding:60px 0 44px}
+}
+@media (prefers-reduced-motion: reduce){
+  .hot rect,.hot text.go,a.linkcard::after{transition:none}
+}
