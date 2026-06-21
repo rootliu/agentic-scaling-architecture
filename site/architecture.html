@@ -4,12 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>架构 & 主线 · Agentic Runtime</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=20260621">
 </head>
 <body class="deck-page">
 <nav class="bar"><div class="inner">
   <span class="brand">Agentic Runtime</span>
   <a href="index.html">概览</a>
+  <a href="research-brief.html">研究简报</a>
   <a href="architecture.html" class="active">架构 & 主线</a>
   <a href="references.html">文献</a>
   <a href="timeline.html">时间线</a>
@@ -18,8 +19,8 @@
 
 <header class="hero wrap slide title-slide" id="top">
   <div class="kicker fade">参考架构 · 三维</div>
-  <h1 class="fade">三层栈 · 一数据子系统 · 三正交切分</h1>
-  <p class="lead fade">三层栈 ⟨S, H, X⟩ 之外，挂接一个略独立的数据子系统 𝒟。三条正交切分——扩展轴、控制/数据面、数据子系统——复用同一组解耦不变量。</p>
+  <h1 class="fade">可扩展 Agentic Runtime 的三层架构</h1>
+  <p class="lead fade">三层栈 ⟨S, H, X⟩ 之外，挂接一个略独立的数据子系统 𝒟。三条正交切分——扩展轴、控制/数据面、数据子系统——复用同一组解耦不变量，目标是研究 agentic runtime 在规模化之后的可审计、可治理、可运维和可演进。</p>
 </header>
 
 <nav class="deck-nav" aria-label="页面跳转">
@@ -39,7 +40,7 @@
 <!-- ============ 三维总览 ============ -->
 <section class="wrap slide" id="dimensions">
   <h2 class="sec">三条正交切分，一个不变量</h2>
-  <p class="sub">每一维问一个不同的问题，但答案都落在同一个解耦机制上：把高频在线路径与低频/离线决策路径分离。</p>
+  <p class="sub">每一维问一个不同的问题，但答案都落在同一个解耦机制上：把高频在线路径与低频/离线决策路径分离，从而让 agentic runtime 的扩展过程保持可管理。</p>
 
   <div class="dimhead"><span class="dimno ext">维度 1</span><h3 style="margin:0">扩展轴 — 往哪个方向加东西</h3></div>
   <div class="card fade" style="margin-bottom:26px">
@@ -454,6 +455,7 @@
 
 <footer>
   <a href="index.html">← 概览</a> ·
+  <a href="research-brief.html">研究简报</a> ·
   <a href="references.html">文献</a> ·
   <a href="timeline.html">时间线</a> ·
   <a href="input.html">原始构想</a>

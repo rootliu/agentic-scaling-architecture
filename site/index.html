@@ -4,12 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agentic Runtime 参考架构</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=20260621">
 </head>
 <body>
 <nav class="bar"><div class="inner">
   <span class="brand">Agentic Runtime</span>
   <a href="index.html" class="active">概览</a>
+  <a href="research-brief.html">研究简报</a>
   <a href="architecture.html">架构 & 主线</a>
   <a href="references.html">文献</a>
   <a href="timeline.html">时间线</a>
@@ -22,8 +23,8 @@
     <span class="kicker" style="margin:0">参考架构 · 三维</span>
     <span class="plate-hint">点击任一切分，进入对应章节 ↗</span>
   </div>
-  <h1 class="fade">三条正交切分，<br>一个解耦不变量。</h1>
-  <p class="lead fade">论文的核心论点不是"三层栈"，而是：扩展轴、控制/数据面、栈外数据子系统——<b>三条互相正交的切分</b>，其"加东西"的一阶成本都落在<b>同一个解耦机制</b>上：把高频在线路径与低频/离线决策路径分离。</p>
+  <h1 class="fade">可扩展的 Agentic Runtime，<br>以及它的可管理性。</h1>
+  <p class="lead fade">论文的核心目标不是"三层栈"本身，而是研究 agentic runtime 在持续增加 skills、执行资源和外部数据源时，如何仍然保持可审计、可治理、可运维、可演进。扩展轴、控制/数据面、栈外数据子系统——<b>三条互相正交的切分</b>，共同服务于这个可管理的扩展目标。</p>
 
   <!-- 三联屏 -->
   <div class="triptych fade">
@@ -65,7 +66,7 @@
   <!-- 共享不变量收敛节点 -->
   <a class="invariant fade" href="architecture.html#dimensions" style="display:block;text-decoration:none;color:inherit">
     <span class="tag">统一命题 · meta-claim</span>
-    <p class="claim">三维各自的"加东西"，其一阶成本都落在<b>与主请求路径解耦的平面/子系统</b>上——逻辑扩展落控制面、物理扩展落数据面、数据扩展落离线 off-policy loop。<b>共享同一解耦机制。</b></p>
+    <p class="claim">三维各自的"加东西"，其一阶成本都落在<b>与主请求路径解耦的平面/子系统</b>上——逻辑扩展落控制面、物理扩展落数据面、数据扩展落离线 off-policy loop。目标是让 agentic runtime <b>可扩展，也可管理。</b></p>
   </a>
 
   <div class="pills fade" style="margin-top:26px">
@@ -75,6 +76,7 @@
     <span class="pill data">数据子系统 = 𝒟（栈外）</span>
   </div>
   <div class="btnrow fade">
+    <a class="btn" href="research-brief.html">阅读研究简报 →</a>
     <a class="btn" href="architecture.html">展开完整架构 →</a>
     <a class="btn ghost" href="references.html">文献证据</a>
   </div>
@@ -142,6 +144,7 @@
 
 <footer>
   Agentic Runtime 参考架构 · 研究 worktree ·
+  <a href="research-brief.html">研究简报</a> ·
   <a href="architecture.html">架构</a> ·
   <a href="references.html">文献</a> ·
   <a href="timeline.html">时间线</a> ·

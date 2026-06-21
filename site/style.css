@@ -587,3 +587,20 @@ li{margin:8px 0}
     text-align:left;
   }
 }
+
+/* Deck navigation should feel like slide tabs instead of a clipped toolbar. */
+.deck-nav-inner{
+  flex-wrap:wrap;
+  justify-content:center;
+  overflow-x:visible;
+}
+@media(max-width:820px){
+  .deck-nav-inner{
+    gap:6px;
+    justify-content:flex-start;
+  }
+  .deck-nav a{
+    font-size:12px;
+    padding:8px 10px;
+  }
+}
