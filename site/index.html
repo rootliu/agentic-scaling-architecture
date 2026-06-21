@@ -16,134 +16,63 @@
   <a href="input.html">原始构想</a>
 </div></nav>
 
-<!-- HERO = 可交互架构图。图即论点，每一区块可点击跳转。 -->
+<!-- HERO = 三正交切分 → 收敛于一个不变量。三联屏每块可点击进入对应章节。 -->
 <header class="plate-hero wrap">
   <div class="plate-meta fade">
-    <span class="kicker" style="margin:0">Figure 1 · 参考架构</span>
-    <span class="plate-hint">点击图中任意区块，进入对应章节 ↗</span>
+    <span class="kicker" style="margin:0">参考架构 · 三维</span>
+    <span class="plate-hint">点击任一切分，进入对应章节 ↗</span>
   </div>
-  <h1 class="fade">逻辑与物理，本可解耦。</h1>
-  <p class="lead fade">一张图就是论文的核心论点：三层栈 Scaffold · Harness · Skills，两条<b>正交</b>的扩展轴，解耦点是 Harness 契约。</p>
+  <h1 class="fade">三条正交切分，<br>一个解耦不变量。</h1>
+  <p class="lead fade">论文的核心论点不是"三层栈"，而是：扩展轴、控制/数据面、栈外数据子系统——<b>三条互相正交的切分</b>，其"加东西"的一阶成本都落在<b>同一个解耦机制</b>上：把高频在线路径与低频/离线决策路径分离。</p>
 
-  <figure class="figure interactive fade" aria-label="可交互的 Agentic Runtime 参考架构图">
-  <svg viewBox="0 0 980 600" width="100%" role="group"
-       font-family="'Schibsted Grotesk',-apple-system,'PingFang SC',sans-serif">
-    <defs>
-      <linearGradient id="gL3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#effaf3"/><stop offset="1" stop-color="#e2f5ea"/></linearGradient>
-      <linearGradient id="gL2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6f1fe"/><stop offset="1" stop-color="#efe8fc"/></linearGradient>
-      <linearGradient id="gL1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fef4ec"/><stop offset="1" stop-color="#fdeede"/></linearGradient>
-      <marker id="mG" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#1a9c63"/></marker>
-      <marker id="mO" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#c8651b"/></marker>
-      <marker id="mC" markerWidth="9" markerHeight="9" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#7a4ddb"/></marker>
-      <filter id="ds" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.06"/></filter>
-    </defs>
+  <!-- 三联屏 -->
+  <div class="triptych fade">
+    <a class="cut c-ext" href="architecture.html#formalization" aria-label="扩展轴 — 形式化与 P1–P3">
+      <span class="seehint">查看 P1–P3 ↗</span>
+      <span class="dim">维度 1 · 扩展轴</span>
+      <h3>往哪个方向加东西</h3>
+      <p class="ortho"><span style="color:var(--logic)">逻辑 +Skill</span> ⟂ <span style="color:var(--phys)">物理 +Scaffold</span></p>
+      <p>逻辑扩展扩大能力覆盖 𝒯，物理扩展扩大吞吐 Θ。二者在效果空间正交，解耦点是 Harness 契约 H。</p>
+      <p class="props">命题 P1 · P2 · P3 ｜ 核心 novelty C5</p>
+    </a>
+    <a class="cut c-plane" href="architecture.html#planes" aria-label="控制/数据面 — P4–P6 与 N0">
+      <span class="seehint">查看 P4–P6 ↗</span>
+      <span class="dim">维度 2 · 控制 / 数据面</span>
+      <h3>按什么职责分流</h3>
+      <p class="ortho"><span style="color:var(--phys)">数据面 DP</span> ⟂ <span style="color:var(--contract)">控制面 CP</span></p>
+      <p>DP 承载 token 处理（∝ 流量），CP 承载决策/翻译/不变量（∝ 状态事件）。本架构 CP 由 LLM 驱动 → 概率性控制面。</p>
+      <p class="props">命题 P4 · P5 · P6 ｜ novelty N0</p>
+    </a>
+    <a class="cut c-data" href="architecture.html#data" aria-label="数据子系统 — P7–P9 与 N1–N5">
+      <span class="seehint">查看 P7–P9 ↗</span>
+      <span class="dim">维度 3 · 数据子系统（栈外）</span>
+      <h3>怎么与外部数据协同</h3>
+      <p class="ortho"><span style="color:var(--data)">𝒟 = ⟨D₁,D₂,D₃,D₄,Ω⟩</span></p>
+      <p>三层栈之外新增的子系统。取数在数据面，语义总结是栈外独立 off-policy loop，治理与 lifetime 在控制面。</p>
+      <p class="props">命题 P7 · P8 · P9 ｜ novelty N1–N5</p>
+    </a>
+  </div>
 
-    <!-- L3 Skills -->
-    <a class="hot hot-logic" href="architecture.html#claims" aria-label="L3 Skills 层 — 查看命题 C4">
-      <rect x="70" y="44" width="600" height="96" rx="16" fill="url(#gL3)" stroke="#1a9c63" stroke-opacity=".45" filter="url(#ds)"/>
-      <circle cx="98" cy="74" r="13" fill="#1a9c63"/><text x="98" y="79" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">L3</text>
-      <text x="124" y="72" fill="#127a4c" font-size="17" font-weight="700">Skills · Specification Plane</text>
-      <text x="124" y="94" fill="#2c5e47" font-size="12.5">specs · I/O schema · 调用 / 终止 / 循环条件</text>
-      <text x="124" y="114" fill="#5a7a6b" font-size="11.5">职责：组装并迭代推送进 LLM context ｜ 仅含 task skills</text>
-      <text class="go" x="650" y="58" fill="#1a9c63" font-size="14" text-anchor="end">↗</text>
-    </a>
+  <!-- 收敛连接线 -->
+  <div class="converge fade" aria-hidden="true">
+    <svg viewBox="0 0 760 30" preserveAspectRatio="none">
+      <path d="M126,0 C126,18 380,12 380,30" fill="none" stroke="#1a9c63" stroke-width="1.5" stroke-opacity=".55"/>
+      <path d="M380,0 L380,30" fill="none" stroke="#6d3fd4" stroke-width="1.5" stroke-opacity=".55"/>
+      <path d="M634,0 C634,18 380,12 380,30" fill="none" stroke="#1474a6" stroke-width="1.5" stroke-opacity=".55"/>
+    </svg>
+  </div>
 
-    <!-- L2 Harness 外框（标题区可点） -->
-    <rect x="70" y="160" width="600" height="232" rx="16" fill="url(#gL2)" stroke="#7a4ddb" stroke-opacity=".45" filter="url(#ds)"/>
-    <a class="hot hot-contract" href="architecture.html#newpoints" aria-label="Harness 层 — 查看三平面精化 S2">
-      <rect x="78" y="168" width="584" height="50" rx="10" fill="transparent"/>
-      <circle cx="98" cy="190" r="13" fill="#7a4ddb"/><text x="98" y="195" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">L2</text>
-      <text x="124" y="188" fill="#5b34b0" font-size="17" font-weight="700">Harness · Capability / Contract Plane</text>
-      <text x="124" y="208" fill="#6a5a8f" font-size="12">解耦点：契约 H 把意图 𝓘 翻译为可执行单元 𝓔</text>
-      <text class="go" x="650" y="184" fill="#7a4ddb" font-size="14" text-anchor="end">↗</text>
-    </a>
-    <!-- a 契约翻译 -->
-    <a class="hot hot-contract" href="architecture.html#formalization" aria-label="契约翻译 — 查看命题 P2">
-      <rect x="90" y="224" width="180" height="150" rx="11" fill="#fff" stroke="#7a4ddb" stroke-opacity=".28"/>
-      <text x="104" y="249" fill="#5b34b0" font-size="13" font-weight="700">a · 契约翻译</text>
-      <text x="104" y="272" fill="#6a5a8f" font-size="11.5">意图 𝓘 → 执行单元 𝓔</text>
-      <text x="104" y="291" fill="#6a5a8f" font-size="11.5">稳定接口（P2）</text>
-      <text x="104" y="310" fill="#9489a6" font-size="11">轻量 · 少调模型</text>
-      <text x="104" y="356" fill="#9489a6" font-size="10.5">⟨ 决定 解耦充分性 ⟩</text>
-    </a>
-    <!-- b 能力供给 -->
-    <a class="hot hot-contract" href="references.html" aria-label="能力供给 tool synthesis — 查看文献 Tool-Forge">
-      <rect x="282" y="224" width="176" height="150" rx="11" fill="#fff" stroke="#7a4ddb" stroke-opacity=".28"/>
-      <text x="296" y="249" fill="#5b34b0" font-size="13" font-weight="700">b · 能力供给</text>
-      <text x="296" y="272" fill="#6a5a8f" font-size="11.5">内部 / 外部工具</text>
-      <text x="296" y="291" fill="#6a5a8f" font-size="11.5">tool synthesis</text>
-      <text x="296" y="310" fill="#9489a6" font-size="11">LLM 生成新工具</text>
-      <text x="296" y="356" fill="#9489a6" font-size="10.5">Tool-Forge / AutoHarness</text>
-    </a>
-    <!-- c 维护子系统（物理轴） -->
-    <a class="hot hot-phys" href="architecture.html#newpoints" aria-label="维护子系统 — 查看精化 S3，走物理轴">
-      <rect x="470" y="224" width="182" height="150" rx="11" fill="#fef4ec" stroke="#c8651b" stroke-opacity=".5"/>
-      <text x="484" y="249" fill="#a8500f" font-size="13" font-weight="700">c · 维护子系统</text>
-      <text x="484" y="271" fill="#9a5418" font-size="11.5">压缩(32K) · 写回(128K)</text>
-      <text x="484" y="289" fill="#9a5418" font-size="11.5">reflection · 检索 · GC</text>
-      <text x="484" y="307" fill="#9a5418" font-size="11.5">固定指令 · Haiku 级</text>
-      <text x="484" y="332" fill="#c8651b" font-size="11" font-weight="700">触发 ∝ token → 物理轴</text>
-      <text x="484" y="352" fill="#b08763" font-size="10.5">≈ SaaS / SSR 前端</text>
-      <text class="go" x="636" y="244" fill="#c8651b" font-size="13" text-anchor="end">↗</text>
-    </a>
-
-    <!-- L1 Scaffold -->
-    <a class="hot hot-phys" href="architecture.html#claims" aria-label="L1 Scaffold 层 — 查看命题 C2">
-      <rect x="70" y="412" width="600" height="96" rx="16" fill="url(#gL1)" stroke="#c8651b" stroke-opacity=".45" filter="url(#ds)"/>
-      <circle cx="98" cy="442" r="13" fill="#c8651b"/><text x="98" y="447" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">L1</text>
-      <text x="124" y="440" fill="#a8500f" font-size="17" font-weight="700">Scaffold · Execution / Isolation Plane</text>
-      <text x="124" y="462" fill="#9a5418" font-size="12.5">microVM / sandbox · bash · 资源 · 隔离 · 推理 serving 容量</text>
-      <text x="124" y="482" fill="#b08763" font-size="11.5">刻画系统吞吐 Θ ｜ 宽定义 = 隔离 + 算力（含 serving）</text>
-      <text class="go" x="650" y="426" fill="#c8651b" font-size="14" text-anchor="end">↗</text>
-    </a>
-
-    <!-- 解耦虚线 + 层间契约箭头（装饰，不可点） -->
-    <line x1="92" y1="402" x2="648" y2="402" stroke="#7a4ddb" stroke-width="1.5" stroke-dasharray="2 5" stroke-opacity=".5"/>
-    <line x1="370" y1="140" x2="370" y2="158" stroke="#7a4ddb" stroke-width="2" marker-end="url(#mC)" opacity=".55"/>
-    <line x1="370" y1="392" x2="370" y2="410" stroke="#7a4ddb" stroke-width="2" marker-end="url(#mC)" opacity=".55"/>
-
-    <!-- 逻辑扩展轴 + 物理扩展轴（可点 → 形式化） -->
-    <a class="hot hot-logic" href="architecture.html#formalization" aria-label="逻辑扩展轴 — 查看命题 P1">
-      <rect x="700" y="44" width="80" height="96" rx="8" fill="transparent"/>
-      <line x1="708" y1="138" x2="708" y2="50" stroke="#1a9c63" stroke-width="2.5" marker-end="url(#mG)"/>
-      <text x="724" y="74" fill="#127a4c" font-size="13" font-weight="700">逻辑扩展轴</text>
-      <text x="724" y="93" fill="#1a9c63" font-size="11">+Skill → 覆盖 𝒯↑</text>
-      <text x="724" y="110" fill="#1a9c63" font-size="11">∂Θ/∂|S| ≈ 0</text>
-    </a>
-    <a class="hot hot-phys" href="architecture.html#formalization" aria-label="物理扩展轴 — 查看命题 P1">
-      <rect x="700" y="412" width="80" height="96" rx="8" fill="transparent"/>
-      <line x1="708" y1="414" x2="708" y2="502" stroke="#c8651b" stroke-width="2.5" marker-end="url(#mO)"/>
-      <text x="724" y="438" fill="#a8500f" font-size="13" font-weight="700">物理扩展轴</text>
-      <text x="724" y="457" fill="#c8651b" font-size="11">+Scaffold → 吞吐 Θ↑</text>
-      <text x="724" y="474" fill="#c8651b" font-size="11">+ 维护推理（线性）</text>
-      <text x="724" y="491" fill="#c8651b" font-size="11">∂𝒯/∂|X| = 0</text>
-    </a>
-
-    <!-- P1 正交小图（可点 → 形式化） -->
-    <a class="hot hot-contract" href="architecture.html#formalization" aria-label="P1 两轴正交 — 查看形式化">
-      <rect x="788" y="238" width="168" height="124" rx="13" fill="#f1ecfd" stroke="#7a4ddb" stroke-opacity=".4"/>
-      <text x="872" y="265" fill="#5b34b0" font-size="13" font-weight="700" text-anchor="middle">P1 · 两轴正交</text>
-      <line x1="812" y1="318" x2="888" y2="318" stroke="#1a9c63" stroke-width="2" marker-end="url(#mG)"/>
-      <line x1="812" y1="318" x2="812" y2="282" stroke="#c8651b" stroke-width="2" marker-end="url(#mO)"/>
-      <text x="894" y="322" fill="#127a4c" font-size="10.5">𝒯</text>
-      <text x="806" y="278" fill="#a8500f" font-size="10.5">Θ</text>
-      <text x="872" y="350" fill="#6a5a8f" font-size="10.5" text-anchor="middle">效果空间 (𝒯, Θ) 解耦</text>
-    </a>
-
-    <!-- 类比角标（装饰，不可点） -->
-    <text x="788" y="78" fill="#86868b" font-size="10.5">类比(C1)</text>
-    <text x="788" y="93" fill="#9a9aa0" font-size="10.5">前端运行时</text>
-    <text x="788" y="190" fill="#9a9aa0" font-size="10.5">框架运行时</text>
-    <text x="788" y="440" fill="#9a9aa0" font-size="10.5">虚机 / 容器</text>
-    <text x="70" y="540" fill="#86868b" font-size="11.5">横切关注点（按层设计 NFR · C6）：性能 · 可靠性 · 可用性 · 安全 — 组合不变量 Inv(S) ⇒ Inv(S∪{s})（P3）</text>
-  </svg>
-  <figcaption class="figcap"><b>图 1</b>　三层栈与两条正交扩展轴。逻辑扩展沿 Skills 轴（𝒯↑），物理扩展沿 Scaffold 轴（Θ↑），解耦点为 Harness 契约 H。<span class="figcap-hint">— 各区块可点击</span></figcaption>
-  </figure>
+  <!-- 共享不变量收敛节点 -->
+  <a class="invariant fade" href="architecture.html#dimensions" style="display:block;text-decoration:none;color:inherit">
+    <span class="tag">统一命题 · meta-claim</span>
+    <p class="claim">三维各自的"加东西"，其一阶成本都落在<b>与主请求路径解耦的平面/子系统</b>上——逻辑扩展落控制面、物理扩展落数据面、数据扩展落离线 off-policy loop。<b>共享同一解耦机制。</b></p>
+  </a>
 
   <div class="pills fade" style="margin-top:26px">
     <span class="pill contract">核心 novelty = C5</span>
     <span class="pill logic">逻辑扩展 = Skills</span>
     <span class="pill phys">物理扩展 = Scaffold</span>
+    <span class="pill data">数据子系统 = 𝒟（栈外）</span>
   </div>
   <div class="btnrow fade">
     <a class="btn" href="architecture.html">展开完整架构 →</a>
@@ -153,53 +82,62 @@
 
 <hr class="divider">
 
+<!-- 三层栈 + 栈外数据子系统 -->
 <section class="wrap">
-  <div class="kicker center">三层栈</div>
-  <h2 class="sec">三个平面，一条契约。</h2>
-  <p class="sub">自底向上，每一层各司其职，对应互联网部署的"虚机 / 框架运行时 / 前端运行时"。</p>
+  <div class="kicker center">三层栈 ⟨S · H · X⟩ + 栈外数据子系统 𝒟</div>
+  <h2 class="sec">三个平面，一条契约；<br>外挂一个数据子系统。</h2>
+  <p class="sub">自底向上三层各司其职，对应"虚机 / 框架运行时 / 前端运行时"。三层之外，再挂一个<b>略独立的数据子系统</b>——它不是第四层。</p>
   <div class="grid g3">
     <a class="card linkcard fade" href="architecture.html#claims">
       <span class="pill logic">L3 · 逻辑轴</span>
       <h3 style="margin-top:14px">Skills</h3>
-      <p class="mut">Specification Plane。specs 描述、I/O schema、调用 / 终止 / 循环条件。职责是组装并迭代推送进 LLM context。仅含 task skills。</p>
+      <p class="mut">Specification Plane。specs 描述、I/O schema、调用 / 终止 / 循环条件。职责是组装并迭代推送进 LLM context。含 task skills。</p>
     </a>
-    <a class="card linkcard fade" href="architecture.html#newpoints">
+    <a class="card linkcard fade" href="architecture.html#planes">
       <span class="pill contract">L2 · 契约</span>
       <h3 style="margin-top:14px">Harness</h3>
-      <p class="mut">Capability / Contract Plane。把上层意图翻译为下层可执行单元。三分：契约翻译 + 能力供给（tool synthesis）+ 维护子系统。</p>
+      <p class="mut">Capability / Contract Plane。把上层意图翻译为下层可执行单元。三分：契约翻译 + 能力供给（tool synthesis）+ 维护子系统 M。</p>
     </a>
     <a class="card linkcard fade" href="architecture.html#claims">
       <span class="pill phys">L1 · 物理轴</span>
       <h3 style="margin-top:14px">Scaffold</h3>
-      <p class="mut">Execution / Isolation Plane。microVM / sandbox、bash、隔离与算力。宽定义含推理 serving 容量，刻画系统 throughput。</p>
+      <p class="mut">Execution / Isolation Plane。microVM / sandbox、隔离与算力。宽定义含推理 serving 容量，刻画系统 throughput Θ。</p>
     </a>
   </div>
+  <a class="card linkcard fade" href="architecture.html#data" style="margin-top:18px;border-top:3px solid var(--data)">
+    <span class="pill data">栈外 · 数据子系统 𝒟</span>
+    <h3 style="margin-top:14px">Data Subsystem（不是第四层）</h3>
+    <p class="mut">刻画 agent 如何理解、访问、治理、维护被授权的外部数据。沿在线/离线与 CP/DP 双重分裂：取数 D₁ 在数据面；语义总结 D₂ 是<b>栈外独立 off-policy loop 𝓛₂</b>（自带 loop / sub-agents / 模型）；治理 D₃、lifetime D₄ 在控制面。仅 semantic-join 查询接口进主路径。</p>
+  </a>
 </section>
 
 <section class="wrap" style="padding-top:0">
   <div class="card fade" style="background:var(--bg2);box-shadow:none">
-    <div class="kicker">核心论证（修订版）</div>
+    <div class="kicker">核心论证</div>
     <blockquote style="background:var(--card);font-size:18px;border-left-color:var(--blue)">
-      现代云应用早已"前端按流量横扩 / 业务按功能纵展 / 后端按算力扩"——三轴解耦是<b>已知工程范式</b>。
-      本研究的 delta：在每层内嵌<b>概率性 LLM 调用</b>的条件下，给出该解耦成立的<b>充要条件（契约层 H）</b>与<b>可证伪判据（P1）</b>。
+      现代云应用早已"前端按流量横扩 / 业务按功能纵展 / 后端按算力扩"——多轴解耦是<b>已知工程范式</b>。
+      本研究的 delta：在每层内嵌<b>概率性 LLM 调用</b>的条件下，给出该解耦成立的<b>充要条件（契约层 H）</b>、<b>可证伪判据（P1–P9）</b>，并证明<b>三条正交切分复用同一不变量</b>。
     </blockquote>
-    <p class="mut">这把论文主张从"我们提出三层架构"提升为"我们证明在 LLM 不确定性下双扩展维度可以解耦"——回应"工程而非科学"的核心质疑。</p>
+    <p class="mut">这把论文主张从"我们提出三层架构"提升为"我们证明在 LLM 不确定性下，逻辑 / 物理 / 数据三种可扩展性可以解耦，且共享同一解耦机制"——回应"工程而非科学"的核心质疑。</p>
   </div>
 </section>
 
 <hr class="divider">
 
+<!-- 创新点速览 -->
 <section class="wrap">
-  <div class="kicker center">最新精化 <span class="pill new">2026-06-18</span></div>
-  <h2 class="sec">维护子系统，走物理轴。</h2>
-  <p class="sub">system skills（压缩 / 写回 / 反思）功能属 Harness，但扩展性属物理轴 —— 正如 SaaS 的 SSR 前端。</p>
-  <div class="grid g2">
-    <div class="card fade"><h3>Skills 二分</h3><p class="mut">task skills 完成用户任务（L3）；system skills 维护 runtime 自身，归入 Harness。判据：输出是否进入用户可见结果 + 触发源。</p></div>
-    <div class="card fade"><h3>触发 ∝ token 流量</h3><p class="mut">每 32K 压缩、每 128K 写 memory，用 Haiku 级廉价模型、指令固定 → 支持线性扩展，故归物理扩展。</p></div>
-    <div class="card fade"><h3>P1 机制解释</h3><p class="mut">维护子系统吸收"逻辑扩展带来的 context 膨胀"，这正是"加 task skill 不拖垮 throughput"的原因。</p></div>
-    <div class="card fade"><h3>一手证据 ClawVM</h3><p class="mut">2604.10352 把 compaction/writeback 明确定位在 harness layer。差异：它偏确定性规则，本架构偏 LLM 驱动 + 可审计日志。</p></div>
+  <div class="kicker center">创新点速览 <span class="pill new">三维</span></div>
+  <h2 class="sec">六条 novelty，一张总表。</h2>
+  <p class="sub">C5 为核心；N0–N5 沿三维分布，每条都绑定一个可证伪命题。</p>
+  <div class="grid g3">
+    <a class="card linkcard fade" href="architecture.html#formalization"><span class="pill logic">C5 · 扩展轴</span><h3 style="margin-top:12px">双扩展正交解耦</h3><p class="mut">逻辑 / 物理扩展正交，解耦点=契约层 Harness。7 篇 2026 文献无一拆正交两维并绑不同层。→ P1–P3</p></a>
+    <a class="card linkcard fade" href="architecture.html#planes"><span class="pill contract">N0 · 平面</span><h3 style="margin-top:12px">概率性控制面</h3><p class="mut">LLM 驱动的控制决策（契约翻译 / 反思 / tool synthesis），需可审计日志 + 不变量约束。区别于确定性 SDN / K8s。→ P4–P6</p></a>
+    <a class="card linkcard fade" href="architecture.html#data"><span class="pill data">N1 · 数据</span><h3 style="margin-top:12px">off-policy 语义总结</h3><p class="mut">schema-on-read 后台预总结进不截断 lake，semantic join 按需注入。填补 Halevy(2605.28787) 的覆盖↔精度留空。→ P8</p></a>
+    <a class="card linkcard fade" href="architecture.html#data"><span class="pill data">N2 · 数据</span><h3 style="margin-top:12px">数据治理即 skill</h3><p class="mut">治理从"管边界"升级为"沉淀经验"：per-use-case data-usage skill。首次缝合数据治理与 agent skill / 记忆理论。→ P9</p></a>
+    <a class="card linkcard fade" href="architecture.html#data"><span class="pill data">N4 · 数据结构</span><h3 style="margin-top:12px">off-policy loop 栈外独立</h3><p class="mut">语义总结不是在线步骤或接口，而是正交于在线运行时的离线子系统（own loop / sub-agents / model）。≈ DB vacuum / 离线索引。</p></a>
+    <a class="card linkcard fade" href="architecture.html#newpoints"><span class="pill"> N3 · N5</span><h3 style="margin-top:12px">架构一致性 + skill 三分</h3><p class="mut">N3：数据子系统沿 CP/DP 自然分裂，复用同一平面不变量。N5：skill 三分 task / system / data-usage，同遵 skill 形式。</p></a>
   </div>
-  <div class="btnrow"><a class="btn ghost" href="architecture.html#newpoints">查看全部 7 条精化 →</a></div>
+  <div class="btnrow"><a class="btn ghost" href="architecture.html#newpoints">查看创新点登记表 →</a></div>
 </section>
 
 <footer>

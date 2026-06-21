@@ -6,7 +6,7 @@
 <title>架构 & 主线 · Agentic Runtime</title>
 <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="deck-page">
 <nav class="bar"><div class="inner">
   <span class="brand">Agentic Runtime</span>
   <a href="index.html">概览</a>
@@ -16,93 +16,317 @@
   <a href="input.html">原始构想</a>
 </div></nav>
 
-<header class="hero wrap" style="padding:72px 0 40px">
-  <div class="kicker fade">参考架构</div>
-  <h1 class="fade" style="font-size:46px">三层 · 双轴 · 一契约</h1>
-  <p class="lead fade" style="font-size:20px">三层栈 + Harness 内部三平面 + 两条正交扩展轴。维护子系统功能属 Harness、扩展走物理轴。</p>
+<header class="hero wrap slide title-slide" id="top">
+  <div class="kicker fade">参考架构 · 三维</div>
+  <h1 class="fade">三层栈 · 一数据子系统 · 三正交切分</h1>
+  <p class="lead fade">三层栈 ⟨S, H, X⟩ 之外，挂接一个略独立的数据子系统 𝒟。三条正交切分——扩展轴、控制/数据面、数据子系统——复用同一组解耦不变量。</p>
 </header>
 
-<section class="wrap" style="padding-top:8px">
-  <div class="legend fade">
-    <span><i class="sw" style="background:#1a9c63"></i>逻辑扩展轴（Skills / 覆盖 𝒯）</span>
-    <span><i class="sw" style="background:#c8651b"></i>物理扩展轴（Scaffold / 吞吐 Θ）</span>
-    <span><i class="sw" style="background:#7a4ddb"></i>契约层（Harness 解耦点）</span>
+<nav class="deck-nav" aria-label="页面跳转">
+  <div class="deck-nav-inner">
+    <a href="#stack"><span>01</span>架构总图</a>
+    <a href="#dimensions"><span>02</span>三维切分</a>
+    <a href="#claims"><span>03</span>扩展命题</a>
+    <a href="#planes"><span>04</span>控制/数据面</a>
+    <a href="#data"><span>05</span>数据子系统</a>
+    <a href="#formalization"><span>06</span>形式化</a>
+    <a href="#propositions"><span>07</span>命题总表</a>
+    <a href="#newpoints"><span>08</span>创新点</a>
+    <a href="#path"><span>09</span>演进路径</a>
   </div>
-  <figure class="figure fade">
-  <svg viewBox="0 0 980 600" width="100%" role="img" aria-label="Agentic Runtime 三层双轴参考架构图" font-family="-apple-system,BlinkMacSystemFont,'SF Pro Text','PingFang SC',sans-serif">
+</nav>
+
+<!-- ============ 三维总览 ============ -->
+<section class="wrap slide" id="dimensions">
+  <h2 class="sec">三条正交切分，一个不变量</h2>
+  <p class="sub">每一维问一个不同的问题，但答案都落在同一个解耦机制上：把高频在线路径与低频/离线决策路径分离。</p>
+
+  <div class="dimhead"><span class="dimno ext">维度 1</span><h3 style="margin:0">扩展轴 — 往哪个方向加东西</h3></div>
+  <div class="card fade" style="margin-bottom:26px">
+    <p class="mut" style="margin-top:0">逻辑扩展（+task Skill）扩大能力覆盖 𝒯，物理扩展（+Scaffold 实例）扩大吞吐 Θ。二者在效果空间 (𝒯, Θ) 上正交，解耦点是 Harness 契约 H。</p>
+    <p style="margin:0"><span class="pill logic">逻辑轴 = Skills</span> <span class="pill phys">物理轴 = Scaffold</span> <span class="pill contract">解耦点 = 契约 H</span> &nbsp;→&nbsp; <a class="inline" href="#formalization">P1 / P2 / P3</a></p>
+  </div>
+
+  <div class="dimhead"><span class="dimno plane">维度 2</span><h3 style="margin:0">控制面 / 数据面 — 按什么职责分流</h3></div>
+  <div class="card fade" style="margin-bottom:26px">
+    <p class="mut" style="margin-top:0">借分布式系统经典切分：数据面 DP 承载 token 处理路径（∝ token 流量），控制面 CP 承载决策/翻译/维护触发/不变量（∝ 状态事件，与业务流量解耦）。本架构的 CP 部分由 LLM 驱动 → <b>概率性控制面</b>，需可审计日志 + 不变量约束。</p>
+    <p style="margin:0"><span class="pill phys">数据面 DP</span> <span class="pill contract">控制面 CP</span> <span class="pill">概率性控制面（N0）</span> &nbsp;→&nbsp; <a class="inline" href="#planes">2×3 矩阵 · P4 / P5 / P6</a></p>
+  </div>
+
+  <div class="dimhead"><span class="dimno data">维度 3</span><h3 style="margin:0">数据子系统 𝒟 — 怎么与外部数据协同（栈外）</h3></div>
+  <div class="card fade">
+    <p class="mut" style="margin-top:0"><b>这是三层栈之外新增的子系统</b>，刻画 agent 如何理解、访问、治理、维护其被授权的外部数据。它沿在线/离线与 CP/DP 双重分裂：取数在数据面，语义总结是<b>栈外独立 off-policy loop</b>，治理与 lifetime 在控制面。</p>
+    <p style="margin:0"><span class="pill data">𝒟 = ⟨D₁,D₂,D₃,D₄,Ω⟩</span> <span class="pill">栈外独立子系统</span> &nbsp;→&nbsp; <a class="inline" href="#data">四组成 · P7 / P8 / P9</a></p>
+  </div>
+
+  <blockquote class="fade" style="margin-top:30px;border-left-color:var(--contract);font-size:17px">
+    <b>统一命题（meta-claim）：</b>三维各自的"加东西"操作，其一阶成本都落在<b>与主请求路径解耦的平面 / 子系统</b>上——逻辑扩展落控制面、物理扩展落数据面、数据扩展落离线 off-policy loop。故三维共享同一个解耦机制。这是把"三层工程架构"提升为"可证明科学主张"的总杠杆。
+  </blockquote>
+</section>
+
+<hr class="divider">
+
+<!-- ============ 维度1：三层栈图 ============ -->
+<section class="wrap slide" id="stack">
+  <div class="slide-head fade">
+    <div class="kicker">01 · Architecture</div>
+    <h2>架构总图</h2>
+    <p class="sub">三层栈、控制/数据面与栈外数据子系统放在同一张图中，先给出全局地图，再展开每一维。</p>
+  </div>
+  <div class="legend fade">
+    <span><i class="sw" style="background:#1a9c63"></i>逻辑扩展轴（Skills / 𝒯）</span>
+    <span><i class="sw" style="background:#c8651b"></i>物理扩展轴（Scaffold / Θ）</span>
+    <span><i class="sw" style="background:#7a4ddb"></i>契约层（Harness 解耦点）</span>
+    <span><i class="sw" style="background:#1474a6"></i>数据子系统（栈外）</span>
+  </div>
+  <figure class="figure fade architecture-plate">
+  <svg viewBox="0 0 1120 760" width="100%" role="img" aria-label="Agentic 三层架构、控制数据面切分与栈外数据子系统总览图" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',Arial,sans-serif">
+    <defs>
+      <pattern id="archGrid" width="28" height="28" patternUnits="userSpaceOnUse">
+        <path d="M28 0H0V28" fill="none" stroke="#eee7db" stroke-width="1"/>
+      </pattern>
+      <linearGradient id="archLogic" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#effaf3"/><stop offset="1" stop-color="#ddf1e6"/>
+      </linearGradient>
+      <linearGradient id="archContract" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#f6f1fe"/><stop offset="1" stop-color="#ece4fb"/>
+      </linearGradient>
+      <linearGradient id="archPhys" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#fff5ec"/><stop offset="1" stop-color="#fbe6d1"/>
+      </linearGradient>
+      <linearGradient id="archData" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#ecf7fb"/><stop offset="1" stop-color="#dceff7"/>
+      </linearGradient>
+      <filter id="archShadow" x="-15%" y="-15%" width="130%" height="130%">
+        <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#3c2d14" flood-opacity=".10"/>
+      </filter>
+      <marker id="archArrowPurple" markerWidth="10" markerHeight="10" refX="7" refY="3.5" orient="auto">
+        <path d="M0,0 L7,3.5 L0,7 Z" fill="#6d3fd4"/>
+      </marker>
+      <marker id="archArrowGreen" markerWidth="10" markerHeight="10" refX="7" refY="3.5" orient="auto">
+        <path d="M0,0 L7,3.5 L0,7 Z" fill="#1a7d52"/>
+      </marker>
+      <marker id="archArrowOrange" markerWidth="10" markerHeight="10" refX="7" refY="3.5" orient="auto">
+        <path d="M0,0 L7,3.5 L0,7 Z" fill="#bc5a16"/>
+      </marker>
+      <marker id="archArrowTeal" markerWidth="10" markerHeight="10" refX="7" refY="3.5" orient="auto">
+        <path d="M0,0 L7,3.5 L0,7 Z" fill="#1474a6"/>
+      </marker>
+    </defs>
+
+    <rect width="1120" height="760" rx="18" fill="#fffdf8"/>
+    <rect width="1120" height="760" rx="18" fill="url(#archGrid)" opacity=".72"/>
+
+    <text x="48" y="48" fill="#221f1a" font-size="22" font-weight="700">Agentic 3-Layer Architecture</text>
+    <text x="48" y="73" fill="#6b6357" font-size="13">A = ⟨S, H, X⟩ 之外挂接数据子系统 𝒟；三条正交切分共享同一解耦不变量</text>
+
+    <rect x="48" y="96" width="420" height="420" rx="18" fill="none" stroke="#c9c1b2" stroke-dasharray="5 7" stroke-width="1.4"/>
+    <text x="68" y="124" fill="#86868b" font-size="12" font-family="ui-monospace,Menlo,monospace" letter-spacing="1">THREE-LAYER STACK</text>
+
+    <rect x="72" y="148" width="372" height="96" rx="14" fill="url(#archLogic)" stroke="#1a7d52" stroke-opacity=".42" filter="url(#archShadow)"/>
+    <circle cx="100" cy="177" r="15" fill="#1a7d52"/>
+    <text x="100" y="182" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">L3</text>
+    <text x="126" y="174" fill="#127a4c" font-size="17" font-weight="700">Skills · Specification Plane</text>
+    <text x="126" y="198" fill="#2c5e47" font-size="12.5">task specs · I/O schema · 调用 / 终止 / 循环条件</text>
+    <text x="126" y="220" fill="#1a7d52" font-size="12" font-weight="700">逻辑扩展：+Skill → 能力覆盖 𝒯↑</text>
+
+    <rect x="72" y="268" width="372" height="136" rx="14" fill="url(#archContract)" stroke="#6d3fd4" stroke-opacity=".42" filter="url(#archShadow)"/>
+    <circle cx="100" cy="297" r="15" fill="#6d3fd4"/>
+    <text x="100" y="302" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">L2</text>
+    <text x="126" y="294" fill="#542fab" font-size="17" font-weight="700">Harness · Contract Plane</text>
+    <text x="126" y="318" fill="#655586" font-size="12.5">唯一解耦点：H 把意图 𝓘 翻译为可执行单元 𝓔</text>
+    <rect x="94" y="336" width="94" height="36" rx="8" fill="#fff" stroke="#6d3fd4" stroke-opacity=".24"/>
+    <text x="141" y="359" fill="#542fab" font-size="12" font-weight="700" text-anchor="middle">契约翻译</text>
+    <rect x="198" y="336" width="94" height="36" rx="8" fill="#fff" stroke="#6d3fd4" stroke-opacity=".24"/>
+    <text x="245" y="359" fill="#542fab" font-size="12" font-weight="700" text-anchor="middle">路由/工具</text>
+    <rect x="302" y="336" width="118" height="36" rx="8" fill="#fff5ec" stroke="#bc5a16" stroke-opacity=".35"/>
+    <text x="361" y="359" fill="#a8500f" font-size="12" font-weight="700" text-anchor="middle">维护 M</text>
+
+    <rect x="72" y="428" width="372" height="72" rx="14" fill="url(#archPhys)" stroke="#bc5a16" stroke-opacity=".42" filter="url(#archShadow)"/>
+    <circle cx="100" cy="458" r="15" fill="#bc5a16"/>
+    <text x="100" y="463" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">L1</text>
+    <text x="126" y="455" fill="#a8500f" font-size="17" font-weight="700">Scaffold · Execution / Isolation</text>
+    <text x="126" y="479" fill="#9a5418" font-size="12.5">microVM · sandbox · serving · 吞吐 Θ↑</text>
+
+    <rect x="508" y="96" width="222" height="420" rx="18" fill="#fbfaf6" stroke="#e6dfd1" filter="url(#archShadow)"/>
+    <text x="528" y="124" fill="#86868b" font-size="12" font-family="ui-monospace,Menlo,monospace" letter-spacing="1">ORTHOGONAL PLANE CUT</text>
+    <rect x="532" y="148" width="174" height="152" rx="14" fill="#f4edfe" stroke="#6d3fd4" stroke-opacity=".36"/>
+    <text x="552" y="178" fill="#542fab" font-size="17" font-weight="700">CP 控制面</text>
+    <text x="552" y="205" fill="#655586" font-size="12.5">skill 选择 · H 翻译</text>
+    <text x="552" y="227" fill="#655586" font-size="12.5">M 触发 · 审计日志</text>
+    <text x="552" y="249" fill="#655586" font-size="12.5">不变量执行</text>
+    <text x="552" y="276" fill="#6d3fd4" font-size="12" font-weight="700">N0：概率性控制面</text>
+
+    <rect x="532" y="348" width="174" height="136" rx="14" fill="#fff2e6" stroke="#bc5a16" stroke-opacity=".36"/>
+    <text x="552" y="378" fill="#a8500f" font-size="17" font-weight="700">DP 数据面</text>
+    <text x="552" y="405" fill="#9a5418" font-size="12.5">token path · tool execution</text>
+    <text x="552" y="427" fill="#9a5418" font-size="12.5">sandbox compute · serving</text>
+    <text x="552" y="462" fill="#bc5a16" font-size="12" font-weight="700">成本 ∝ token 流量</text>
+
+    <rect x="536" y="294" width="166" height="64" rx="16" fill="#fff" stroke="#6d3fd4" stroke-width="2.2" filter="url(#archShadow)"/>
+    <text x="619" y="321" fill="#542fab" font-size="18" font-weight="800" text-anchor="middle">H: 𝓘 → 𝓔</text>
+    <text x="619" y="344" fill="#6b6357" font-size="11.5" font-family="ui-monospace,Menlo,monospace" text-anchor="middle">contract gate</text>
+
+    <path d="M444 196 C470 196 486 186 532 194" fill="none" stroke="#1a7d52" stroke-width="2.2" marker-end="url(#archArrowGreen)"/>
+    <path d="M444 336 C482 336 496 326 536 326" fill="none" stroke="#6d3fd4" stroke-width="2.4" marker-end="url(#archArrowPurple)"/>
+    <path d="M444 464 C480 464 494 430 532 422" fill="none" stroke="#bc5a16" stroke-width="2.2" marker-end="url(#archArrowOrange)"/>
+
+    <rect x="768" y="96" width="304" height="420" rx="18" fill="url(#archData)" stroke="#1474a6" stroke-opacity=".44" filter="url(#archShadow)"/>
+    <text x="788" y="124" fill="#1474a6" font-size="12" font-family="ui-monospace,Menlo,monospace" letter-spacing="1">DATA SUBSYSTEM 𝒟 · OUTSIDE STACK</text>
+    <text x="788" y="150" fill="#0f5e87" font-size="17" font-weight="700">𝒟 = ⟨D₁,D₂,D₃,D₄,Ω⟩</text>
+
+    <rect x="792" y="174" width="122" height="82" rx="12" fill="#fff" stroke="#1474a6" stroke-opacity=".30"/>
+    <text x="812" y="204" fill="#0f5e87" font-size="15" font-weight="700">D₁ 取数 API</text>
+    <text x="812" y="229" fill="#3d7a99" font-size="11.5">on-policy · R(q)</text>
+
+    <rect x="930" y="174" width="118" height="82" rx="12" fill="#fff" stroke="#1474a6" stroke-width="1.5" stroke-dasharray="5 5"/>
+    <text x="950" y="204" fill="#0f5e87" font-size="15" font-weight="700">D₂ 语义 Σ</text>
+    <text x="950" y="229" fill="#3d7a99" font-size="11.5">semantic-join</text>
+
+    <rect x="792" y="276" width="122" height="82" rx="12" fill="#fff" stroke="#1474a6" stroke-opacity=".30"/>
+    <text x="812" y="306" fill="#0f5e87" font-size="15" font-weight="700">D₃ 治理记忆</text>
+    <text x="812" y="331" fill="#3d7a99" font-size="11.5">data-usage skill</text>
+
+    <rect x="930" y="276" width="118" height="82" rx="12" fill="#fff" stroke="#1474a6" stroke-opacity=".30"/>
+    <text x="950" y="306" fill="#0f5e87" font-size="15" font-weight="700">D₄ lifetime</text>
+    <text x="950" y="331" fill="#3d7a99" font-size="11.5">freshness · NFR</text>
+
+    <rect x="792" y="390" width="256" height="84" rx="14" fill="#f7fcff" stroke="#1474a6" stroke-width="1.5" stroke-dasharray="6 6"/>
+    <text x="812" y="420" fill="#0f5e87" font-size="15" font-weight="700">栈外 off-policy loop 𝓛₂</text>
+    <text x="812" y="445" fill="#3d7a99" font-size="12">schema-on-read · async · 不截断 lake</text>
+    <path d="M1008 414 C1044 432 1044 466 1008 466" fill="none" stroke="#1474a6" stroke-width="1.8" marker-end="url(#archArrowTeal)" opacity=".75"/>
+
+    <path d="M702 326 C728 326 742 306 792 306" fill="none" stroke="#1474a6" stroke-width="2.1" marker-end="url(#archArrowTeal)"/>
+    <path d="M702 326 C735 326 742 216 792 216" fill="none" stroke="#1474a6" stroke-width="2.1" marker-end="url(#archArrowTeal)" opacity=".72"/>
+    <text x="720" y="305" fill="#1474a6" font-size="11.5" font-family="ui-monospace,Menlo,monospace">consult / query</text>
+
+    <rect x="48" y="560" width="1024" height="146" rx="18" fill="#f1ebe0" stroke="#6d3fd4" stroke-opacity=".38" stroke-dasharray="7 7"/>
+    <text x="72" y="593" fill="#6d3fd4" font-size="12" font-family="ui-monospace,Menlo,monospace" letter-spacing="1">UNIFIED INVARIANT</text>
+    <text x="72" y="624" fill="#221f1a" font-size="22" font-weight="700">新增能力的一阶成本，落在与主请求路径解耦的平面 / 子系统上</text>
+
+    <rect x="72" y="646" width="300" height="48" rx="10" fill="#e4f1e8" stroke="#1a7d52" stroke-opacity=".24"/>
+    <text x="222" y="666" fill="#1a7d52" font-size="13" font-weight="700" text-anchor="middle">逻辑扩展 → CP</text>
+    <text x="222" y="684" fill="#1a7d52" font-size="11.5" font-weight="600" text-anchor="middle">覆盖 𝒯↑ · 吞吐不被拖垮</text>
+    <rect x="410" y="646" width="300" height="48" rx="10" fill="#fbeee0" stroke="#bc5a16" stroke-opacity=".24"/>
+    <text x="560" y="666" fill="#bc5a16" font-size="13" font-weight="700" text-anchor="middle">物理扩展 → DP</text>
+    <text x="560" y="684" fill="#bc5a16" font-size="11.5" font-weight="600" text-anchor="middle">吞吐 Θ↑ · 语义覆盖不变</text>
+    <rect x="748" y="646" width="300" height="48" rx="10" fill="#e1eff6" stroke="#1474a6" stroke-opacity=".24"/>
+    <text x="898" y="666" fill="#1474a6" font-size="13" font-weight="700" text-anchor="middle">数据扩展 → 𝓛₂</text>
+    <text x="898" y="684" fill="#1474a6" font-size="11.5" font-weight="600" text-anchor="middle">源增加 · 单请求成本不升</text>
+
+    <text x="72" y="732" fill="#86868b" font-size="11.5" font-family="ui-monospace,Menlo,monospace">P1-P3: 扩展轴 · P4-P6: CP/DP 平面 · P7-P9: 数据子系统；核心证伪点是成本是否回流到高频在线路径。</text>
+  </svg>
+  <figcaption class="figcap"><b>图 1</b> 三层栈、控制/数据面、数据子系统的合并视图。图中把 Harness H 画成契约闸门：逻辑扩展先落 CP，物理扩展落 DP，数据扩展落到栈外 off-policy loop 𝓛₂，再通过稳定查询接口回到主路径。</figcaption>
+  </figure>
+  <figure class="figure fade" hidden>
+  <svg viewBox="0 0 980 640" width="100%" role="img" aria-label="三层栈 + 栈外数据子系统参考架构图" font-family="-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif">
     <defs>
       <linearGradient id="gL3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#effaf3"/><stop offset="1" stop-color="#e2f5ea"/></linearGradient>
       <linearGradient id="gL2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6f1fe"/><stop offset="1" stop-color="#efe8fc"/></linearGradient>
       <linearGradient id="gL1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fef4ec"/><stop offset="1" stop-color="#fdeede"/></linearGradient>
-      <marker id="mG" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#1a9c63"/></marker>
-      <marker id="mO" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#c8651b"/></marker>
-      <marker id="mC" markerWidth="9" markerHeight="9" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#7a4ddb"/></marker>
-      <filter id="ds" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.06"/></filter>
+      <linearGradient id="gD" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8f3f9"/><stop offset="1" stop-color="#dceef6"/></linearGradient>
+      <marker id="mC2" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#7a4ddb"/></marker>
+      <marker id="mD" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#1474a6"/></marker>
+      <filter id="ds2" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.06"/></filter>
     </defs>
-    <rect x="70" y="44" width="600" height="96" rx="16" fill="url(#gL3)" stroke="#1a9c63" stroke-opacity=".45" filter="url(#ds)"/>
-    <circle cx="98" cy="74" r="13" fill="#1a9c63"/><text x="98" y="79" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">L3</text>
-    <text x="124" y="72" fill="#127a4c" font-size="17" font-weight="700">Skills · Specification Plane</text>
-    <text x="124" y="94" fill="#2c5e47" font-size="12.5">specs · I/O schema · 调用 / 终止 / 循环条件</text>
-    <text x="124" y="114" fill="#5a7a6b" font-size="11.5">职责：组装并迭代推送进 LLM context ｜ 仅含 task skills</text>
-    <rect x="70" y="160" width="600" height="232" rx="16" fill="url(#gL2)" stroke="#7a4ddb" stroke-opacity=".45" filter="url(#ds)"/>
-    <circle cx="98" cy="190" r="13" fill="#7a4ddb"/><text x="98" y="195" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">L2</text>
-    <text x="124" y="188" fill="#5b34b0" font-size="17" font-weight="700">Harness · Capability / Contract Plane</text>
-    <text x="124" y="208" fill="#6a5a8f" font-size="12">解耦点：契约 H 把意图 𝓘 翻译为可执行单元 𝓔</text>
-    <rect x="90" y="224" width="180" height="150" rx="11" fill="#fff" stroke="#7a4ddb" stroke-opacity=".28"/>
-    <text x="104" y="249" fill="#5b34b0" font-size="13" font-weight="700">a · 契约翻译</text>
-    <text x="104" y="272" fill="#6a5a8f" font-size="11.5">意图 𝓘 → 执行单元 𝓔</text>
-    <text x="104" y="291" fill="#6a5a8f" font-size="11.5">稳定接口（P2）</text>
-    <text x="104" y="310" fill="#9489a6" font-size="11">轻量 · 少调模型</text>
-    <text x="104" y="356" fill="#9489a6" font-size="10.5">⟨ 决定 解耦充分性 ⟩</text>
-    <rect x="282" y="224" width="176" height="150" rx="11" fill="#fff" stroke="#7a4ddb" stroke-opacity=".28"/>
-    <text x="296" y="249" fill="#5b34b0" font-size="13" font-weight="700">b · 能力供给</text>
-    <text x="296" y="272" fill="#6a5a8f" font-size="11.5">内部 / 外部工具</text>
-    <text x="296" y="291" fill="#6a5a8f" font-size="11.5">tool synthesis</text>
-    <text x="296" y="310" fill="#9489a6" font-size="11">LLM 生成新工具</text>
-    <text x="296" y="356" fill="#9489a6" font-size="10.5">Tool-Forge / AutoHarness</text>
-    <rect x="470" y="224" width="182" height="150" rx="11" fill="#fef4ec" stroke="#c8651b" stroke-opacity=".5"/>
-    <text x="484" y="249" fill="#a8500f" font-size="13" font-weight="700">c · 维护子系统</text>
-    <text x="484" y="271" fill="#9a5418" font-size="11.5">压缩(32K) · 写回(128K)</text>
-    <text x="484" y="289" fill="#9a5418" font-size="11.5">reflection · 检索 · GC</text>
-    <text x="484" y="307" fill="#9a5418" font-size="11.5">固定指令 · Haiku 级</text>
-    <text x="484" y="332" fill="#c8651b" font-size="11" font-weight="700">触发 ∝ token → 物理轴</text>
-    <text x="484" y="352" fill="#b08763" font-size="10.5">≈ SaaS / SSR 前端</text>
-    <rect x="70" y="412" width="600" height="96" rx="16" fill="url(#gL1)" stroke="#c8651b" stroke-opacity=".45" filter="url(#ds)"/>
-    <circle cx="98" cy="442" r="13" fill="#c8651b"/><text x="98" y="447" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">L1</text>
-    <text x="124" y="440" fill="#a8500f" font-size="17" font-weight="700">Scaffold · Execution / Isolation Plane</text>
-    <text x="124" y="462" fill="#9a5418" font-size="12.5">microVM / sandbox · bash · 资源 · 隔离 · 推理 serving 容量</text>
-    <text x="124" y="482" fill="#b08763" font-size="11.5">刻画系统吞吐 Θ ｜ 宽定义 = 隔离 + 算力（含 serving）</text>
-    <line x1="92" y1="402" x2="648" y2="402" stroke="#7a4ddb" stroke-width="1.5" stroke-dasharray="2 5" stroke-opacity=".5"/>
-    <line x1="370" y1="140" x2="370" y2="158" stroke="#7a4ddb" stroke-width="2" marker-end="url(#mC)" opacity=".55"/>
-    <line x1="370" y1="392" x2="370" y2="410" stroke="#7a4ddb" stroke-width="2" marker-end="url(#mC)" opacity=".55"/>
-    <line x1="708" y1="138" x2="708" y2="50" stroke="#1a9c63" stroke-width="2.5" marker-end="url(#mG)"/>
-    <text x="724" y="74" fill="#127a4c" font-size="13" font-weight="700">逻辑扩展轴</text>
-    <text x="724" y="93" fill="#1a9c63" font-size="11">+Skill → 覆盖 𝒯↑</text>
-    <text x="724" y="110" fill="#1a9c63" font-size="11">∂Θ/∂|S| ≈ 0</text>
-    <line x1="708" y1="414" x2="708" y2="502" stroke="#c8651b" stroke-width="2.5" marker-end="url(#mO)"/>
-    <text x="724" y="438" fill="#a8500f" font-size="13" font-weight="700">物理扩展轴</text>
-    <text x="724" y="457" fill="#c8651b" font-size="11">+Scaffold → 吞吐 Θ↑</text>
-    <text x="724" y="474" fill="#c8651b" font-size="11">+ 维护推理（线性）</text>
-    <text x="724" y="491" fill="#c8651b" font-size="11">∂𝒯/∂|X| = 0</text>
-    <rect x="788" y="238" width="168" height="124" rx="13" fill="#f1ecfd" stroke="#7a4ddb" stroke-opacity=".4"/>
-    <text x="872" y="265" fill="#5b34b0" font-size="13" font-weight="700" text-anchor="middle">P1 · 两轴正交</text>
-    <line x1="812" y1="318" x2="888" y2="318" stroke="#1a9c63" stroke-width="2" marker-end="url(#mG)"/>
-    <line x1="812" y1="318" x2="812" y2="282" stroke="#c8651b" stroke-width="2" marker-end="url(#mO)"/>
-    <text x="894" y="322" fill="#127a4c" font-size="10.5">𝒯</text>
-    <text x="806" y="278" fill="#a8500f" font-size="10.5">Θ</text>
-    <text x="872" y="350" fill="#6a5a8f" font-size="10.5" text-anchor="middle">效果空间 (𝒯, Θ) 解耦</text>
-    <text x="788" y="78" fill="#86868b" font-size="10.5">类比(C1)</text>
-    <text x="788" y="93" fill="#9a9aa0" font-size="10.5">前端运行时</text>
-    <text x="788" y="190" fill="#9a9aa0" font-size="10.5">框架运行时</text>
-    <text x="788" y="440" fill="#9a9aa0" font-size="10.5">虚机 / 容器</text>
-    <text x="70" y="540" fill="#86868b" font-size="11.5">横切关注点（按层设计 NFR · C6）：性能 · 可靠性 · 可用性 · 安全 — 组合不变量 Inv(S) ⇒ Inv(S∪{s})（P3）</text>
+
+    <!-- 三层栈外框标注 -->
+    <text x="60" y="34" fill="#86868b" font-size="11" font-family="monospace" letter-spacing="1">三层栈 ⟨S · H · X⟩</text>
+    <rect x="56" y="42" width="572" height="486" rx="18" fill="none" stroke="#c9c1b2" stroke-dasharray="3 6" stroke-opacity=".8"/>
+
+    <!-- L3 -->
+    <rect x="74" y="60" width="536" height="92" rx="14" fill="url(#gL3)" stroke="#1a9c63" stroke-opacity=".45" filter="url(#ds2)"/>
+    <circle cx="100" cy="88" r="13" fill="#1a9c63"/><text x="100" y="93" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">L3</text>
+    <text x="126" y="86" fill="#127a4c" font-size="16" font-weight="700">Skills · Specification Plane</text>
+    <text x="126" y="107" fill="#2c5e47" font-size="12">task skills · specs · I/O schema · 调用 / 终止 / 循环条件</text>
+    <text x="126" y="126" fill="#5a7a6b" font-size="11">逻辑扩展轴：+Skill → 覆盖 𝒯↑</text>
+
+    <!-- L2 -->
+    <rect x="74" y="166" width="536" height="210" rx="14" fill="url(#gL2)" stroke="#7a4ddb" stroke-opacity=".45" filter="url(#ds2)"/>
+    <circle cx="100" cy="192" r="13" fill="#7a4ddb"/><text x="100" y="197" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">L2</text>
+    <text x="126" y="190" fill="#5b34b0" font-size="16" font-weight="700">Harness · Capability / Contract Plane</text>
+    <text x="126" y="209" fill="#6a5a8f" font-size="11.5">解耦点：契约 H 把意图 𝓘 翻译为可执行单元 𝓔</text>
+    <rect x="92" y="222" width="160" height="142" rx="10" fill="#fff" stroke="#7a4ddb" stroke-opacity=".28"/>
+    <text x="104" y="246" fill="#5b34b0" font-size="12.5" font-weight="700">a · 契约翻译</text>
+    <text x="104" y="267" fill="#6a5a8f" font-size="11">意图 𝓘 → 执行单元 𝓔</text>
+    <text x="104" y="285" fill="#6a5a8f" font-size="11">稳定接口（P2）</text>
+    <text x="104" y="345" fill="#9489a6" font-size="10">⟨ 决定解耦充分性 ⟩</text>
+    <rect x="264" y="222" width="156" height="142" rx="10" fill="#fff" stroke="#7a4ddb" stroke-opacity=".28"/>
+    <text x="276" y="246" fill="#5b34b0" font-size="12.5" font-weight="700">b · 能力供给</text>
+    <text x="276" y="267" fill="#6a5a8f" font-size="11">内 / 外部工具</text>
+    <text x="276" y="285" fill="#6a5a8f" font-size="11">tool synthesis</text>
+    <text x="276" y="345" fill="#9489a6" font-size="10">Tool-Forge</text>
+    <rect x="432" y="222" width="160" height="142" rx="10" fill="#fef4ec" stroke="#c8651b" stroke-opacity=".5"/>
+    <text x="444" y="246" fill="#a8500f" font-size="12.5" font-weight="700">c · 维护子系统 M</text>
+    <text x="444" y="267" fill="#9a5418" font-size="11">压缩 · 写回 · 反思</text>
+    <text x="444" y="285" fill="#9a5418" font-size="11">固定指令 · Haiku 级</text>
+    <text x="444" y="328" fill="#c8651b" font-size="10.5" font-weight="700">触发∈CP · 开销∈DP</text>
+    <text x="444" y="345" fill="#b08763" font-size="10">→ 物理轴（P6）</text>
+
+    <!-- L1 -->
+    <rect x="74" y="390" width="536" height="92" rx="14" fill="url(#gL1)" stroke="#c8651b" stroke-opacity=".45" filter="url(#ds2)"/>
+    <circle cx="100" cy="418" r="13" fill="#c8651b"/><text x="100" y="423" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">L1</text>
+    <text x="126" y="416" fill="#a8500f" font-size="16" font-weight="700">Scaffold · Execution / Isolation Plane</text>
+    <text x="126" y="437" fill="#9a5418" font-size="12">microVM / sandbox · 隔离 · 算力 · 推理 serving 容量</text>
+    <text x="126" y="456" fill="#b08763" font-size="11">物理扩展轴：+Scaffold → 吞吐 Θ↑（刻画系统 throughput）</text>
+
+    <!-- 契约箭头 -->
+    <line x1="342" y1="152" x2="342" y2="164" stroke="#7a4ddb" stroke-width="2" marker-end="url(#mC2)" opacity=".55"/>
+    <line x1="342" y1="378" x2="342" y2="388" stroke="#7a4ddb" stroke-width="2" marker-end="url(#mC2)" opacity=".55"/>
+
+    <!-- ===== 栈外数据子系统 𝒟 ===== -->
+    <text x="668" y="34" fill="#1474a6" font-size="11" font-family="monospace" letter-spacing="1">数据子系统 𝒟（栈外）</text>
+    <rect x="664" y="42" width="252" height="486" rx="18" fill="url(#gD)" stroke="#1474a6" stroke-opacity=".5" filter="url(#ds2)"/>
+
+    <!-- D1 online -->
+    <rect x="682" y="64" width="216" height="80" rx="10" fill="#fff" stroke="#1474a6" stroke-opacity=".3"/>
+    <text x="696" y="88" fill="#0f5e87" font-size="12.5" font-weight="700">D₁ · 取数 API（on-policy）</text>
+    <text x="696" y="108" fill="#3d7a99" font-size="10.5">参数化查询 q → R(q)</text>
+    <text x="696" y="126" fill="#7a98a8" font-size="10">运行时数据面 · Harness 直接调用</text>
+
+    <!-- D2 off-policy loop OUTSIDE stack -->
+    <rect x="682" y="156" width="216" height="118" rx="10" fill="#fff" stroke="#1474a6" stroke-width="1.6" stroke-dasharray="4 4"/>
+    <text x="696" y="180" fill="#0f5e87" font-size="12.5" font-weight="700">D₂ · off-policy loop 𝓛₂</text>
+    <text x="696" y="200" fill="#3d7a99" font-size="10.5">栈外独立异步子系统</text>
+    <text x="696" y="217" fill="#3d7a99" font-size="10.5">自带 loop / sub-agents / 模型</text>
+    <text x="696" y="234" fill="#3d7a99" font-size="10.5">schema-on-read → 不截断 lake</text>
+    <text x="696" y="254" fill="#1474a6" font-size="10" font-weight="700">仅 semantic-join 查询接口进主路径</text>
+    <text x="696" y="269" fill="#7a98a8" font-size="10">≈ DB vacuum / 离线索引（N1·N4）</text>
+
+    <!-- D3 control -->
+    <rect x="682" y="286" width="216" height="68" rx="10" fill="#fff" stroke="#1474a6" stroke-opacity=".3"/>
+    <text x="696" y="310" fill="#0f5e87" font-size="12.5" font-weight="700">D₃ · 治理 memory</text>
+    <text x="696" y="329" fill="#3d7a99" font-size="10.5">data-usage skill（治理→沉淀经验）</text>
+    <text x="696" y="346" fill="#7a98a8" font-size="10">运行时控制面 · 独立 API（N2）</text>
+
+    <!-- D4 control -->
+    <rect x="682" y="366" width="216" height="68" rx="10" fill="#fff" stroke="#1474a6" stroke-opacity=".3"/>
+    <text x="696" y="390" fill="#0f5e87" font-size="12.5" font-weight="700">D₄ · lifetime 体系</text>
+    <text x="696" y="409" fill="#3d7a99" font-size="10.5">时新性 · 业务口径 · 访问 NFR 预算</text>
+    <text x="696" y="426" fill="#7a98a8" font-size="10">运行时控制面 · 独立 API</text>
+
+    <text x="690" y="466" fill="#0f5e87" font-size="10.5">取数解耦：∂ℓ/∂|src| ≈ 0（P7，与物理扩展同构）</text>
+
+    <!-- D 经 Harness 契约接入：consult D3/D4 → plan → D1/D2 -->
+    <line x1="664" y1="293" x2="612" y2="270" stroke="#1474a6" stroke-width="1.6" marker-end="url(#mD)" opacity=".7"/>
+    <text x="618" y="262" fill="#1474a6" font-size="9.5" font-family="monospace">H: consult D₃,D₄</text>
+    <line x1="612" y1="300" x2="664" y2="100" stroke="#1474a6" stroke-width="1.4" marker-end="url(#mD)" opacity=".5"/>
+    <text x="612" y="318" fill="#1474a6" font-size="9.5" font-family="monospace">→ plan → D₁,D₂</text>
+
+    <!-- 横切 + 统一命题 -->
+    <text x="56" y="560" fill="#86868b" font-size="11">横切关注点（按层设计 NFR · C6）：性能 · 可靠性 · 可用性 · 安全 — 组合不变量 Inv(S) ⇒ Inv(S∪{s})（P3）</text>
+    <text x="56" y="588" fill="#5b34b0" font-size="11.5" font-weight="700">统一命题：三维加东西的一阶成本都落在与主请求路径解耦的平面/子系统上 → 共享同一解耦机制。</text>
+    <text x="56" y="612" fill="#9a9aa0" font-size="10.5">类比(C1)：L3≈前端运行时 · L2≈框架运行时 · L1≈虚机/容器 · 𝒟≈数据湖 + 离线索引</text>
   </svg>
-  <figcaption class="figcap"><b>图 1</b>　三层栈（Scaffold · Harness · Skills）与两条正交扩展轴。逻辑扩展沿 Skills 轴（𝒯↑），物理扩展沿 Scaffold 轴（Θ↑），解耦点为 Harness 契约 H。</figcaption>
+  <figcaption class="figcap"><b>图 1</b>　三层栈 ⟨S, H, X⟩ 与<b>栈外数据子系统 𝒟</b>。𝒟 经 Harness 契约接入（consult D₃,D₄ → plan → D₁,D₂），但其 off-policy loop 𝓛₂ 在栈外独立异步运行。</figcaption>
   </figure>
 </section>
 
-<section class="wrap" id="claims">
-  <h2 class="sec">六条可检验命题</h2>
+<hr class="divider">
+
+<!-- ============ 维度1 命题 ============ -->
+<section class="wrap slide" id="claims">
+  <h2 class="sec">六条可检验命题（扩展轴）</h2>
   <p class="sub">C1–C6。其中 C5 为核心 novelty。</p>
   <div class="card fade">
   <table>
@@ -117,49 +341,114 @@
   </div>
 </section>
 
-<hr class="divider">
+<!-- ============ 维度2：平面 ============ -->
+<section class="wrap slide" id="planes">
+  <div class="dimhead"><span class="dimno plane">维度 2</span><h2>控制面 / 数据面正交切分</h2></div>
+  <p class="sub" style="margin-top:14px">扩展轴问"加什么"，平面轴问"按什么职责分流"。一个职责单元同时有扩展归属与平面归属。</p>
+  <div class="card fade" style="margin-bottom:22px">
+    <table class="matrix">
+      <tr><th></th><th>数据面 DP（∝ token 流量）</th><th>控制面 CP（∝ 状态事件）</th></tr>
+      <tr><td class="rowlab">L3 Skills</td><td class="dp">激活 skill 产生的 context tokens</td><td class="cp">skill 选择 / 调用 / 终止 / 循环条件判定</td></tr>
+      <tr><td class="rowlab">L2 Harness</td><td class="dp">工具执行流 · M 维护推理的 token 开销</td><td class="cp">契约翻译 H · 路由 · M 触发策略 · 不变量执行</td></tr>
+      <tr><td class="rowlab">L1 Scaffold</td><td class="dp">sandbox 计算 · serving 前向</td><td class="cp">实例调度 · 放置 · 隔离边界设定</td></tr>
+    </table>
+  </div>
+  <div class="grid g3">
+    <div class="card fade"><span class="pill contract">P4</span><h3 style="margin-top:10px">平面分离</h3><p class="mut">∂L_CP/∂τ̇ ≈ 0 且 ∂L_DP/∂|CP规则| ≈ 0：业务流量不放大控制开销，控制规则复杂化不放大每请求数据面成本。</p></div>
+    <div class="card fade"><span class="pill contract">P5</span><h3 style="margin-top:10px">P1 的平面分解</h3><p class="mut">逻辑扩展一阶效应落控制面，物理扩展落数据面 → 作用平面不同 → 效果正交。P1 的第二个结构性来源。</p></div>
+    <div class="card fade"><span class="pill phys">P6</span><h3 style="margin-top:10px">M 跨面分解</h3><p class="mut">维护子系统 M 触发逻辑属 CP（θ 阈值 + 状态事件），推理开销属 DP（随物理吞吐线性）。是平面分离的典型实例。</p></div>
+  </div>
+  <blockquote class="fade" style="border-left-color:var(--warn)">
+    <b>N0 · 概率性控制面（novelty）：</b>经典系统控制面是确定性配置下发；本架构 CP 部分由 LLM 驱动（契约翻译 / M 反思 / tool synthesis），控制决策本身有不确定性 → 需<b>可审计日志 + 不变量执行</b>把概率性控制面约束在安全包络内。这一差异是平面切分的真正贡献点，而非简单套用 SDN。
+  </blockquote>
+</section>
 
-<section class="wrap" id="newpoints">
-  <div class="kicker center">2026-06-18 讨论新增</div>
-  <h2 class="sec">7 条架构精化</h2>
-  <p class="sub">原话见 <a class="inline" href="input.html">原始构想 I-3 ~ I-5</a>。已融入主文档与形式化草稿。</p>
-  <div class="grid g2">
-    <div class="card fade"><span class="pill">S1</span><h3 style="margin-top:10px">Skills 二分</h3><p class="mut">task skills（L3）vs system skills（归 Harness）。判据：输出是否进入用户可见结果 + 触发源。</p></div>
-    <div class="card fade"><span class="pill contract">S2</span><h3 style="margin-top:10px">Harness 内部三平面</h3><p class="mut">契约翻译 + 能力供给（tool synthesis）+ 维护子系统（system skills）。</p></div>
-    <div class="card fade"><span class="pill phys">S3</span><h3 style="margin-top:10px">维护子系统走物理轴</h3><p class="mut">触发 ∝ token 流量、Haiku 级、指令固定 → 线性扩展 → 物理扩展。给出 P1 的机制解释。</p></div>
-    <div class="card fade"><span class="pill">S4</span><h3 style="margin-top:10px">P1 可证伪前提</h3><p class="mut">维护开销只依赖 token 量、不依赖 Skills 语义复杂度。可实验证伪。</p></div>
-    <div class="card fade"><span class="pill phys">S5</span><h3 style="margin-top:10px">阈值参数化</h3><p class="mut"><code>θ_compact</code>/<code>θ_persist</code> 由 KV Cache 经济学（显存→并发→最优 context）推出，非拍脑袋。</p></div>
-    <div class="card fade"><span class="pill contract">S6</span><h3 style="margin-top:10px">SaaS/SSR 三轴解耦</h3><p class="mut">三轴解耦是已知范式；delta = LLM 概率性下解耦的充要条件 + 可证伪判据。维护子系统 ≈ SSR 前端。</p></div>
-    <div class="card fade" style="grid-column:1/-1"><span class="pill">S7</span><h3 style="margin-top:10px">ClawVM 一手证据</h3><p class="mut">2604.10352 把 compaction/writeback/校验定位在 harness layer（"deterministic and auditable"）。引用时声明差异：ClawVM 偏确定性规则，本架构偏 LLM 驱动 + 可审计日志。</p></div>
+<!-- ============ 维度3：数据子系统 ============ -->
+<section class="wrap slide" id="data">
+  <div class="dimhead"><span class="dimno data">维度 3</span><h2>数据子系统 𝒟（三层栈之外）</h2></div>
+  <p class="sub" style="margin-top:14px">略独立于三层栈的子系统，刻画 agent 如何理解、访问、治理、维护被授权的外部数据。沿在线/离线与 CP/DP 双重分裂。</p>
+  <div class="dquad fade" style="margin-bottom:22px">
+    <div class="dnode"><span class="sym">D₁</span><h4>取数 API</h4><p>on-policy 访问特定源的特定切片，参数化查询 q = ⟨src, scope, time, proj⟩ → R(q)。</p><span class="plane-tag online">运行时数据面 · 在线</span></div>
+    <div class="dnode"><span class="sym">D₂</span><h4>语义总结平面</h4><p>off-policy loop 𝓛₂：栈外独立异步子系统，自带 loop / sub-agents / 模型，schema-on-read 预总结进不截断 lake。仅 semantic-join 查询接口进主路径。</p><span class="plane-tag loop">栈外 off-policy loop</span></div>
+    <div class="dnode"><span class="sym">D₃</span><h4>治理 memory</h4><p>把"如何用数据"沉淀为 per-use-case data-usage skill：top-k 权重、可补充关系、何时搜新源。治理从"管边界"升级为"沉淀经验"。</p><span class="plane-tag offline">运行时控制面 · 独立 API</span></div>
+    <div class="dnode"><span class="sym">D₄</span><h4>lifetime 体系</h4><p>时新性 + 业务主题口径（有时效的定义）+ 访问 NFR 预算（防空访问与阻塞）。</p><span class="plane-tag offline">运行时控制面 · 独立 API</span></div>
+  </div>
+  <div class="card fade" style="margin-bottom:18px">
+    <p class="mut" style="margin-top:0"><b>契约映射扩展：</b><code>H: 𝓘 —consult D₃,D₄→ plan —D₁,D₂→ 𝓔</code>。其中 D₁ 与 D₂ 的 semantic-join 查询接口 ⊆ Interface(H)（Harness 直接调用），而 <b>D₂ 的生产 loop 𝓛₂ 在栈外、不被 H 调度</b>。</p>
+  </div>
+  <div class="grid g3">
+    <div class="card fade"><span class="pill data">P7</span><h3 style="margin-top:10px">取数解耦</h3><p class="mut">固定 use case，∂ℓ/∂|src| ≈ 0：加数据源不污染单请求 token 成本，与 P1 物理扩展同构。</p></div>
+    <div class="card fade"><span class="pill data">P8</span><h3 style="margin-top:10px">语义摘要充分性</h3><p class="mut">off-policy 摘要 Σ 是取数的充分统计量，兼顾覆盖与精度——填补 Halevy 等(2605.28787) 留空的折中路。</p></div>
+    <div class="card fade"><span class="pill data">P9</span><h3 style="margin-top:10px">治理记忆收敛</h3><p class="mut">随 use case 重复，data-usage skill 使取数决策熵 𝓗(π_data) 单调不增、方差下降。</p></div>
   </div>
 </section>
 
 <hr class="divider">
 
-<section class="wrap" id="formalization">
-  <h2 class="sec">形式化与命题</h2>
-  <p class="sub">A = ⟨S, H, X⟩ · P1 解耦 · P2 契约充分性 · P3 组合不变量</p>
+<!-- ============ 形式化 P1–P3 ============ -->
+<section class="wrap slide" id="formalization">
+  <h2 class="sec">形式化内核（扩展轴）</h2>
+  <p class="sub">A = ⟨S, H, X⟩ · P1 解耦 · P2 契约充分 · P3 组合不变量</p>
   <div class="card fade">
     <blockquote style="border-left-color:var(--blue)">
-      <b>P1（修订）</b>：逻辑扩展（+task skill）改变覆盖 𝒯，不改变单位 token 维护开销；物理扩展（+Scaffold + 配套廉价维护推理）改变吞吐 Θ（总成本随 token 线性增长），不改变 𝒯。<br>
+      <b>P1（解耦）</b>：逻辑扩展（+task skill）改变覆盖 𝒯，不改变单位 token 维护开销；物理扩展（+Scaffold + 配套廉价维护推理 M）改变吞吐 Θ（总成本随 token 线性），不改变 𝒯。<br>
       <b>充要前提</b>：维护开销只依赖 token 流量、不依赖 Skills 语义复杂度。
     </blockquote>
     <table>
       <tr><th>命题</th><th>内容</th><th>可证伪形式</th></tr>
-      <tr><td><b>P1</b></td><td>∂Θ/∂|S|≈0 且 ∂𝒯/∂|X|=0（正交）</td><td>固定 S 加 X 测 Θ（近线性）；固定 X 加 S 测 𝒯（Θ 不变）；前提：固定 token 变 Skill 多样性测压缩漂移</td></tr>
+      <tr><td><b>P1</b></td><td>∂Θ/∂|S|≈0 且 ∂𝒯/∂|X|=0（正交）</td><td>固定 S 加 X 测 Θ（近线性）；固定 X 加 S 测 𝒯（Θ 不变）；加 Skills 显著拖垮 throughput 则证伪</td></tr>
       <tr><td><b>P2</b></td><td>解耦充分条件 = 良定义契约 H，S 与 X 无直接依赖</td><td>旁路 H → 观察是否退化为耦合</td></tr>
-      <tr><td><b>P3</b></td><td>逻辑扩展保持安全不变量 Inv(S)⇒Inv(S∪{s})</td><td>对标 SCR-Bench (2606.15242)：33.6% / 96.5% / +71.8%</td></tr>
+      <tr><td><b>P3</b></td><td>逻辑扩展保持安全不变量 Inv(S)⇒Inv(S∪{s})</td><td>对标 SCR-Bench (2606.15242)</td></tr>
     </table>
   </div>
 </section>
 
-<section class="wrap" id="path" style="padding-top:0">
+<!-- ============ P 全表 ============ -->
+<section class="wrap slide" id="propositions">
+  <h2 class="sec">可证伪命题总表</h2>
+  <p class="sub">P1–P9 横跨三维，是把架构提升为科学主张的可检验承诺。</p>
+  <div class="card fade">
+  <table>
+    <tr><th>命题</th><th>维度</th><th>一句话</th><th>证伪条件</th></tr>
+    <tr><td>P1</td><td>扩展轴</td><td>∂Θ/∂|S|≈0 且 ∂𝒯/∂|X|=0</td><td>加 Skills 显著拖垮 throughput</td></tr>
+    <tr><td>P2</td><td>扩展轴</td><td>良定义 H ⇒ S/X 无直接依赖</td><td>旁路 H 后仍解耦</td></tr>
+    <tr><td>P3</td><td>扩展轴</td><td>Inv(S)⇒Inv(S∪{s})</td><td>组合后越权 / 不变量破坏</td></tr>
+    <tr><td>P4</td><td>平面</td><td>∂L_CP/∂τ̇ ≈ 0</td><td>QPS↑ 使控制开销同比上升</td></tr>
+    <tr><td>P5</td><td>平面</td><td>逻辑→CP、物理→DP</td><td>二者作用同一平面</td></tr>
+    <tr><td>P6</td><td>平面</td><td>M 触发在 CP、开销在 DP</td><td>M 触发频率 ∝ 业务流量</td></tr>
+    <tr><td><span class="ok">P7</span></td><td>数据</td><td>固定 use case，∂ℓ/∂|src|≈0</td><td>加数据源抬高单请求 token 成本</td></tr>
+    <tr><td><span class="ok">P8</span></td><td>数据</td><td>off-policy Σ 兼顾覆盖与精度</td><td>(c) 摘要不优于 (a)在线/(b)人工</td></tr>
+    <tr><td><span class="ok">P9</span></td><td>数据</td><td>data-usage skill 使取数决策熵单调不增</td><td>重复 use case 决策发散 / 震荡</td></tr>
+  </table>
+  </div>
+</section>
+
+<!-- ============ novelty ============ -->
+<section class="wrap slide" id="newpoints">
+  <h2 class="sec">创新点登记（Novelty Ledger）</h2>
+  <p class="sub">C5 + N0–N5。每条标注主张与对标空白。</p>
+  <div class="card fade">
+  <table>
+    <tr><th>编号</th><th>维度</th><th>创新主张</th><th>对标空白</th></tr>
+    <tr><td><span class="ok">C5</span></td><td>扩展轴</td><td>逻辑 / 物理扩展正交解耦，解耦点=契约层 Harness</td><td>7 篇 2026 文献无一拆正交两维并绑不同层</td></tr>
+    <tr><td>N0</td><td>平面</td><td>概率性控制面（LLM 驱动的控制决策 + 可审计约束）</td><td>经典 SDN/K8s 控制面是确定性配置下发</td></tr>
+    <tr><td>N1</td><td>数据</td><td>off-policy schema-on-read 语义总结平面</td><td>Halevy(2605.28787) 留空"后台预总结"折中路</td></tr>
+    <tr><td>N2</td><td>数据</td><td>数据治理即 skill：从"管边界"升级为"沉淀经验"</td><td>Five-Plane/DataGovBench 只做合规 enforcement</td></tr>
+    <tr><td>N3</td><td>跨维</td><td>数据子系统沿 CP/DP 自然分裂，复用同一平面不变量</td><td>同一切分解释三层结构 → 架构内在一致性</td></tr>
+    <tr><td>N4</td><td>数据结构</td><td>off-policy loop 是栈外独立异步子系统</td><td>现有工作把语义建模当在线步骤或接口</td></tr>
+    <tr><td>N5</td><td>skill 理论</td><td>skill 三分：task / system / data-usage</td><td>现有 skill 综述未区分"数据使用"为独立类</td></tr>
+  </table>
+  </div>
+</section>
+
+<!-- ============ 演进路径 ============ -->
+<section class="wrap slide" id="path">
   <h2 class="sec">演进路径</h2>
   <div class="grid g2">
-    <div class="card fade"><h3>阶段 1 · 立论文</h3><p class="mut">参考架构 + C5 解耦命题 + 定位表；形式化层间契约。</p></div>
-    <div class="card fade"><h3>阶段 2 · 证解耦</h3><p class="mut">物理轴 throughput 曲线（baseline=Helium/vLLM）；逻辑轴覆盖 vs 成本；消融去 Harness。</p></div>
-    <div class="card fade"><h3>阶段 3 · 保安全/可靠</h3><p class="mut">组合性安全（对标 SCR-Bench）；Scaffold 隔离。</p></div>
-    <div class="card fade"><h3>阶段 4 · 开源系统化</h3><p class="mut">多租户 agent 云、按层 NFR、digital-worker；参照 Five-Plane。</p></div>
+    <div class="card fade"><h3>阶段 1 · 立论文</h3><p class="mut">三维参考架构 + C5 解耦命题 + 定位表；形式化层间契约与平面切分。</p></div>
+    <div class="card fade"><h3>阶段 2 · 证解耦</h3><p class="mut">物理轴 throughput 曲线（baseline=Helium/vLLM）；逻辑轴覆盖 vs 成本；数据轴 P7–P9 实验；消融去 Harness / 平面泄漏注入。</p></div>
+    <div class="card fade"><h3>阶段 3 · 保安全/可靠</h3><p class="mut">组合性安全（对标 SCR-Bench）；Scaffold 隔离；概率性控制面可审计性指标。</p></div>
+    <div class="card fade"><h3>阶段 4 · 开源系统化</h3><p class="mut">多租户 agent 云、按层 NFR、digital-worker；数据子系统 𝒟 落地。</p></div>
   </div>
 </section>
 
