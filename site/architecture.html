@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>架构 & 主线 · Agentic Runtime</title>
-<link rel="stylesheet" href="style.css?v=20260621">
+<link rel="stylesheet" href="style.css?v=20260628">
 </head>
 <body class="deck-page">
 <nav class="bar"><div class="inner">
@@ -15,6 +15,7 @@
   <a href="references.html">文献</a>
   <a href="timeline.html">时间线</a>
   <a href="input.html">原始构想</a>
+  <a href="arch-zh.html" style="margin-left:auto">导览 ↗</a>
 </div></nav>
 
 <header class="hero wrap slide title-slide" id="top">
@@ -26,14 +27,16 @@
 <nav class="deck-nav" aria-label="页面跳转">
   <div class="deck-nav-inner">
     <a href="#stack"><span>01</span>架构总图</a>
-    <a href="#dimensions"><span>02</span>三维切分</a>
-    <a href="#claims"><span>03</span>扩展命题</a>
-    <a href="#planes"><span>04</span>控制/数据面</a>
-    <a href="#data"><span>05</span>数据子系统</a>
-    <a href="#formalization"><span>06</span>形式化</a>
-    <a href="#propositions"><span>07</span>命题总表</a>
-    <a href="#newpoints"><span>08</span>创新点</a>
-    <a href="#path"><span>09</span>演进路径</a>
+    <a href="#specs"><span>02</span>Spec 分层</a>
+    <a href="#dimensions"><span>03</span>三维切分</a>
+    <a href="#claims"><span>04</span>扩展命题</a>
+    <a href="#planes"><span>05</span>控制/数据面</a>
+    <a href="#data"><span>06</span>数据子系统</a>
+    <a href="#orchestration"><span>07</span>Agent loop</a>
+    <a href="#formalization"><span>08</span>形式化</a>
+    <a href="#propositions"><span>09</span>命题总表</a>
+    <a href="#newpoints"><span>10</span>创新点</a>
+    <a href="#path"><span>11</span>演进路径</a>
   </div>
 </nav>
 
@@ -140,8 +143,8 @@
     <text x="141" y="359" fill="#542fab" font-size="12" font-weight="700" text-anchor="middle">契约翻译</text>
     <rect x="198" y="336" width="94" height="36" rx="8" fill="#fff" stroke="#6d3fd4" stroke-opacity=".24"/>
     <text x="245" y="359" fill="#542fab" font-size="12" font-weight="700" text-anchor="middle">路由/工具</text>
-    <rect x="302" y="336" width="118" height="36" rx="8" fill="#fff5ec" stroke="#bc5a16" stroke-opacity=".35"/>
-    <text x="361" y="359" fill="#a8500f" font-size="12" font-weight="700" text-anchor="middle">维护 M</text>
+    <rect x="302" y="336" width="118" height="36" rx="8" fill="#f6f1fe" stroke="#6d3fd4" stroke-opacity=".35"/>
+    <text x="361" y="359" fill="#542fab" font-size="12" font-weight="700" text-anchor="middle">维护 M</text>
 
     <rect x="72" y="428" width="372" height="72" rx="14" fill="url(#archPhys)" stroke="#bc5a16" stroke-opacity=".42" filter="url(#archShadow)"/>
     <circle cx="100" cy="458" r="15" fill="#bc5a16"/>
@@ -257,12 +260,12 @@
     <text x="276" y="267" fill="#6a5a8f" font-size="11">内 / 外部工具</text>
     <text x="276" y="285" fill="#6a5a8f" font-size="11">tool synthesis</text>
     <text x="276" y="345" fill="#9489a6" font-size="10">Tool-Forge</text>
-    <rect x="432" y="222" width="160" height="142" rx="10" fill="#fef4ec" stroke="#c8651b" stroke-opacity=".5"/>
-    <text x="444" y="246" fill="#a8500f" font-size="12.5" font-weight="700">c · 维护子系统 M</text>
-    <text x="444" y="267" fill="#9a5418" font-size="11">压缩 · 写回 · 反思</text>
-    <text x="444" y="285" fill="#9a5418" font-size="11">固定指令 · Haiku 级</text>
-    <text x="444" y="328" fill="#c8651b" font-size="10.5" font-weight="700">触发∈CP · 开销∈DP</text>
-    <text x="444" y="345" fill="#b08763" font-size="10">→ 物理轴（P6）</text>
+    <rect x="432" y="222" width="160" height="142" rx="10" fill="#f6f1fe" stroke="#7a4ddb" stroke-opacity=".42"/>
+    <text x="444" y="246" fill="#5b34b0" font-size="12.5" font-weight="700">c · 维护子系统 M</text>
+    <text x="444" y="267" fill="#6a5a8f" font-size="11">压缩 · 写回 · 反思</text>
+    <text x="444" y="285" fill="#6a5a8f" font-size="11">固定指令 · Haiku 级</text>
+    <text x="444" y="328" fill="#7a4ddb" font-size="10.5" font-weight="700">触发∈CP · 开销∈DP</text>
+    <text x="444" y="345" fill="#9489a6" font-size="10">→ 跨面分解（P6）</text>
 
     <!-- L1 -->
     <rect x="74" y="390" width="536" height="92" rx="14" fill="url(#gL1)" stroke="#c8651b" stroke-opacity=".45" filter="url(#ds2)"/>
@@ -325,6 +328,97 @@
 
 <hr class="divider">
 
+<!-- ============ Spec 分层图 ============ -->
+<section class="wrap slide" id="specs">
+  <div class="slide-head fade">
+    <div class="kicker">02 · Specs</div>
+    <h2>Spec 架构图：把契约填回每一层</h2>
+    <p class="sub">把论文草稿里的 Layer Specs 重新填到三层栈里：L3 只保留用户可感知的 task SkillSpec；system skill 放入 Harness 的维护子系统；数据使用经验沉淀在 D₃，再由 Harness 按需调用。</p>
+  </div>
+  <div class="legend fade">
+    <span><i class="sw" style="background:#1a9c63"></i>L3 SkillSpec</span>
+    <span><i class="sw" style="background:#7a4ddb"></i>L2 Harness specs</span>
+    <span><i class="sw" style="background:#c8651b"></i>L1 Scaffold / ExecutionSpec</span>
+    <span><i class="sw" style="background:#1474a6"></i>Data subsystem specs</span>
+  </div>
+  <figure class="figure fade architecture-plate">
+  <svg viewBox="0 0 1120 760" width="100%" role="img" aria-label="按三层架构填充 spec 的图，system skill 位于 Harness 层" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',Arial,sans-serif">
+    <defs>
+      <pattern id="specGrid" width="28" height="28" patternUnits="userSpaceOnUse">
+        <path d="M28 0H0V28" fill="none" stroke="#eee7db" stroke-width="1"/>
+      </pattern>
+      <linearGradient id="specLogic" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#effaf3"/><stop offset="1" stop-color="#ddf1e6"/></linearGradient>
+      <linearGradient id="specHarness" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6f1fe"/><stop offset="1" stop-color="#ece4fb"/></linearGradient>
+      <linearGradient id="specPhys" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff5ec"/><stop offset="1" stop-color="#fbe6d1"/></linearGradient>
+      <linearGradient id="specData" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ecf7fb"/><stop offset="1" stop-color="#dceff7"/></linearGradient>
+      <filter id="specShadow" x="-15%" y="-15%" width="130%" height="130%"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#3c2d14" flood-opacity=".10"/></filter>
+      <marker id="specArrowPurple" markerWidth="10" markerHeight="10" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#6d3fd4"/></marker>
+      <marker id="specArrowTeal" markerWidth="10" markerHeight="10" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#1474a6"/></marker>
+      <marker id="specArrowOrange" markerWidth="10" markerHeight="10" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#bc5a16"/></marker>
+    </defs>
+    <rect width="1120" height="760" rx="18" fill="#fffdf8"/>
+    <rect width="1120" height="760" rx="18" fill="url(#specGrid)" opacity=".72"/>
+    <text x="48" y="48" fill="#221f1a" font-size="22" font-weight="700">Layer Specs Filled into the 3-Layer Stack</text>
+    <text x="48" y="73" fill="#6b6357" font-size="13">Spec 不只是文档字段，而是 Harness 可路由、可验证、可审计的契约对象</text>
+
+    <rect x="48" y="100" width="690" height="520" rx="18" fill="none" stroke="#c9c1b2" stroke-dasharray="5 7" stroke-width="1.4"/>
+    <text x="70" y="128" fill="#86868b" font-size="12" font-family="ui-monospace,Menlo,monospace" letter-spacing="1">THREE-LAYER STACK · A = ⟨S,H,X⟩</text>
+
+    <rect x="76" y="152" width="634" height="112" rx="14" fill="url(#specLogic)" stroke="#1a7d52" stroke-opacity=".42" filter="url(#specShadow)"/>
+    <circle cx="104" cy="181" r="15" fill="#1a7d52"/><text x="104" y="186" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">L3</text>
+    <text x="130" y="179" fill="#127a4c" font-size="17" font-weight="700">Skill · Specification Plane</text>
+    <text x="130" y="202" fill="#2c5e47" font-size="12.5">用户可感知的任务规约：做什么、输出什么、何时反思、何时停止</text>
+    <rect x="96" y="218" width="134" height="30" rx="8" fill="#fff" stroke="#1a7d52" stroke-opacity=".25"/><text x="163" y="238" fill="#127a4c" font-size="11.5" font-weight="700" text-anchor="middle">Task SkillSpec</text>
+    <rect x="244" y="218" width="130" height="30" rx="8" fill="#fff" stroke="#1a7d52" stroke-opacity=".25"/><text x="309" y="238" fill="#127a4c" font-size="11.5" font-weight="700" text-anchor="middle">Activation / loop</text>
+    <rect x="388" y="218" width="128" height="30" rx="8" fill="#fff" stroke="#1a7d52" stroke-opacity=".25"/><text x="452" y="238" fill="#127a4c" font-size="11.5" font-weight="700" text-anchor="middle">Personalization</text>
+    <rect x="530" y="218" width="154" height="30" rx="8" fill="#fff" stroke="#1a7d52" stroke-opacity=".25"/><text x="607" y="238" fill="#127a4c" font-size="11.5" font-weight="700" text-anchor="middle">Verification spec</text>
+
+    <rect x="76" y="298" width="634" height="190" rx="14" fill="url(#specHarness)" stroke="#6d3fd4" stroke-opacity=".42" filter="url(#specShadow)"/>
+    <circle cx="104" cy="327" r="15" fill="#6d3fd4"/><text x="104" y="332" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">L2</text>
+    <text x="130" y="325" fill="#542fab" font-size="17" font-weight="700">Harness · Capability / Contract Plane</text>
+    <text x="130" y="348" fill="#655586" font-size="12.5">把 Skill 意图翻译为可执行单元，并维护上下文、工具、数据、策略、验证与审计</text>
+    <rect x="96" y="368" width="138" height="34" rx="8" fill="#fff" stroke="#6d3fd4" stroke-opacity=".25"/><text x="165" y="389" fill="#542fab" font-size="11.5" font-weight="700" text-anchor="middle">CapabilityCapsule</text>
+    <rect x="248" y="368" width="114" height="34" rx="8" fill="#fff" stroke="#6d3fd4" stroke-opacity=".25"/><text x="305" y="389" fill="#542fab" font-size="11.5" font-weight="700" text-anchor="middle">Tool routing</text>
+    <rect x="376" y="368" width="132" height="34" rx="8" fill="#fff" stroke="#6d3fd4" stroke-opacity=".25"/><text x="442" y="389" fill="#542fab" font-size="11.5" font-weight="700" text-anchor="middle">Context assembly</text>
+    <rect x="522" y="368" width="148" height="34" rx="8" fill="#fff" stroke="#6d3fd4" stroke-opacity=".25"/><text x="596" y="389" fill="#542fab" font-size="11.5" font-weight="700" text-anchor="middle">Data bridge</text>
+    <rect x="96" y="418" width="128" height="34" rx="8" fill="#fff" stroke="#6d3fd4" stroke-opacity=".25"/><text x="160" y="439" fill="#542fab" font-size="11.5" font-weight="700" text-anchor="middle">Policy gates</text>
+    <rect x="238" y="418" width="134" height="34" rx="8" fill="#fff" stroke="#6d3fd4" stroke-opacity=".25"/><text x="305" y="439" fill="#542fab" font-size="11.5" font-weight="700" text-anchor="middle">Reward/verifier</text>
+    <rect x="386" y="418" width="104" height="34" rx="8" fill="#fff" stroke="#6d3fd4" stroke-opacity=".25"/><text x="438" y="439" fill="#542fab" font-size="11.5" font-weight="700" text-anchor="middle">Audit/replay</text>
+    <rect x="504" y="412" width="176" height="48" rx="10" fill="#f2ebff" stroke="#6d3fd4" stroke-width="1.6"/>
+    <text x="592" y="432" fill="#542fab" font-size="12" font-weight="800" text-anchor="middle">System skills live here</text>
+    <text x="592" y="449" fill="#655586" font-size="10.5" text-anchor="middle">compaction · reflection · GC</text>
+
+    <rect x="76" y="522" width="634" height="82" rx="14" fill="url(#specPhys)" stroke="#bc5a16" stroke-opacity=".42" filter="url(#specShadow)"/>
+    <circle cx="104" cy="551" r="15" fill="#bc5a16"/><text x="104" y="556" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">L1</text>
+    <text x="130" y="549" fill="#a8500f" font-size="17" font-weight="700">Scaffold · Execution / Isolation Plane</text>
+    <text x="130" y="572" fill="#9a5418" font-size="12.5">ExecutionSpec · isolation substrate · resources/serving · FS/network/credentials · lifecycle/observability</text>
+
+    <path d="M393 264 L393 296" fill="none" stroke="#6d3fd4" stroke-width="2.2" marker-end="url(#specArrowPurple)"/>
+    <path d="M393 488 L393 520" fill="none" stroke="#bc5a16" stroke-width="2.2" marker-end="url(#specArrowOrange)"/>
+
+    <rect x="768" y="100" width="304" height="520" rx="18" fill="url(#specData)" stroke="#1474a6" stroke-opacity=".44" filter="url(#specShadow)"/>
+    <text x="790" y="128" fill="#1474a6" font-size="12" font-family="ui-monospace,Menlo,monospace" letter-spacing="1">DATA SUBSYSTEM 𝒟 · OUTSIDE STACK</text>
+    <text x="790" y="154" fill="#0f5e87" font-size="17" font-weight="700">D-specs consulted through Harness</text>
+    <rect x="792" y="184" width="122" height="72" rx="12" fill="#fff" stroke="#1474a6" stroke-opacity=".30"/><text x="810" y="211" fill="#0f5e87" font-size="13.5" font-weight="700">D₁ DataSource</text><text x="810" y="233" fill="#3d7a99" font-size="11">source · auth · NFR</text>
+    <rect x="930" y="184" width="118" height="72" rx="12" fill="#fff" stroke="#1474a6" stroke-dasharray="5 5"/><text x="948" y="211" fill="#0f5e87" font-size="13.5" font-weight="700">D₂ Summary</text><text x="948" y="233" fill="#3d7a99" font-size="11">schema* · themes</text>
+    <rect x="792" y="282" width="122" height="72" rx="12" fill="#fff" stroke="#1474a6" stroke-opacity=".30"/><text x="810" y="309" fill="#0f5e87" font-size="13.5" font-weight="700">D₃ UsageSkill</text><text x="810" y="331" fill="#3d7a99" font-size="11">join plan · runs</text>
+    <rect x="930" y="282" width="118" height="72" rx="12" fill="#fff" stroke="#1474a6" stroke-opacity=".30"/><text x="948" y="309" fill="#0f5e87" font-size="13.5" font-weight="700">D₄ Lifetime</text><text x="948" y="331" fill="#3d7a99" font-size="11">freshness · policy</text>
+    <rect x="792" y="390" width="256" height="86" rx="14" fill="#f7fcff" stroke="#1474a6" stroke-dasharray="6 6"/><text x="812" y="420" fill="#0f5e87" font-size="14.5" font-weight="700">Ω Workspace</text><text x="812" y="445" fill="#3d7a99" font-size="11.5">RunTrace · ArtifactManifest · LLM Wiki</text>
+    <path d="M710 393 C736 393 742 318 792 318" fill="none" stroke="#1474a6" stroke-width="2.1" marker-end="url(#specArrowTeal)"/>
+    <path d="M710 385 C736 385 742 220 792 220" fill="none" stroke="#1474a6" stroke-width="1.8" marker-end="url(#specArrowTeal)" opacity=".72"/>
+    <text x="724" y="372" fill="#1474a6" font-size="11.5" font-family="ui-monospace,Menlo,monospace">consult/query</text>
+
+    <rect x="48" y="650" width="1024" height="58" rx="16" fill="#f1ebe0" stroke="#6d3fd4" stroke-opacity=".38" stroke-dasharray="7 7"/>
+    <text x="72" y="675" fill="#221f1a" font-size="16" font-weight="700">Placement rule</text>
+    <text x="198" y="675" fill="#6b6357" font-size="13">Task skill 属于 L3；System skill 属于 L2 Harness 维护子系统；Data-usage skill 属于 D₃，由 Harness 按需激活。</text>
+    <text x="72" y="696" fill="#86868b" font-size="11.5" font-family="ui-monospace,Menlo,monospace">This prevents system maintenance prompts from becoming user-facing logical expansion.</text>
+  </svg>
+  <figcaption class="figcap"><b>图 2</b> 按层填充的 Spec 架构图。注意 <b>System skills</b> 被放在 Harness 内部维护子系统中；L3 Skill 只保留面向任务的 SkillSpec，数据使用经验则在 D₃ 中沉淀为 data-usage skill。</figcaption>
+  </figure>
+</section>
+
+<hr class="divider">
+
 <!-- ============ 维度1 命题 ============ -->
 <section class="wrap slide" id="claims">
   <h2 class="sec">六条可检验命题（扩展轴）</h2>
@@ -382,6 +476,106 @@
     <div class="card fade"><span class="pill data">P8</span><h3 style="margin-top:10px">语义摘要充分性</h3><p class="mut">off-policy 摘要 Σ 是取数的充分统计量，兼顾覆盖与精度——填补 Halevy 等(2605.28787) 留空的折中路。</p></div>
     <div class="card fade"><span class="pill data">P9</span><h3 style="margin-top:10px">治理记忆收敛</h3><p class="mut">随 use case 重复，data-usage skill 使取数决策熵 𝓗(π_data) 单调不增、方差下降。</p></div>
   </div>
+</section>
+
+<hr class="divider">
+
+<!-- ============ Orchestration Agent Loop ============ -->
+<section class="wrap slide" id="orchestration">
+  <div class="slide-head fade">
+    <div class="kicker">07 · Orchestration</div>
+    <h2>Orchestration：Harness 中的 Agent Loop</h2>
+    <p class="sub">LLM 不是自由循环，而是在 Harness 的 typed contract、policy gate、verifier、reward 和 replayable trace 内做概率性控制决策。Scaffold 与 Data 子系统只通过稳定接口进入 loop。</p>
+  </div>
+  <div class="legend fade">
+    <span><i class="sw" style="background:#1a9c63"></i>Skill activation</span>
+    <span><i class="sw" style="background:#7a4ddb"></i>Harness control loop</span>
+    <span><i class="sw" style="background:#c8651b"></i>Scaffold execution</span>
+    <span><i class="sw" style="background:#1474a6"></i>Data / workspace</span>
+  </div>
+  <figure class="figure fade architecture-plate">
+  <svg viewBox="0 0 1120 760" width="100%" role="img" aria-label="基于 agent loop 的 orchestration 图" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',Arial,sans-serif">
+    <defs>
+      <pattern id="loopGrid" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M28 0H0V28" fill="none" stroke="#eee7db" stroke-width="1"/></pattern>
+      <linearGradient id="loopHarness" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6f1fe"/><stop offset="1" stop-color="#ece4fb"/></linearGradient>
+      <linearGradient id="loopLogic" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#effaf3"/><stop offset="1" stop-color="#ddf1e6"/></linearGradient>
+      <linearGradient id="loopPhys" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff5ec"/><stop offset="1" stop-color="#fbe6d1"/></linearGradient>
+      <linearGradient id="loopData" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ecf7fb"/><stop offset="1" stop-color="#dceff7"/></linearGradient>
+      <filter id="loopShadow" x="-15%" y="-15%" width="130%" height="130%"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#3c2d14" flood-opacity=".10"/></filter>
+      <marker id="loopArrowPurple" markerWidth="10" markerHeight="10" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#6d3fd4"/></marker>
+      <marker id="loopArrowGreen" markerWidth="10" markerHeight="10" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#1a7d52"/></marker>
+      <marker id="loopArrowOrange" markerWidth="10" markerHeight="10" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#bc5a16"/></marker>
+      <marker id="loopArrowTeal" markerWidth="10" markerHeight="10" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#1474a6"/></marker>
+    </defs>
+    <rect width="1120" height="760" rx="18" fill="#fffdf8"/>
+    <rect width="1120" height="760" rx="18" fill="url(#loopGrid)" opacity=".72"/>
+    <text x="48" y="48" fill="#221f1a" font-size="22" font-weight="700">LLM-driven Orchestration as Harness Agent Loop</text>
+    <text x="48" y="73" fill="#6b6357" font-size="13">Probabilistic control plane constrained by typed contracts, policy gates, verifier/reward and replayable evidence</text>
+
+    <rect x="48" y="112" width="212" height="440" rx="18" fill="#fbfaf6" stroke="#e6dfd1" filter="url(#loopShadow)"/>
+    <text x="70" y="140" fill="#86868b" font-size="12" font-family="ui-monospace,Menlo,monospace" letter-spacing="1">INPUT STATE</text>
+    <rect x="72" y="166" width="164" height="64" rx="12" fill="#fff" stroke="#c9c1b2"/><text x="154" y="193" fill="#221f1a" font-size="14" font-weight="700" text-anchor="middle">User goal</text><text x="154" y="214" fill="#6b6357" font-size="11" text-anchor="middle">constraints · intent</text>
+    <rect x="72" y="258" width="164" height="64" rx="12" fill="url(#loopLogic)" stroke="#1a7d52" stroke-opacity=".38"/><text x="154" y="285" fill="#127a4c" font-size="14" font-weight="700" text-anchor="middle">SkillSpec</text><text x="154" y="306" fill="#2c5e47" font-size="11" text-anchor="middle">activation · output schema</text>
+    <rect x="72" y="350" width="164" height="74" rx="12" fill="url(#loopData)" stroke="#1474a6" stroke-opacity=".38"/><text x="154" y="377" fill="#0f5e87" font-size="14" font-weight="700" text-anchor="middle">Context pool</text><text x="154" y="399" fill="#3d7a99" font-size="11" text-anchor="middle">memory · data themes</text><text x="154" y="415" fill="#3d7a99" font-size="11" text-anchor="middle">capability catalog</text>
+    <rect x="72" y="456" width="164" height="52" rx="12" fill="#fff" stroke="#6d3fd4" stroke-opacity=".32"/><text x="154" y="488" fill="#542fab" font-size="13" font-weight="700" text-anchor="middle">assemble context</text>
+
+    <rect x="300" y="112" width="510" height="500" rx="18" fill="url(#loopHarness)" stroke="#6d3fd4" stroke-opacity=".44" filter="url(#loopShadow)"/>
+    <text x="322" y="140" fill="#6d3fd4" font-size="12" font-family="ui-monospace,Menlo,monospace" letter-spacing="1">HARNESS AGENT LOOP · AUDIT BOUNDARY</text>
+    <text x="322" y="166" fill="#542fab" font-size="17" font-weight="700">LLM control decisions under contracts</text>
+
+    <rect x="386" y="196" width="150" height="62" rx="14" fill="#f2ebff" stroke="#6d3fd4" stroke-width="1.4"/><text x="461" y="222" fill="#542fab" font-size="13.5" font-weight="800" text-anchor="middle">LLM.plan</text><text x="461" y="242" fill="#655586" font-size="10.5" text-anchor="middle">plan + fallback</text>
+    <rect x="598" y="196" width="150" height="62" rx="14" fill="#f2ebff" stroke="#6d3fd4" stroke-width="1.4"/><text x="673" y="222" fill="#542fab" font-size="13.5" font-weight="800" text-anchor="middle">select action</text><text x="673" y="242" fill="#655586" font-size="10.5" text-anchor="middle">tool · sub-agent · code</text>
+    <rect x="598" y="306" width="150" height="68" rx="14" fill="#fff" stroke="#6d3fd4" stroke-opacity=".35"/><text x="673" y="331" fill="#542fab" font-size="13.5" font-weight="800" text-anchor="middle">policy gate</text><text x="673" y="351" fill="#655586" font-size="10.5" text-anchor="middle">scope · auth · boundary</text>
+    <rect x="598" y="428" width="150" height="62" rx="14" fill="#fff" stroke="#6d3fd4" stroke-opacity=".35"/><text x="673" y="454" fill="#542fab" font-size="13.5" font-weight="800" text-anchor="middle">observe(result)</text><text x="673" y="474" fill="#655586" font-size="10.5" text-anchor="middle">state + evidence</text>
+    <rect x="386" y="428" width="150" height="62" rx="14" fill="#fff" stroke="#6d3fd4" stroke-opacity=".35"/><text x="461" y="454" fill="#542fab" font-size="13.5" font-weight="800" text-anchor="middle">verifier/reward</text><text x="461" y="474" fill="#655586" font-size="10.5" text-anchor="middle">tests · schema · QA</text>
+    <path d="M372 312 L458 270 L544 312 L458 354 Z" fill="#fffdf8" stroke="#c9c1b2" stroke-width="1.2"/><text x="458" y="317" fill="#221f1a" font-size="13" font-weight="800" text-anchor="middle">score ok?</text>
+    <rect x="342" y="350" width="150" height="52" rx="14" fill="#f2ebff" stroke="#6d3fd4" stroke-width="1.4"/><text x="417" y="381" fill="#542fab" font-size="13" font-weight="800" text-anchor="middle">reflect + revise</text>
+
+    <path d="M536 227 L596 227" fill="none" stroke="#6d3fd4" stroke-width="2.1" marker-end="url(#loopArrowPurple)"/>
+    <path d="M673 258 L673 304" fill="none" stroke="#6d3fd4" stroke-width="2.1" marker-end="url(#loopArrowPurple)"/>
+    <path d="M673 374 L673 426" fill="none" stroke="#6d3fd4" stroke-width="2.1" marker-end="url(#loopArrowPurple)"/>
+    <path d="M598 459 L538 459" fill="none" stroke="#6d3fd4" stroke-width="2.1" marker-end="url(#loopArrowPurple)"/>
+    <path d="M458 428 L458 356" fill="none" stroke="#6d3fd4" stroke-width="2.1" marker-end="url(#loopArrowPurple)"/>
+    <path d="M414 351 C362 320 360 250 386 226" fill="none" stroke="#6d3fd4" stroke-width="2" marker-end="url(#loopArrowPurple)"/>
+    <text x="351" y="306" fill="#542fab" font-size="11" font-family="ui-monospace,Menlo,monospace">no</text>
+    <path d="M544 312 C580 312 590 340 598 340" fill="none" stroke="#6d3fd4" stroke-width="2" marker-end="url(#loopArrowPurple)"/>
+    <text x="555" y="299" fill="#542fab" font-size="11" font-family="ui-monospace,Menlo,monospace">yes/continue</text>
+
+    <path d="M236 198 C266 198 276 222 386 222" fill="none" stroke="#6d3fd4" stroke-width="2" marker-end="url(#loopArrowPurple)"/>
+    <path d="M236 290 C272 290 278 247 386 244" fill="none" stroke="#1a7d52" stroke-width="2" marker-end="url(#loopArrowGreen)"/>
+    <path d="M236 386 C268 386 278 458 386 458" fill="none" stroke="#1474a6" stroke-width="2" marker-end="url(#loopArrowTeal)"/>
+
+    <rect x="848" y="156" width="224" height="130" rx="18" fill="url(#loopPhys)" stroke="#bc5a16" stroke-opacity=".42" filter="url(#loopShadow)"/>
+    <text x="872" y="187" fill="#a8500f" font-size="16" font-weight="700">Scaffold execution</text>
+    <text x="872" y="214" fill="#9a5418" font-size="12">sandbox · shell · browser</text>
+    <text x="872" y="235" fill="#9a5418" font-size="12">model serving · filesystem</text>
+    <text x="872" y="256" fill="#9a5418" font-size="12">network · credentials</text>
+    <rect x="848" y="326" width="224" height="150" rx="18" fill="url(#loopData)" stroke="#1474a6" stroke-opacity=".44" filter="url(#loopShadow)"/>
+    <text x="872" y="357" fill="#0f5e87" font-size="16" font-weight="700">Data subsystem</text>
+    <text x="872" y="384" fill="#3d7a99" font-size="12">D₁/D₂ query interfaces</text>
+    <text x="872" y="405" fill="#3d7a99" font-size="12">D₃ data-usage skill</text>
+    <text x="872" y="426" fill="#3d7a99" font-size="12">D₄ lifetime policy</text>
+    <text x="872" y="447" fill="#3d7a99" font-size="12">Ω workspace evidence</text>
+    <path d="M748 340 C788 340 800 220 846 220" fill="none" stroke="#bc5a16" stroke-width="2.1" marker-end="url(#loopArrowOrange)"/>
+    <path d="M748 340 C788 340 800 400 846 400" fill="none" stroke="#1474a6" stroke-width="2.1" marker-end="url(#loopArrowTeal)"/>
+    <path d="M848 252 C808 294 800 435 748 456" fill="none" stroke="#bc5a16" stroke-width="1.8" marker-end="url(#loopArrowOrange)" opacity=".72"/>
+    <path d="M848 442 C812 460 796 464 748 464" fill="none" stroke="#1474a6" stroke-width="1.8" marker-end="url(#loopArrowTeal)" opacity=".72"/>
+
+    <rect x="300" y="646" width="510" height="62" rx="16" fill="#f1ebe0" stroke="#6d3fd4" stroke-opacity=".38" stroke-dasharray="7 7"/>
+    <text x="324" y="672" fill="#542fab" font-size="14" font-weight="800">System skills trigger on state events</text>
+    <text x="324" y="694" fill="#6b6357" font-size="12.5">memory compaction · retrieval · writeback · GC · verification trigger feed the next context assembly</text>
+    <path d="M672 490 C700 564 650 630 620 646" fill="none" stroke="#6d3fd4" stroke-width="1.9" stroke-dasharray="6 6" marker-end="url(#loopArrowPurple)"/>
+    <path d="M485 646 C424 598 402 560 418 403" fill="none" stroke="#6d3fd4" stroke-width="1.9" stroke-dasharray="6 6" marker-end="url(#loopArrowPurple)"/>
+
+    <rect x="848" y="526" width="224" height="86" rx="18" fill="#fffdf8" stroke="#c9c1b2" filter="url(#loopShadow)"/>
+    <text x="872" y="556" fill="#221f1a" font-size="16" font-weight="700">Emit artifact</text>
+    <text x="872" y="583" fill="#6b6357" font-size="12">final answer · report · code patch</text>
+    <path d="M458 354 C524 562 696 570 846 570" fill="none" stroke="#6d3fd4" stroke-width="2.1" marker-end="url(#loopArrowPurple)"/>
+    <path d="M960 612 L960 640 C960 670 920 676 812 676" fill="none" stroke="#1474a6" stroke-width="2" marker-end="url(#loopArrowTeal)"/>
+    <text x="872" y="662" fill="#1474a6" font-size="11.5" font-family="ui-monospace,Menlo,monospace">write trace + data-usage skill</text>
+  </svg>
+  <figcaption class="figcap"><b>图 3</b> 基于 agent loop 的 orchestration。LLM 做 plan/action/reflection 等概率性控制决策；Harness 把这些决策约束在 typed contract、policy gate、verifier/reward 和 audit/replay 内，并通过稳定接口调用 Scaffold 与数据子系统。</figcaption>
+  </figure>
 </section>
 
 <hr class="divider">

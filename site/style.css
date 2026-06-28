@@ -69,19 +69,21 @@ section{padding:76px 0}
 .deck-page .title-slide{order:1}
 .deck-page .deck-nav{order:2}
 .deck-page #stack{order:3}
-.deck-page #dimensions{order:4}
-.deck-page #claims{order:5}
-.deck-page #planes{order:6}
-.deck-page #data{order:7}
-.deck-page #formalization{order:8}
-.deck-page #propositions{order:9}
-.deck-page #newpoints{order:10}
-.deck-page #path{order:11}
-.deck-page footer{order:12}
+.deck-page #specs{order:4}
+.deck-page #dimensions{order:5}
+.deck-page #claims{order:6}
+.deck-page #planes{order:7}
+.deck-page #data{order:8}
+.deck-page #orchestration{order:9}
+.deck-page #formalization{order:10}
+.deck-page #propositions{order:11}
+.deck-page #newpoints{order:12}
+.deck-page #path{order:13}
+.deck-page footer{order:14}
 .slide{min-height:calc(100vh - 104px);display:flex;flex-direction:column;justify-content:center;
   padding-top:84px;padding-bottom:84px;scroll-margin-top:112px;scroll-snap-align:start}
 .title-slide{min-height:calc(72vh - 56px);padding-top:96px;padding-bottom:54px}
-#stack.slide{justify-content:flex-start;padding-top:52px}
+#stack.slide,#specs.slide,#orchestration.slide{justify-content:flex-start;padding-top:52px}
 .slide-head{text-align:center;max-width:760px;margin:0 auto 24px}
 .deck-nav{position:sticky;top:56px;z-index:45;background:color-mix(in srgb,var(--paper) 92%,transparent);
   backdrop-filter:saturate(140%) blur(12px);border-bottom:1px solid var(--line)}
@@ -431,7 +433,7 @@ section{padding:92px 0}
   padding-top:112px;
   padding-bottom:78px;
 }
-#stack.slide{padding-top:68px}
+#stack.slide,#specs.slide,#orchestration.slide{padding-top:68px}
 .slide-head{max-width:860px;margin-bottom:30px}
 
 .hero h1,
@@ -534,14 +536,18 @@ li{margin:8px 0}
   width:100%;
   max-width:min(var(--maxw),100%);
 }
-#stack .architecture-plate{
+#stack .architecture-plate,
+#specs .architecture-plate,
+#orchestration .architecture-plate{
   width:100%;
   max-width:100%;
   box-sizing:border-box;
   overflow-x:auto;
   overscroll-behavior-x:contain;
 }
-#stack .architecture-plate svg{
+#stack .architecture-plate svg,
+#specs .architecture-plate svg,
+#orchestration .architecture-plate svg{
   width:100%;
   min-width:960px;
 }
@@ -562,7 +568,7 @@ li{margin:8px 0}
     margin-left:auto;
     margin-right:auto;
   }
-  #stack.slide{padding-top:52px}
+  #stack.slide,#specs.slide,#orchestration.slide{padding-top:52px}
   #stack .legend{
     justify-content:flex-start;
     gap:10px;
@@ -572,17 +578,23 @@ li{margin:8px 0}
     font-size:12px;
     padding:6px 8px;
   }
-  #stack .architecture-plate{
+  #stack .architecture-plate,
+  #specs .architecture-plate,
+  #orchestration .architecture-plate{
     max-width:100%;
     margin-left:0;
     margin-right:0;
   }
-  #stack .architecture-plate svg{
+  #stack .architecture-plate svg,
+  #specs .architecture-plate svg,
+  #orchestration .architecture-plate svg{
     width:960px;
     max-width:none;
     min-width:960px;
   }
-  #stack .architecture-plate .figcap{
+  #stack .architecture-plate .figcap,
+  #specs .architecture-plate .figcap,
+  #orchestration .architecture-plate .figcap{
     min-width:0;
     text-align:left;
   }
