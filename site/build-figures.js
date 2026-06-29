@@ -508,6 +508,7 @@ function pageHTML(P){
 <body>
 <nav><div class="wrap"><span class="brand">${P.brand}</span>
   <a href="index.html" style="border:none;color:var(--mut);margin-left:auto;padding-right:4px">${P.lang==="en"?"Full site":"完整站点"}</a>
+  <a href="dry-run-${P.lang}.html" style="border:none;color:var(--harn);padding-right:4px">${P.lang==="en"?"Dry Run":"Dry Run 走查"}</a>
   <a href="${P.otherHref}">${P.other}</a></div></nav>
 <header class="wrap">
   <div class="kicker">Reference Architecture</div>
@@ -537,4 +538,302 @@ for(const lang of ["en","zh"]){
   fs.writeFileSync(path.join(OUT,`arch-${lang}.html`), pageHTML(PAGE[lang]));
 }
 console.log("pages written: arch-en.html, arch-zh.html");
+
+/* ===================================================================
+   DRY RUN PAGE — data-driven examples (AI4Science is the first).
+   Add more examples to EXAMPLES[lang] later; the selector renders them all.
+   =================================================================== */
+const EXAMPLES = {
+  en: [
+    {
+      id:"ai4science", tag:"AI4Science",
+      name:"Perovskite band-gap screening",
+      goal:"From the latest literature, compute-screen perovskite candidates with a target band gap (~1.3 eV) and produce a report with citations and a reproducible script.",
+      why:"Exercises all three layers + the data subsystem at once: literature (D2 temporal summaries), known-property DB (D1 fetch), simulation (code-gen + Scaffold + cloud/HPC), multi-signal verification (numeric sanity + citation grounding), report (doc skill), write-back (D2/Ω/D3).",
+      layers:[
+        ["L3 Skills","lit-review.skill · materials-screening.skill · data-report.skill (each with I/O schema, call/stop/loop, verification)"],
+        ["L2 Harness","capsules: arxiv_search · materials_db_query(D1) · code_execution · dft_screen(may be live-coded) · doc_generation; + context assembly / policy gate / verifier / audit / maintenance M"],
+        ["L1 Scaffold","ExecutionSpec: microVM(scripts) + GPU serving(models) + cloud(HPC for screening) + SSO/identity(institutional HPC) + network allowlist(Materials Project / arXiv)"],
+        ["D1","DataSourceCard: Materials Project API · OQMD · arXiv"],
+        ["D2","temporally-constrained SummaryEntry (“band-gap SOTA as of T”, with evidence_ref) in a structured DB"],
+        ["D3","DataUsageSkill: source selection + join plan + top-k weights for the perovskite-screening use case"],
+        ["D4","lifetime: literature freshness (as-of date) · property-DB conventions · HPC budget"],
+        ["Ω","RunTrace · screening script/result artifacts · IntermediateRelation(candidate↔property↔paper) · LLM Wiki"],
+      ],
+      phases:[
+        {h:"Phase 0 · Intake (CP)", steps:[
+          ["01","parse_intent(U)","parse goal / constraints / done-criteria"],
+          ["02","O4 plan","decompose sub-goals {lit → candidates → properties → screen → analyze → report}"],
+        ]},
+        {h:"Phase 1 · Skill activation (CP)", steps:[
+          ["03","activate lit-review","required_data_themes = [perovskite, bandgap]"],
+          ["04","activate materials-screening","required_capabilities = [materials_db_query, code_execution, dft_screen]"],
+          ["05","activate data-report","output_format = report{citations required}"],
+        ]},
+        {h:"Phase 2 · Context assembly (CP→DP)", steps:[
+          ["06","consult D3.DataUsageSkill","get preferred_sources + semantic_join_plan(top_k, weights)"],
+          ["07","consult D4.lifetime","get freshness(as_of=today) + HPC nfr_budget"],
+          ["08","query D2.semantic_join(valid_at=today)","DP online: fetch temporally-constrained SummaryEntry, each with evidence_ref"],
+          ["09","O2 shots + O3 output schema","shots ← D2 pos/neg examples; schema ← SkillSpec"],
+        ]},
+        {h:"Phase 3 · Capability routing + resources (CP)", steps:[
+          ["10","O1 tool selection","capsules {arxiv_search, materials_db_query, code_execution, doc_generation}"],
+          ["11","O5 live-coding (if dft_screen missing)","synthesize capsule → sandbox-validate → register"],
+          ["12","O7 model + O8 token","plan/analysis = Opus-tier; bulk lit triage = Haiku-tier; allocate token budget"],
+          ["13","policy gate + ExecutionSpec","SSO → institutional HPC; cloud = GPU pool; network allowlist = [MP, arXiv]"],
+        ]},
+        {h:"Phase 4 · Execution loop (DP — per sub-goal)", steps:[
+          ["14","execute arxiv_search","skip if already covered by a shared D2 summary (less re-digestion)"],
+          ["15","execute D1.materials_db_query","DP online fetch: candidate properties from MP"],
+          ["16","O5 code generation","Read/Edit/Bash write screening script + run tests/lint"],
+          ["17","execute dft_screen","on Scaffold (cloud HPC microVM)"],
+          ["18","observe + verifier/reward","① numeric sanity (band-gap physical range/units) ② citation grounding (every claim has evidence_ref)"],
+          ["19","if verify fails → O6 reflect","non-physical band gap / unverifiable claim → revise plan → back to 14/16"],
+        ]},
+        {h:"Phase 5 · Output + write-back (CP/DP)", steps:[
+          ["20","execute doc_generation","report artifact (citations + reproducible script)"],
+          ["21","writeback (M) → D2","new SummaryEntry {claim, valid_from=T, evidence_ref=run_id} — logical append, no overwrite"],
+          ["22","write RunTrace + IntermediateRelation → Ω",""],
+          ["23","distill DataUsageSkill → D3","this run's winning sources/weights/fallbacks (P9 convergence)"],
+        ]},
+      ],
+      invariants:[
+        ["[06–08] precede [14]","query D3/D4/D2 first; a shared-summary hit avoids re-pulling the source → less inter-agent contention, lower per-request cost (P7)"],
+        ["[10–13] go through the Harness contract","a Skill only declares required_capabilities; H translates intent 𝓘 → executable 𝓔 (P2)"],
+        ["[21] is logical append + evidence_ref","overflow demotes (cold-tier), never hard-deletes; old claims stay back-traceable to source → anti-hallucination (§4.4.1 S3/S4)"],
+      ],
+      diagram:[
+        "                      ┌──── offline off-policy loop 𝓛₂ (out-of-stack, not scheduled by H) ─────┐",
+        " external sources     │  arXiv / journals / MP snapshot ─▶ D2.summarize ─▶ SummaryEntry{claim,  │",
+        " (papers, MP, OQMD) ──┼─▶                                  (schema-on-read)  valid_from/to,     │",
+        "                      │                                                  evidence_ref, supersedes}│",
+        "                      │                                          └─▶ Structured Summary DB        │",
+        "                      │                                             (index: source / theme / valid)│",
+        "                      └──────────────────────────────────────────────────────────────────────────┘",
+        "                                                                        │ ▲",
+        "               semantic_join(valid_at=T, top_k)                         │ │ writeback [21] (append)",
+        "                              ▼                                         │ │",
+        " ┌ L3 Skills ─┐  intent/specs  ┌──── L2 Harness (contract / control plane) ┴─┴────┐",
+        " │ lit-review  │ ──[03-05]────▶ │ context assembly ← D2 summary / D3 usage / D4    │",
+        " │ materials   │               │ O1 route · O5 code-gen · O7 model · O8 token · ver│",
+        " │ data-report │ ◀─report schema│ policy gate ──▶ translate 𝓘 → 𝓔                  │",
+        " └─────────────┘               └───┬───────────────────────────────┬──────────────┘",
+        "      ▲ deliver artifact            │ executable 𝓔                   │ D1 fetch (online)",
+        "      │                             ▼                                ▼",
+        "      │                 ┌ L1 Scaffold (data plane) ┐        ┌ D1 Fetch API ┐",
+        "      │                 │ microVM·bash·GPU serving  │        │ MP / OQMD    │",
+        "      │                 │ cloud HPC · SSO · network │        └──────┬───────┘",
+        "      │                 └────────────┬──────────────┘               │ property slice",
+        "      │  RunTrace/artifact [22]      │ results + evidence            │",
+        "      └─────────────── Ω workspace ◀─┴───────────────────────────────┘",
+        "                       (RunTrace · IntermediateRelation: cand↔property↔paper · LLM Wiki)",
+        "                                  │",
+        "                                  └─▶ D3 DataUsageSkill update [23]  (fetch-decision entropy ↓, P9)",
+      ],
+      reading:[
+        "Two separate data paths — offline 𝓛₂ pre-digests raw papers/DBs into temporally-constrained SummaryEntries (off the request path → adding sources doesn't raise per-request token cost, P7); online does only D2.semantic_join (shared summaries) + D1.query (live properties), both through the Harness contract.",
+        "The summary DB is a shared read-only hot spot — many agents / runs read the same SummaryEntry (snapshot reads) instead of each re-pulling the same PDF → contention removed, repeated inference saved (AOHP-style token ↓); retrieval uses the valid-interval index for point-in-time filtering.",
+        "Write-back is one-way & logical-append — results → Ω → distilled into new SummaryEntries fed back to D2 (with evidence_ref; old entries logically invalidated, not deleted) + D3 updates. A closed loop: offline summarize → online consume → execute → feed back, with every recallable claim back-traceable to source.",
+      ],
+    },
+  ],
+  zh: [
+    {
+      id:"ai4science", tag:"AI4Science",
+      name:"钙钛矿带隙筛选",
+      goal:"基于最新文献，计算筛选目标带隙(~1.3 eV)的钙钛矿候选材料，并产出带引用与可复现脚本的报告。",
+      why:"同时压满三层 + 数据子系统：文献(→D2 时序摘要)、已知物性库(→D1 取数)、仿真计算(→code gen + Scaffold + cloud/HPC)、多信号验证(数值合理性 + 引用接地)、报告(→doc skill)、回写(→D2/Ω/D3)。",
+      layers:[
+        ["L3 Skills","lit-review.skill · materials-screening.skill · data-report.skill（各含 I/O schema、call/stop/loop、verification）"],
+        ["L2 Harness","capsule：arxiv_search · materials_db_query(D1) · code_execution · dft_screen(可能 live-code) · doc_generation；+ context assembly / policy gate / verifier / audit / 维护子系统 M"],
+        ["L1 Scaffold","ExecutionSpec：microVM(脚本) + GPU serving(模型) + cloud(HPC 跑筛选) + SSO/identity(机构 HPC) + network allowlist(Materials Project / arXiv)"],
+        ["D1","DataSourceCard：Materials Project API · OQMD · arXiv"],
+        ["D2","带时序约束的 SummaryEntry（“截至 T 的带隙 SOTA”，带 evidence_ref）存结构化 DB"],
+        ["D3","DataUsageSkill：perovskite-screening 用例的源选择 + join plan + top-k 权重"],
+        ["D4","lifetime：文献时新性(as-of 日期) · 物性库口径 · HPC 预算"],
+        ["Ω","RunTrace · 筛选脚本/结果 artifact · IntermediateRelation(候选↔物性↔文献) · LLM Wiki"],
+      ],
+      phases:[
+        {h:"阶段 0 · Intake（CP）", steps:[
+          ["01","parse_intent(U)","解析目标 / 约束 / 做完判据"],
+          ["02","O4 plan","分解 sub-goals {文献 → 候选 → 取物性 → 筛选 → 分析 → 报告}"],
+        ]},
+        {h:"阶段 1 · Skill 激活（CP）", steps:[
+          ["03","activate lit-review","required_data_themes = [perovskite, bandgap]"],
+          ["04","activate materials-screening","required_capabilities = [materials_db_query, code_execution, dft_screen]"],
+          ["05","activate data-report","output_format = report{引用必填}"],
+        ]},
+        {h:"阶段 2 · Context 组装（CP→DP）", steps:[
+          ["06","consult D3.DataUsageSkill","取 preferred_sources + semantic_join_plan(top_k, weights)"],
+          ["07","consult D4.lifetime","取 freshness(as_of=今日) + HPC nfr_budget"],
+          ["08","query D2.semantic_join(valid_at=今日)","DP 在线：取带时序约束 SummaryEntry，每条带 evidence_ref"],
+          ["09","O2 shots + O3 output schema","shots ← D2 正反例；schema ← SkillSpec"],
+        ]},
+        {h:"阶段 3 · 能力路由 + 资源就绪（CP）", steps:[
+          ["10","O1 tool 选择","capsule {arxiv_search, materials_db_query, code_execution, doc_generation}"],
+          ["11","O5 live-coding（若缺 dft_screen）","合成 capsule → sandbox 验证 → 注册"],
+          ["12","O7 model + O8 token","plan/分析 = Opus 级；海量文献初筛 = Haiku 级；分发 token 预算"],
+          ["13","policy gate + ExecutionSpec","SSO 授权机构 HPC；cloud = GPU pool；network allowlist = [MP, arXiv]"],
+        ]},
+        {h:"阶段 4 · 执行循环（DP — 逐 sub-goal）", steps:[
+          ["14","execute arxiv_search","D2 已覆盖则跳过(命中共享摘要) → 减少重复消化"],
+          ["15","execute D1.materials_db_query","DP 在线取数：MP 候选集物性"],
+          ["16","O5 code generation","Read/Edit/Bash 写筛选脚本 + 跑测试/lint"],
+          ["17","execute dft_screen","在 Scaffold(cloud HPC microVM)"],
+          ["18","observe + verifier/reward","① 数值合理性(带隙物理区间/单位) ② 引用接地(每条结论有 evidence_ref)"],
+          ["19","验证失败 → O6 reflect","带隙非物理 / 结论 unverifiable → revise plan → 回 14/16"],
+        ]},
+        {h:"阶段 5 · 产出 + 回写（CP/DP）", steps:[
+          ["20","execute doc_generation","report artifact(含引用、可复现脚本)"],
+          ["21","writeback(M) → D2","新 SummaryEntry {claim, valid_from=T, evidence_ref=run_id} — 逻辑追加，不覆盖"],
+          ["22","write RunTrace + IntermediateRelation → Ω",""],
+          ["23","distill DataUsageSkill → D3","本次成功源/权重/失败回退（P9 收敛）"],
+        ]},
+      ],
+      invariants:[
+        ["[06–08] 先于 [14]","先查 D3/D4/D2；命中共享摘要就不重拉原文 → 减少多 agent 争用、降单请求成本（P7）"],
+        ["[10–13] 经 Harness 契约","Skill 只声明 required_capabilities；H 翻译意图 𝓘 → 可执行 𝓔（P2）"],
+        ["[21] 逻辑追加 + evidence_ref","溢出降冷不硬删；旧结论可回指原文 → 防幻觉（§4.4.1 S3/S4）"],
+      ],
+      diagram:[
+        "                      ┌──── 离线 off-policy loop 𝓛₂（栈外，不被 H 调度）─────┐",
+        " 外部源               │  arXiv / 期刊 / MP 快照 ─▶ D2.summarize ─▶ SummaryEntry{claim, │",
+        " (papers, MP, OQMD) ──┼─▶                         (schema-on-read)  valid_from/to,      │",
+        "                      │                                          evidence_ref, supersedes}│",
+        "                      │                                       └─▶ 【结构化摘要 DB】       │",
+        "                      │                                          (索引: source/theme/valid)│",
+        "                      └──────────────────────────────────────────────────────────────────┘",
+        "                                                                     │ ▲",
+        "            semantic_join(valid_at=T, top_k)                         │ │ writeback [21] (逻辑追加)",
+        "                           ▼                                         │ │",
+        " ┌ L3 Skills ─┐ intent/specs ┌──── L2 Harness（契约 / 控制面）────────┴─┴────┐",
+        " │ lit-review  │ ─[03-05]───▶ │ context assembly ← D2摘要 / D3用法 / D4时效    │",
+        " │ materials   │             │ O1路由 · O5 code-gen · O7 model · O8 token · ver│",
+        " │ data-report │ ◀─报告schema─│ policy gate ──▶ 翻译 𝓘 → 𝓔                     │",
+        " └─────────────┘             └───┬───────────────────────────────┬────────────┘",
+        "      ▲ 交付 artifact             │ 可执行单元 𝓔                    │ D1 取数(在线)",
+        "      │                          ▼                                ▼",
+        "      │              ┌ L1 Scaffold（数据面）┐         ┌ D1 取数 API ┐",
+        "      │              │ microVM·bash·GPU serving│       │ MP / OQMD 物性│",
+        "      │              │ cloud HPC · SSO · network│      └──────┬───────┘",
+        "      │              └────────────┬─────────────┘             │ 物性切片",
+        "      │  RunTrace/artifact [22]   │ 计算结果 + evidence         │",
+        "      └────────────── Ω 工作区 ◀──┴────────────────────────────┘",
+        "                      (RunTrace · IntermediateRelation: 候选↔物性↔文献 · LLM Wiki)",
+        "                                 │",
+        "                                 └─▶ D3 DataUsageSkill 更新 [23]  (取数决策熵 ↓，P9)",
+      ],
+      reading:[
+        "两条数据路径分离 — 离线 𝓛₂ 把原始文献/库预消化成带时序约束的 SummaryEntry（不在请求路径上 → 加数据源不抬单请求 token 成本，P7）；在线只做 D2.semantic_join(读共享摘要) + D1.query(读实时物性)，都经 Harness 契约。",
+        "摘要 DB 是共享只读热点 — 多 agent / 多次运行读同一份 SummaryEntry(快照读)，不各自重拉同一篇 PDF → 消除争用、省重复推理(AOHP 同类机理 token↓)；检索靠 valid 区间索引做时点过滤。",
+        "写回单向 + 逻辑追加 — 执行结果 → Ω → 蒸馏出新 SummaryEntry 回灌 D2(带 evidence_ref，旧条逻辑失效不删) + 更新 D3。闭环：离线总结 → 在线消费 → 执行产出 → 回灌总结，每个可召回结论都能回指原文。",
+      ],
+    },
+  ],
+};
+
+const DRY = {
+  en:{ htmllang:"en", brand:"Agentic Runtime", title:"Dry Run — Architecture Walkthrough",
+    lead:"Pick a use case and trace one full run through <b>A = ⟨S, H, X⟩</b> + the data subsystem 𝒟 — the spec call sequence, the layer instantiation, and the data-flow diagram.",
+    note:"This is the first example. More will be added; the selector lists them all.",
+    other:"ZH", otherHref:"dry-run-zh.html",
+    L:{usecase:"Use case",why:"Why this one",layers:"Layer instantiation",seq:"Spec call sequence",inv:"Structural invariants (↔ propositions)",diagram:"Data diagram (online / offline)",reading:"How to read it",full:"Full site",arch:"Architecture"} },
+  zh:{ htmllang:"zh-CN", brand:"Agentic Runtime", title:"Dry Run — 架构走查",
+    lead:"选一个用例，沿 <b>A = ⟨S, H, X⟩</b> + 数据子系统 𝒟 走查一次完整运行——spec 调用顺序、各层实例化、数据流图。",
+    note:"这是第一个实例。后续会加更多；选择器会列出全部。",
+    other:"EN", otherHref:"dry-run-en.html",
+    L:{usecase:"用例",why:"为什么选它",layers:"各层实例化",seq:"Spec 调用顺序集",inv:"结构性约束（↔ 命题）",diagram:"Data diagram（在线 / 离线）",reading:"读图要点",full:"完整站点",arch:"架构"} },
+};
+
+function dryRunHTML(D){
+  const exs = EXAMPLES[D.htmllang==="en"?"en":"zh"];
+  const lang = D.htmllang==="en"?"en":"zh";
+  const tabs = exs.map((e,i)=>`<button class="tab${i===0?" on":""}" data-ex="${e.id}">${esc(e.tag)} · ${esc(e.name)}</button>`).join("");
+  const panel = e=>{
+    const layers = e.layers.map(([k,v])=>`<tr><td class="id">${esc(k)}</td><td>${esc(v)}</td></tr>`).join("");
+    const phases = e.phases.map(ph=>`
+      <div class="phase"><h4>${esc(ph.h)}</h4>
+      <table class="seq">${ph.steps.map(([n,a,d])=>`<tr><td class="sn">${esc(n)}</td><td class="sa">${esc(a)}</td><td class="sd">${esc(d)}</td></tr>`).join("")}</table></div>`).join("");
+    const inv = e.invariants.map(([k,v])=>`<li><b>${esc(k)}</b> — ${esc(v)}</li>`).join("");
+    const reading = e.reading.map((r,i)=>`<li><b>${i+1}.</b> ${esc(r)}</li>`).join("");
+    return `<section class="ex" id="ex-${e.id}">
+      <div class="goal"><span class="badge">${esc(e.tag)}</span><p>${esc(e.goal)}</p></div>
+      <h3 class="th">${D.L.why}</h3><p class="muted">${esc(e.why)}</p>
+      <h3 class="th">${D.L.layers}</h3><table class="tbl">${layers}</table>
+      <h3 class="th">${D.L.seq}</h3>${phases}
+      <h3 class="th">${D.L.inv}</h3><ul class="inv">${inv}</ul>
+      <h3 class="th">${D.L.diagram}</h3><pre class="diagram">${esc(e.diagram.join("\n"))}</pre>
+      <h3 class="th">${D.L.reading}</h3><ul class="reading">${reading}</ul>
+    </section>`;
+  };
+  const panels = exs.map((e,i)=>`<div class="exwrap${i===0?" on":""}" data-ex="${e.id}">${panel(e)}</div>`).join("");
+  return `<!DOCTYPE html><html lang="${D.htmllang}"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>${D.title}</title>
+<style>
+  :root{--ink:#221f1a;--mut:#6b6357;--page:#fffdf8;--card:#fff;--line:#e7dfce;--harn:#6d3fd4;--data:#1474a6;--skill:#1a7d52;--scaf:#bc5a16}
+  *{box-sizing:border-box} body{margin:0;background:var(--page);color:var(--ink);line-height:1.65;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',Arial,sans-serif}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 28px}
+  nav{position:sticky;top:0;z-index:10;background:rgba(255,253,248,.86);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  nav .wrap{display:flex;align-items:center;gap:14px;height:56px}
+  nav .brand{font-weight:800} nav a{color:var(--harn);text-decoration:none;font-weight:700;font-size:14px}
+  nav a.r{margin-left:auto}
+  header{padding:50px 0 24px} .kicker{color:var(--harn);font-weight:800;letter-spacing:2px;font-size:12px;text-transform:uppercase}
+  h1{font-size:38px;margin:.3em 0 .3em} .lead{font-size:18px;color:#3a352c;max-width:880px}
+  .note{font-size:13.5px;color:var(--mut);margin-top:10px}
+  .tabs{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 6px;border-bottom:1px solid var(--line);padding-bottom:16px}
+  .tab{cursor:pointer;border:1px solid var(--harn);background:#fff;color:var(--harn);font-weight:700;font-size:14px;
+       padding:9px 16px;border-radius:999px;font-family:inherit}
+  .tab.on{background:var(--harn);color:#fff}
+  .exwrap{display:none} .exwrap.on{display:block}
+  .goal{display:flex;gap:14px;align-items:flex-start;background:#f6f1fe;border:1px solid #e3d7fb;border-radius:14px;padding:16px 18px;margin:20px 0}
+  .goal .badge{flex:0 0 auto;background:var(--harn);color:#fff;font-weight:800;border-radius:9px;padding:5px 11px;font-size:13px}
+  .goal p{margin:0;font-size:16px;font-weight:600}
+  .th{font-size:17px;font-weight:800;margin:26px 0 8px;color:var(--ink)}
+  .muted{color:var(--mut);font-size:14.5px;max-width:900px}
+  .tbl{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .tbl td{padding:8px 13px;border-top:1px solid var(--line);vertical-align:top} .tbl tr:first-child td{border-top:none}
+  .tbl td.id{font-weight:800;color:var(--data);white-space:nowrap}
+  .phase{margin:12px 0} .phase h4{margin:6px 0;font-size:14px;color:var(--harn);font-weight:800}
+  table.seq{width:100%;border-collapse:collapse;font-size:13px;background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  table.seq td{padding:6px 12px;border-top:1px solid #f0eadd;vertical-align:top}
+  table.seq td.sn{font-family:ui-monospace,Menlo,monospace;font-weight:800;color:var(--scaf);width:36px}
+  table.seq td.sa{font-weight:700;width:300px}
+  table.seq td.sd{color:var(--mut)}
+  .inv,.reading{font-size:14px;max-width:940px} .inv li,.reading li{margin:7px 0}
+  .diagram{background:#1f1b16;color:#e9e2d2;border-radius:12px;padding:18px 16px;overflow-x:auto;
+           font-family:ui-monospace,Menlo,'SFMono-Regular',monospace;font-size:11.5px;line-height:1.35;white-space:pre}
+  footer{padding:36px 0 70px;color:var(--mut);font-size:13px;border-top:1px solid var(--line);margin-top:30px}
+  @media(max-width:720px){h1{font-size:28px}table.seq td.sa{width:auto}}
+</style></head>
+<body>
+<nav><div class="wrap"><span class="brand">${D.brand}</span>
+  <a href="arch-${lang}.html">${D.L.arch}</a>
+  <a href="index.html" style="color:var(--mut)">${D.L.full}</a>
+  <a class="r" href="${D.otherHref}">${D.other}</a></div></nav>
+<header class="wrap">
+  <div class="kicker">Dry Run</div>
+  <h1>${D.title}</h1>
+  <p class="lead">${D.lead}</p>
+  <p class="note">${D.note}</p>
+</header>
+<main class="wrap">
+  <div class="tabs">${tabs}</div>
+  ${panels}
+</main>
+<footer class="wrap">Dry Run · 2026-06-29 · companion to the synthesized paper draft v0.4 (§4.4.1 / §5).</footer>
+<script>
+const tabs=document.querySelectorAll('.tab'),wraps=document.querySelectorAll('.exwrap');
+tabs.forEach(t=>t.addEventListener('click',()=>{
+  const id=t.dataset.ex;
+  tabs.forEach(x=>x.classList.toggle('on',x===t));
+  wraps.forEach(w=>w.classList.toggle('on',w.dataset.ex===id));
+}));
+</script>
+</body></html>`;
+}
+for(const lang of ["en","zh"]){
+  fs.writeFileSync(path.join(OUT,`dry-run-${lang}.html`), dryRunHTML(DRY[lang]));
+}
+console.log("pages written: dry-run-en.html, dry-run-zh.html");
 module.exports={built,W,H};

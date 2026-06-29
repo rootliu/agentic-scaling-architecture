@@ -1,0 +1,109 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Dry Run — Architecture Walkthrough</title>
+<style>
+  :root{--ink:#221f1a;--mut:#6b6357;--page:#fffdf8;--card:#fff;--line:#e7dfce;--harn:#6d3fd4;--data:#1474a6;--skill:#1a7d52;--scaf:#bc5a16}
+  *{box-sizing:border-box} body{margin:0;background:var(--page);color:var(--ink);line-height:1.65;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',Arial,sans-serif}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 28px}
+  nav{position:sticky;top:0;z-index:10;background:rgba(255,253,248,.86);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  nav .wrap{display:flex;align-items:center;gap:14px;height:56px}
+  nav .brand{font-weight:800} nav a{color:var(--harn);text-decoration:none;font-weight:700;font-size:14px}
+  nav a.r{margin-left:auto}
+  header{padding:50px 0 24px} .kicker{color:var(--harn);font-weight:800;letter-spacing:2px;font-size:12px;text-transform:uppercase}
+  h1{font-size:38px;margin:.3em 0 .3em} .lead{font-size:18px;color:#3a352c;max-width:880px}
+  .note{font-size:13.5px;color:var(--mut);margin-top:10px}
+  .tabs{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 6px;border-bottom:1px solid var(--line);padding-bottom:16px}
+  .tab{cursor:pointer;border:1px solid var(--harn);background:#fff;color:var(--harn);font-weight:700;font-size:14px;
+       padding:9px 16px;border-radius:999px;font-family:inherit}
+  .tab.on{background:var(--harn);color:#fff}
+  .exwrap{display:none} .exwrap.on{display:block}
+  .goal{display:flex;gap:14px;align-items:flex-start;background:#f6f1fe;border:1px solid #e3d7fb;border-radius:14px;padding:16px 18px;margin:20px 0}
+  .goal .badge{flex:0 0 auto;background:var(--harn);color:#fff;font-weight:800;border-radius:9px;padding:5px 11px;font-size:13px}
+  .goal p{margin:0;font-size:16px;font-weight:600}
+  .th{font-size:17px;font-weight:800;margin:26px 0 8px;color:var(--ink)}
+  .muted{color:var(--mut);font-size:14.5px;max-width:900px}
+  .tbl{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .tbl td{padding:8px 13px;border-top:1px solid var(--line);vertical-align:top} .tbl tr:first-child td{border-top:none}
+  .tbl td.id{font-weight:800;color:var(--data);white-space:nowrap}
+  .phase{margin:12px 0} .phase h4{margin:6px 0;font-size:14px;color:var(--harn);font-weight:800}
+  table.seq{width:100%;border-collapse:collapse;font-size:13px;background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  table.seq td{padding:6px 12px;border-top:1px solid #f0eadd;vertical-align:top}
+  table.seq td.sn{font-family:ui-monospace,Menlo,monospace;font-weight:800;color:var(--scaf);width:36px}
+  table.seq td.sa{font-weight:700;width:300px}
+  table.seq td.sd{color:var(--mut)}
+  .inv,.reading{font-size:14px;max-width:940px} .inv li,.reading li{margin:7px 0}
+  .diagram{background:#1f1b16;color:#e9e2d2;border-radius:12px;padding:18px 16px;overflow-x:auto;
+           font-family:ui-monospace,Menlo,'SFMono-Regular',monospace;font-size:11.5px;line-height:1.35;white-space:pre}
+  footer{padding:36px 0 70px;color:var(--mut);font-size:13px;border-top:1px solid var(--line);margin-top:30px}
+  @media(max-width:720px){h1{font-size:28px}table.seq td.sa{width:auto}}
+</style></head>
+<body>
+<nav><div class="wrap"><span class="brand">Agentic Runtime</span>
+  <a href="arch-en.html">Architecture</a>
+  <a href="index.html" style="color:var(--mut)">Full site</a>
+  <a class="r" href="dry-run-zh.html">ZH</a></div></nav>
+<header class="wrap">
+  <div class="kicker">Dry Run</div>
+  <h1>Dry Run — Architecture Walkthrough</h1>
+  <p class="lead">Pick a use case and trace one full run through <b>A = ⟨S, H, X⟩</b> + the data subsystem 𝒟 — the spec call sequence, the layer instantiation, and the data-flow diagram.</p>
+  <p class="note">This is the first example. More will be added; the selector lists them all.</p>
+</header>
+<main class="wrap">
+  <div class="tabs"><button class="tab on" data-ex="ai4science">AI4Science · Perovskite band-gap screening</button></div>
+  <div class="exwrap on" data-ex="ai4science"><section class="ex" id="ex-ai4science">
+      <div class="goal"><span class="badge">AI4Science</span><p>From the latest literature, compute-screen perovskite candidates with a target band gap (~1.3 eV) and produce a report with citations and a reproducible script.</p></div>
+      <h3 class="th">Why this one</h3><p class="muted">Exercises all three layers + the data subsystem at once: literature (D2 temporal summaries), known-property DB (D1 fetch), simulation (code-gen + Scaffold + cloud/HPC), multi-signal verification (numeric sanity + citation grounding), report (doc skill), write-back (D2/Ω/D3).</p>
+      <h3 class="th">Layer instantiation</h3><table class="tbl"><tr><td class="id">L3 Skills</td><td>lit-review.skill · materials-screening.skill · data-report.skill (each with I/O schema, call/stop/loop, verification)</td></tr><tr><td class="id">L2 Harness</td><td>capsules: arxiv_search · materials_db_query(D1) · code_execution · dft_screen(may be live-coded) · doc_generation; + context assembly / policy gate / verifier / audit / maintenance M</td></tr><tr><td class="id">L1 Scaffold</td><td>ExecutionSpec: microVM(scripts) + GPU serving(models) + cloud(HPC for screening) + SSO/identity(institutional HPC) + network allowlist(Materials Project / arXiv)</td></tr><tr><td class="id">D1</td><td>DataSourceCard: Materials Project API · OQMD · arXiv</td></tr><tr><td class="id">D2</td><td>temporally-constrained SummaryEntry (“band-gap SOTA as of T”, with evidence_ref) in a structured DB</td></tr><tr><td class="id">D3</td><td>DataUsageSkill: source selection + join plan + top-k weights for the perovskite-screening use case</td></tr><tr><td class="id">D4</td><td>lifetime: literature freshness (as-of date) · property-DB conventions · HPC budget</td></tr><tr><td class="id">Ω</td><td>RunTrace · screening script/result artifacts · IntermediateRelation(candidate↔property↔paper) · LLM Wiki</td></tr></table>
+      <h3 class="th">Spec call sequence</h3>
+      <div class="phase"><h4>Phase 0 · Intake (CP)</h4>
+      <table class="seq"><tr><td class="sn">01</td><td class="sa">parse_intent(U)</td><td class="sd">parse goal / constraints / done-criteria</td></tr><tr><td class="sn">02</td><td class="sa">O4 plan</td><td class="sd">decompose sub-goals {lit → candidates → properties → screen → analyze → report}</td></tr></table></div>
+      <div class="phase"><h4>Phase 1 · Skill activation (CP)</h4>
+      <table class="seq"><tr><td class="sn">03</td><td class="sa">activate lit-review</td><td class="sd">required_data_themes = [perovskite, bandgap]</td></tr><tr><td class="sn">04</td><td class="sa">activate materials-screening</td><td class="sd">required_capabilities = [materials_db_query, code_execution, dft_screen]</td></tr><tr><td class="sn">05</td><td class="sa">activate data-report</td><td class="sd">output_format = report{citations required}</td></tr></table></div>
+      <div class="phase"><h4>Phase 2 · Context assembly (CP→DP)</h4>
+      <table class="seq"><tr><td class="sn">06</td><td class="sa">consult D3.DataUsageSkill</td><td class="sd">get preferred_sources + semantic_join_plan(top_k, weights)</td></tr><tr><td class="sn">07</td><td class="sa">consult D4.lifetime</td><td class="sd">get freshness(as_of=today) + HPC nfr_budget</td></tr><tr><td class="sn">08</td><td class="sa">query D2.semantic_join(valid_at=today)</td><td class="sd">DP online: fetch temporally-constrained SummaryEntry, each with evidence_ref</td></tr><tr><td class="sn">09</td><td class="sa">O2 shots + O3 output schema</td><td class="sd">shots ← D2 pos/neg examples; schema ← SkillSpec</td></tr></table></div>
+      <div class="phase"><h4>Phase 3 · Capability routing + resources (CP)</h4>
+      <table class="seq"><tr><td class="sn">10</td><td class="sa">O1 tool selection</td><td class="sd">capsules {arxiv_search, materials_db_query, code_execution, doc_generation}</td></tr><tr><td class="sn">11</td><td class="sa">O5 live-coding (if dft_screen missing)</td><td class="sd">synthesize capsule → sandbox-validate → register</td></tr><tr><td class="sn">12</td><td class="sa">O7 model + O8 token</td><td class="sd">plan/analysis = Opus-tier; bulk lit triage = Haiku-tier; allocate token budget</td></tr><tr><td class="sn">13</td><td class="sa">policy gate + ExecutionSpec</td><td class="sd">SSO → institutional HPC; cloud = GPU pool; network allowlist = [MP, arXiv]</td></tr></table></div>
+      <div class="phase"><h4>Phase 4 · Execution loop (DP — per sub-goal)</h4>
+      <table class="seq"><tr><td class="sn">14</td><td class="sa">execute arxiv_search</td><td class="sd">skip if already covered by a shared D2 summary (less re-digestion)</td></tr><tr><td class="sn">15</td><td class="sa">execute D1.materials_db_query</td><td class="sd">DP online fetch: candidate properties from MP</td></tr><tr><td class="sn">16</td><td class="sa">O5 code generation</td><td class="sd">Read/Edit/Bash write screening script + run tests/lint</td></tr><tr><td class="sn">17</td><td class="sa">execute dft_screen</td><td class="sd">on Scaffold (cloud HPC microVM)</td></tr><tr><td class="sn">18</td><td class="sa">observe + verifier/reward</td><td class="sd">① numeric sanity (band-gap physical range/units) ② citation grounding (every claim has evidence_ref)</td></tr><tr><td class="sn">19</td><td class="sa">if verify fails → O6 reflect</td><td class="sd">non-physical band gap / unverifiable claim → revise plan → back to 14/16</td></tr></table></div>
+      <div class="phase"><h4>Phase 5 · Output + write-back (CP/DP)</h4>
+      <table class="seq"><tr><td class="sn">20</td><td class="sa">execute doc_generation</td><td class="sd">report artifact (citations + reproducible script)</td></tr><tr><td class="sn">21</td><td class="sa">writeback (M) → D2</td><td class="sd">new SummaryEntry {claim, valid_from=T, evidence_ref=run_id} — logical append, no overwrite</td></tr><tr><td class="sn">22</td><td class="sa">write RunTrace + IntermediateRelation → Ω</td><td class="sd"></td></tr><tr><td class="sn">23</td><td class="sa">distill DataUsageSkill → D3</td><td class="sd">this run's winning sources/weights/fallbacks (P9 convergence)</td></tr></table></div>
+      <h3 class="th">Structural invariants (↔ propositions)</h3><ul class="inv"><li><b>[06–08] precede [14]</b> — query D3/D4/D2 first; a shared-summary hit avoids re-pulling the source → less inter-agent contention, lower per-request cost (P7)</li><li><b>[10–13] go through the Harness contract</b> — a Skill only declares required_capabilities; H translates intent 𝓘 → executable 𝓔 (P2)</li><li><b>[21] is logical append + evidence_ref</b> — overflow demotes (cold-tier), never hard-deletes; old claims stay back-traceable to source → anti-hallucination (§4.4.1 S3/S4)</li></ul>
+      <h3 class="th">Data diagram (online / offline)</h3><pre class="diagram">                      ┌──── offline off-policy loop 𝓛₂ (out-of-stack, not scheduled by H) ─────┐
+ external sources     │  arXiv / journals / MP snapshot ─▶ D2.summarize ─▶ SummaryEntry{claim,  │
+ (papers, MP, OQMD) ──┼─▶                                  (schema-on-read)  valid_from/to,     │
+                      │                                                  evidence_ref, supersedes}│
+                      │                                          └─▶ Structured Summary DB        │
+                      │                                             (index: source / theme / valid)│
+                      └──────────────────────────────────────────────────────────────────────────┘
+                                                                        │ ▲
+               semantic_join(valid_at=T, top_k)                         │ │ writeback [21] (append)
+                              ▼                                         │ │
+ ┌ L3 Skills ─┐  intent/specs  ┌──── L2 Harness (contract / control plane) ┴─┴────┐
+ │ lit-review  │ ──[03-05]────▶ │ context assembly ← D2 summary / D3 usage / D4    │
+ │ materials   │               │ O1 route · O5 code-gen · O7 model · O8 token · ver│
+ │ data-report │ ◀─report schema│ policy gate ──▶ translate 𝓘 → 𝓔                  │
+ └─────────────┘               └───┬───────────────────────────────┬──────────────┘
+      ▲ deliver artifact            │ executable 𝓔                   │ D1 fetch (online)
+      │                             ▼                                ▼
+      │                 ┌ L1 Scaffold (data plane) ┐        ┌ D1 Fetch API ┐
+      │                 │ microVM·bash·GPU serving  │        │ MP / OQMD    │
+      │                 │ cloud HPC · SSO · network │        └──────┬───────┘
+      │                 └────────────┬──────────────┘               │ property slice
+      │  RunTrace/artifact [22]      │ results + evidence            │
+      └─────────────── Ω workspace ◀─┴───────────────────────────────┘
+                       (RunTrace · IntermediateRelation: cand↔property↔paper · LLM Wiki)
+                                  │
+                                  └─▶ D3 DataUsageSkill update [23]  (fetch-decision entropy ↓, P9)</pre>
+      <h3 class="th">How to read it</h3><ul class="reading"><li><b>1.</b> Two separate data paths — offline 𝓛₂ pre-digests raw papers/DBs into temporally-constrained SummaryEntries (off the request path → adding sources doesn't raise per-request token cost, P7); online does only D2.semantic_join (shared summaries) + D1.query (live properties), both through the Harness contract.</li><li><b>2.</b> The summary DB is a shared read-only hot spot — many agents / runs read the same SummaryEntry (snapshot reads) instead of each re-pulling the same PDF → contention removed, repeated inference saved (AOHP-style token ↓); retrieval uses the valid-interval index for point-in-time filtering.</li><li><b>3.</b> Write-back is one-way &amp; logical-append — results → Ω → distilled into new SummaryEntries fed back to D2 (with evidence_ref; old entries logically invalidated, not deleted) + D3 updates. A closed loop: offline summarize → online consume → execute → feed back, with every recallable claim back-traceable to source.</li></ul>
+    </section></div>
+</main>
+<footer class="wrap">Dry Run · 2026-06-29 · companion to the synthesized paper draft v0.4 (§4.4.1 / §5).</footer>
+<script>
+const tabs=document.querySelectorAll('.tab'),wraps=document.querySelectorAll('.exwrap');
+tabs.forEach(t=>t.addEventListener('click',()=>{
+  const id=t.dataset.ex;
+  tabs.forEach(x=>x.classList.toggle('on',x===t));
+  wraps.forEach(w=>w.classList.toggle('on',w.dataset.ex===id));
+}));
+</script>
+</body></html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Dry Run — 架构走查</title>
+<style>
+  :root{--ink:#221f1a;--mut:#6b6357;--page:#fffdf8;--card:#fff;--line:#e7dfce;--harn:#6d3fd4;--data:#1474a6;--skill:#1a7d52;--scaf:#bc5a16}
+  *{box-sizing:border-box} body{margin:0;background:var(--page);color:var(--ink);line-height:1.65;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',Arial,sans-serif}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 28px}
+  nav{position:sticky;top:0;z-index:10;background:rgba(255,253,248,.86);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  nav .wrap{display:flex;align-items:center;gap:14px;height:56px}
+  nav .brand{font-weight:800} nav a{color:var(--harn);text-decoration:none;font-weight:700;font-size:14px}
+  nav a.r{margin-left:auto}
+  header{padding:50px 0 24px} .kicker{color:var(--harn);font-weight:800;letter-spacing:2px;font-size:12px;text-transform:uppercase}
+  h1{font-size:38px;margin:.3em 0 .3em} .lead{font-size:18px;color:#3a352c;max-width:880px}
+  .note{font-size:13.5px;color:var(--mut);margin-top:10px}
+  .tabs{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 6px;border-bottom:1px solid var(--line);padding-bottom:16px}
+  .tab{cursor:pointer;border:1px solid var(--harn);background:#fff;color:var(--harn);font-weight:700;font-size:14px;
+       padding:9px 16px;border-radius:999px;font-family:inherit}
+  .tab.on{background:var(--harn);color:#fff}
+  .exwrap{display:none} .exwrap.on{display:block}
+  .goal{display:flex;gap:14px;align-items:flex-start;background:#f6f1fe;border:1px solid #e3d7fb;border-radius:14px;padding:16px 18px;margin:20px 0}
+  .goal .badge{flex:0 0 auto;background:var(--harn);color:#fff;font-weight:800;border-radius:9px;padding:5px 11px;font-size:13px}
+  .goal p{margin:0;font-size:16px;font-weight:600}
+  .th{font-size:17px;font-weight:800;margin:26px 0 8px;color:var(--ink)}
+  .muted{color:var(--mut);font-size:14.5px;max-width:900px}
+  .tbl{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .tbl td{padding:8px 13px;border-top:1px solid var(--line);vertical-align:top} .tbl tr:first-child td{border-top:none}
+  .tbl td.id{font-weight:800;color:var(--data);white-space:nowrap}
+  .phase{margin:12px 0} .phase h4{margin:6px 0;font-size:14px;color:var(--harn);font-weight:800}
+  table.seq{width:100%;border-collapse:collapse;font-size:13px;background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  table.seq td{padding:6px 12px;border-top:1px solid #f0eadd;vertical-align:top}
+  table.seq td.sn{font-family:ui-monospace,Menlo,monospace;font-weight:800;color:var(--scaf);width:36px}
+  table.seq td.sa{font-weight:700;width:300px}
+  table.seq td.sd{color:var(--mut)}
+  .inv,.reading{font-size:14px;max-width:940px} .inv li,.reading li{margin:7px 0}
+  .diagram{background:#1f1b16;color:#e9e2d2;border-radius:12px;padding:18px 16px;overflow-x:auto;
+           font-family:ui-monospace,Menlo,'SFMono-Regular',monospace;font-size:11.5px;line-height:1.35;white-space:pre}
+  footer{padding:36px 0 70px;color:var(--mut);font-size:13px;border-top:1px solid var(--line);margin-top:30px}
+  @media(max-width:720px){h1{font-size:28px}table.seq td.sa{width:auto}}
+</style></head>
+<body>
+<nav><div class="wrap"><span class="brand">Agentic Runtime</span>
+  <a href="arch-zh.html">架构</a>
+  <a href="index.html" style="color:var(--mut)">完整站点</a>
+  <a class="r" href="dry-run-en.html">EN</a></div></nav>
+<header class="wrap">
+  <div class="kicker">Dry Run</div>
+  <h1>Dry Run — 架构走查</h1>
+  <p class="lead">选一个用例，沿 <b>A = ⟨S, H, X⟩</b> + 数据子系统 𝒟 走查一次完整运行——spec 调用顺序、各层实例化、数据流图。</p>
+  <p class="note">这是第一个实例。后续会加更多；选择器会列出全部。</p>
+</header>
+<main class="wrap">
+  <div class="tabs"><button class="tab on" data-ex="ai4science">AI4Science · 钙钛矿带隙筛选</button></div>
+  <div class="exwrap on" data-ex="ai4science"><section class="ex" id="ex-ai4science">
+      <div class="goal"><span class="badge">AI4Science</span><p>基于最新文献，计算筛选目标带隙(~1.3 eV)的钙钛矿候选材料，并产出带引用与可复现脚本的报告。</p></div>
+      <h3 class="th">为什么选它</h3><p class="muted">同时压满三层 + 数据子系统：文献(→D2 时序摘要)、已知物性库(→D1 取数)、仿真计算(→code gen + Scaffold + cloud/HPC)、多信号验证(数值合理性 + 引用接地)、报告(→doc skill)、回写(→D2/Ω/D3)。</p>
+      <h3 class="th">各层实例化</h3><table class="tbl"><tr><td class="id">L3 Skills</td><td>lit-review.skill · materials-screening.skill · data-report.skill（各含 I/O schema、call/stop/loop、verification）</td></tr><tr><td class="id">L2 Harness</td><td>capsule：arxiv_search · materials_db_query(D1) · code_execution · dft_screen(可能 live-code) · doc_generation；+ context assembly / policy gate / verifier / audit / 维护子系统 M</td></tr><tr><td class="id">L1 Scaffold</td><td>ExecutionSpec：microVM(脚本) + GPU serving(模型) + cloud(HPC 跑筛选) + SSO/identity(机构 HPC) + network allowlist(Materials Project / arXiv)</td></tr><tr><td class="id">D1</td><td>DataSourceCard：Materials Project API · OQMD · arXiv</td></tr><tr><td class="id">D2</td><td>带时序约束的 SummaryEntry（“截至 T 的带隙 SOTA”，带 evidence_ref）存结构化 DB</td></tr><tr><td class="id">D3</td><td>DataUsageSkill：perovskite-screening 用例的源选择 + join plan + top-k 权重</td></tr><tr><td class="id">D4</td><td>lifetime：文献时新性(as-of 日期) · 物性库口径 · HPC 预算</td></tr><tr><td class="id">Ω</td><td>RunTrace · 筛选脚本/结果 artifact · IntermediateRelation(候选↔物性↔文献) · LLM Wiki</td></tr></table>
+      <h3 class="th">Spec 调用顺序集</h3>
+      <div class="phase"><h4>阶段 0 · Intake（CP）</h4>
+      <table class="seq"><tr><td class="sn">01</td><td class="sa">parse_intent(U)</td><td class="sd">解析目标 / 约束 / 做完判据</td></tr><tr><td class="sn">02</td><td class="sa">O4 plan</td><td class="sd">分解 sub-goals {文献 → 候选 → 取物性 → 筛选 → 分析 → 报告}</td></tr></table></div>
+      <div class="phase"><h4>阶段 1 · Skill 激活（CP）</h4>
+      <table class="seq"><tr><td class="sn">03</td><td class="sa">activate lit-review</td><td class="sd">required_data_themes = [perovskite, bandgap]</td></tr><tr><td class="sn">04</td><td class="sa">activate materials-screening</td><td class="sd">required_capabilities = [materials_db_query, code_execution, dft_screen]</td></tr><tr><td class="sn">05</td><td class="sa">activate data-report</td><td class="sd">output_format = report{引用必填}</td></tr></table></div>
+      <div class="phase"><h4>阶段 2 · Context 组装（CP→DP）</h4>
+      <table class="seq"><tr><td class="sn">06</td><td class="sa">consult D3.DataUsageSkill</td><td class="sd">取 preferred_sources + semantic_join_plan(top_k, weights)</td></tr><tr><td class="sn">07</td><td class="sa">consult D4.lifetime</td><td class="sd">取 freshness(as_of=今日) + HPC nfr_budget</td></tr><tr><td class="sn">08</td><td class="sa">query D2.semantic_join(valid_at=今日)</td><td class="sd">DP 在线：取带时序约束 SummaryEntry，每条带 evidence_ref</td></tr><tr><td class="sn">09</td><td class="sa">O2 shots + O3 output schema</td><td class="sd">shots ← D2 正反例；schema ← SkillSpec</td></tr></table></div>
+      <div class="phase"><h4>阶段 3 · 能力路由 + 资源就绪（CP）</h4>
+      <table class="seq"><tr><td class="sn">10</td><td class="sa">O1 tool 选择</td><td class="sd">capsule {arxiv_search, materials_db_query, code_execution, doc_generation}</td></tr><tr><td class="sn">11</td><td class="sa">O5 live-coding（若缺 dft_screen）</td><td class="sd">合成 capsule → sandbox 验证 → 注册</td></tr><tr><td class="sn">12</td><td class="sa">O7 model + O8 token</td><td class="sd">plan/分析 = Opus 级；海量文献初筛 = Haiku 级；分发 token 预算</td></tr><tr><td class="sn">13</td><td class="sa">policy gate + ExecutionSpec</td><td class="sd">SSO 授权机构 HPC；cloud = GPU pool；network allowlist = [MP, arXiv]</td></tr></table></div>
+      <div class="phase"><h4>阶段 4 · 执行循环（DP — 逐 sub-goal）</h4>
+      <table class="seq"><tr><td class="sn">14</td><td class="sa">execute arxiv_search</td><td class="sd">D2 已覆盖则跳过(命中共享摘要) → 减少重复消化</td></tr><tr><td class="sn">15</td><td class="sa">execute D1.materials_db_query</td><td class="sd">DP 在线取数：MP 候选集物性</td></tr><tr><td class="sn">16</td><td class="sa">O5 code generation</td><td class="sd">Read/Edit/Bash 写筛选脚本 + 跑测试/lint</td></tr><tr><td class="sn">17</td><td class="sa">execute dft_screen</td><td class="sd">在 Scaffold(cloud HPC microVM)</td></tr><tr><td class="sn">18</td><td class="sa">observe + verifier/reward</td><td class="sd">① 数值合理性(带隙物理区间/单位) ② 引用接地(每条结论有 evidence_ref)</td></tr><tr><td class="sn">19</td><td class="sa">验证失败 → O6 reflect</td><td class="sd">带隙非物理 / 结论 unverifiable → revise plan → 回 14/16</td></tr></table></div>
+      <div class="phase"><h4>阶段 5 · 产出 + 回写（CP/DP）</h4>
+      <table class="seq"><tr><td class="sn">20</td><td class="sa">execute doc_generation</td><td class="sd">report artifact(含引用、可复现脚本)</td></tr><tr><td class="sn">21</td><td class="sa">writeback(M) → D2</td><td class="sd">新 SummaryEntry {claim, valid_from=T, evidence_ref=run_id} — 逻辑追加，不覆盖</td></tr><tr><td class="sn">22</td><td class="sa">write RunTrace + IntermediateRelation → Ω</td><td class="sd"></td></tr><tr><td class="sn">23</td><td class="sa">distill DataUsageSkill → D3</td><td class="sd">本次成功源/权重/失败回退（P9 收敛）</td></tr></table></div>
+      <h3 class="th">结构性约束（↔ 命题）</h3><ul class="inv"><li><b>[06–08] 先于 [14]</b> — 先查 D3/D4/D2；命中共享摘要就不重拉原文 → 减少多 agent 争用、降单请求成本（P7）</li><li><b>[10–13] 经 Harness 契约</b> — Skill 只声明 required_capabilities；H 翻译意图 𝓘 → 可执行 𝓔（P2）</li><li><b>[21] 逻辑追加 + evidence_ref</b> — 溢出降冷不硬删；旧结论可回指原文 → 防幻觉（§4.4.1 S3/S4）</li></ul>
+      <h3 class="th">Data diagram（在线 / 离线）</h3><pre class="diagram">                      ┌──── 离线 off-policy loop 𝓛₂（栈外，不被 H 调度）─────┐
+ 外部源               │  arXiv / 期刊 / MP 快照 ─▶ D2.summarize ─▶ SummaryEntry{claim, │
+ (papers, MP, OQMD) ──┼─▶                         (schema-on-read)  valid_from/to,      │
+                      │                                          evidence_ref, supersedes}│
+                      │                                       └─▶ 【结构化摘要 DB】       │
+                      │                                          (索引: source/theme/valid)│
+                      └──────────────────────────────────────────────────────────────────┘
+                                                                     │ ▲
+            semantic_join(valid_at=T, top_k)                         │ │ writeback [21] (逻辑追加)
+                           ▼                                         │ │
+ ┌ L3 Skills ─┐ intent/specs ┌──── L2 Harness（契约 / 控制面）────────┴─┴────┐
+ │ lit-review  │ ─[03-05]───▶ │ context assembly ← D2摘要 / D3用法 / D4时效    │
+ │ materials   │             │ O1路由 · O5 code-gen · O7 model · O8 token · ver│
+ │ data-report │ ◀─报告schema─│ policy gate ──▶ 翻译 𝓘 → 𝓔                     │
+ └─────────────┘             └───┬───────────────────────────────┬────────────┘
+      ▲ 交付 artifact             │ 可执行单元 𝓔                    │ D1 取数(在线)
+      │                          ▼                                ▼
+      │              ┌ L1 Scaffold（数据面）┐         ┌ D1 取数 API ┐
+      │              │ microVM·bash·GPU serving│       │ MP / OQMD 物性│
+      │              │ cloud HPC · SSO · network│      └──────┬───────┘
+      │              └────────────┬─────────────┘             │ 物性切片
+      │  RunTrace/artifact [22]   │ 计算结果 + evidence         │
+      └────────────── Ω 工作区 ◀──┴────────────────────────────┘
+                      (RunTrace · IntermediateRelation: 候选↔物性↔文献 · LLM Wiki)
+                                 │
+                                 └─▶ D3 DataUsageSkill 更新 [23]  (取数决策熵 ↓，P9)</pre>
+      <h3 class="th">读图要点</h3><ul class="reading"><li><b>1.</b> 两条数据路径分离 — 离线 𝓛₂ 把原始文献/库预消化成带时序约束的 SummaryEntry（不在请求路径上 → 加数据源不抬单请求 token 成本，P7）；在线只做 D2.semantic_join(读共享摘要) + D1.query(读实时物性)，都经 Harness 契约。</li><li><b>2.</b> 摘要 DB 是共享只读热点 — 多 agent / 多次运行读同一份 SummaryEntry(快照读)，不各自重拉同一篇 PDF → 消除争用、省重复推理(AOHP 同类机理 token↓)；检索靠 valid 区间索引做时点过滤。</li><li><b>3.</b> 写回单向 + 逻辑追加 — 执行结果 → Ω → 蒸馏出新 SummaryEntry 回灌 D2(带 evidence_ref，旧条逻辑失效不删) + 更新 D3。闭环：离线总结 → 在线消费 → 执行产出 → 回灌总结，每个可召回结论都能回指原文。</li></ul>
+    </section></div>
+</main>
+<footer class="wrap">Dry Run · 2026-06-29 · companion to the synthesized paper draft v0.4 (§4.4.1 / §5).</footer>
+<script>
+const tabs=document.querySelectorAll('.tab'),wraps=document.querySelectorAll('.exwrap');
+tabs.forEach(t=>t.addEventListener('click',()=>{
+  const id=t.dataset.ex;
+  tabs.forEach(x=>x.classList.toggle('on',x===t));
+  wraps.forEach(w=>w.classList.toggle('on',w.dataset.ex===id));
+}));
+</script>
+</body></html>
