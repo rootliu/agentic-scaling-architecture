@@ -732,6 +732,109 @@ const EXAMPLES = {
   ],
 };
 
+/* ---- SVG data-flow diagram for the AI4Science dry-run (figure-consistent) ---- */
+const DIAGRAM_TX = {
+  en:{
+    title:"AI4Science Dry Run — Data Diagram (online / offline)",
+    sub:"Offline 𝓛₂ pre-digests sources into a structured summary DB; online consumes shared summaries through the Harness contract.",
+    offline:"Offline off-policy loop 𝓛₂   ·   out-of-stack, not scheduled by H",
+    ext:["External sources","arXiv · journals","MP / OQMD"],
+    summ:["D2.summarize","schema-on-read"],
+    entry:["SummaryEntry","claim · valid_from/to","evidence_ref · supersedes"],
+    db:["Structured Summary DB","index: source / theme / valid"],
+    l3:["L3 Skills","lit-review · materials-","screening · data-report"],
+    l2:["L2 Harness","context assembly · O1 route · O5 code-gen","O7 model · O8 token · verifier · policy gate"],
+    l1:["L1 Scaffold","microVM · bash · GPU serving","cloud HPC · SSO · network"],
+    d1:["D1 Fetch API","Materials Project · OQMD"],
+    omega:["Ω Workspace","RunTrace · IntermediateRelation · LLM Wiki"],
+    d3:["D3 DataUsageSkill update","fetch-decision entropy ↓  (P9)"],
+    join:"semantic_join(valid_at=T)", wb:"writeback [21] append",
+    intent:"intent / specs", exec:"executable 𝓔", fetch:"D1 fetch (online)", results:"results + evidence → Ω",
+  },
+  zh:{
+    title:"AI4Science Dry Run — Data Diagram（在线 / 离线）",
+    sub:"离线 𝓛₂ 把数据源预消化进结构化摘要 DB；在线经 Harness 契约消费共享摘要。",
+    offline:"离线 off-policy loop 𝓛₂   ·   栈外，不被 H 调度",
+    ext:["外部源","arXiv · 期刊","MP / OQMD"],
+    summ:["D2.summarize","schema-on-read"],
+    entry:["SummaryEntry","claim · valid_from/to","evidence_ref · supersedes"],
+    db:["结构化摘要 DB","索引: source / theme / valid"],
+    l3:["L3 Skills","lit-review · materials-","screening · data-report"],
+    l2:["L2 Harness","context assembly · O1 路由 · O5 code-gen","O7 model · O8 token · verifier · policy gate"],
+    l1:["L1 Scaffold","microVM · bash · GPU serving","cloud HPC · SSO · network"],
+    d1:["D1 取数 API","Materials Project · OQMD"],
+    omega:["Ω 工作区","RunTrace · IntermediateRelation · LLM Wiki"],
+    d3:["D3 DataUsageSkill 更新","取数决策熵 ↓  (P9)"],
+    join:"semantic_join(valid_at=T)", wb:"writeback [21] 逻辑追加",
+    intent:"intent / specs", exec:"可执行 𝓔", fetch:"D1 取数(在线)", results:"结果 + evidence → Ω",
+  }
+};
+function dbox(x,y,w,h,pal,lines,{strong=false,dash=false,titleSize=13.5}={}){
+  const fill = pal==="neut"?C.neutFill:({skill:C.skillFill,harn:strong?C.harnStrong:C.harnFill,scaf:C.scafFill,data:C.dataFill}[pal]);
+  const stroke = {neut:C.neutStroke,skill:C.skillStroke,harn:C.harnStroke,scaf:C.scafStroke,data:C.dataStroke}[pal];
+  const tcol = {neut:C.ink,skill:C.skillText,harn:C.harnText,scaf:C.scafText,data:C.dataText}[pal];
+  let r=rect(x,y,w,h,{fill,stroke,sw:1.5,rx:12,dash:dash?"5 4":null});
+  r+=center(x+w/2,y+19,[lines[0]],{size:titleSize,weight:800,fill:tcol});
+  if(lines.length>1){
+    const sub=lines.slice(1); const lh=14;
+    const cy=y+19+18+(sub.length-1)*lh/2;
+    r+=center(x+w/2,cy,sub,{size:10.3,fill:tcol,lh});
+  }
+  return r;
+}
+function diagramSVG(lang){
+  const t=DIAGRAM_TX[lang];
+  let s=frame(t.title,t.sub);
+  // ---------- OFFLINE band (top) ----------
+  s+=rect(44,98,1112,150,{fill:"#fbf7ef",stroke:C.dataStroke,sw:1.4,rx:16,dash:"6 5",filter:false});
+  s+=tline(66,122,t.offline,{size:12,weight:700,fill:C.dataText});
+  const oy=140, oh=84;
+  s+=dbox(66,oy,176,oh,"neut",t.ext);
+  s+=dbox(300,oy,150,oh,"data",t.summ);
+  s+=dbox(508,oy,232,oh,"data",t.entry);
+  s+=dbox(800,oy,332,oh,"data",t.db);
+  s+=hArrow(242,300,oy+oh/2,{stroke:C.dataStroke,head:"t"});
+  s+=hArrow(450,508,oy+oh/2,{stroke:C.dataStroke,head:"t"});
+  s+=hArrow(740,800,oy+oh/2,{stroke:C.dataStroke,head:"t"});
+  // ---------- ONLINE region ----------
+  // L3 / L2 / L1 stacked left-center
+  const LX=300, LW=520;
+  const y3=320, y2=410, y1=560, bh3=70, bh2=120, bh1=70;
+  s+=dbox(LX,y3,LW,bh3,"skill",t.l3);
+  s+=dbox(LX,y2,LW,bh2,"harn",t.l2,{strong:true});
+  s+=dbox(LX,y1,LW,bh1,"scaf",t.l1);
+  // D1 (right of harness) + Omega + D3 on the right column
+  const RX=860, RW=262;
+  s+=dbox(RX,y2,RW,bh2,"data",t.d1);
+  s+=dbox(RX,y1,RW,bh1,"data",t.omega);
+  s+=dbox(RX,648,RW,58,"data",t.d3);
+  // Skills box on the far left feeding L3
+  const SK=66, SKW=200;
+  s+=dbox(SK,y2,SKW,bh2,"skill",["Skills","→ activate","specs / schema"]);
+  // ---- arrows (online) ----
+  // db --(semantic_join)--> harness
+  s+=elbow([[966,oy+oh],[966,300],[560,300],[560,y2]],{stroke:C.dataStroke,sw:1.8,head:"t"});
+  s+=tline(575,296,t.join,{size:10.5,fill:C.dataText});
+  // skills -> L3 -> L2
+  s+=hArrow(SK+SKW,LX,y3+bh3/2,{stroke:C.skillStroke,head:"g"});
+  s+=tline(SK+SKW+8,y3+bh3/2-8,t.intent,{size:10,fill:C.skillText});
+  s+=vArrow(LX+LW/2,y3+bh3,y2,{stroke:C.harnStroke});
+  // L2 -> L1 (executable)
+  s+=vArrow(LX+LW/2,y2+bh2,y1,{stroke:C.scafStroke,head:"o"});
+  s+=tline(LX+LW/2+12,(y2+bh2+y1)/2,t.exec,{size:10,fill:C.scafText});
+  // L2 -> D1 (fetch)
+  s+=hArrow(LX+LW,RX,y2+bh2/2,{stroke:C.dataStroke,head:"t"});
+  s+=tline(LX+LW+8,y2+bh2/2-8,t.fetch,{size:10,fill:C.dataText});
+  // L1 -> Omega (results); D1 -> Omega
+  s+=hArrow(LX+LW,RX,y1+bh1/2,{stroke:C.scafStroke,head:"t"});
+  s+=tline(LX+LW+8,y1+bh1/2-8,t.results,{size:10,fill:C.scafText});
+  // Omega -> D3
+  s+=vArrow(RX+RW/2,y1+bh1,648,{stroke:C.dataStroke,head:"t"});
+  // writeback: Omega -> back up to DB, routed in the clear right margin (x=1150)
+  s+=elbow([[RX+RW,y1+18],[1150,y1+18],[1150,oy+oh-20],[1132,oy+oh-20]],{stroke:C.dataStroke,sw:1.6,head:"t",dash:"6 5"});
+  s+=tline(966,oy+oh+34,t.wb,{size:10,weight:700,fill:C.dataText});
+  return svgWrap(s);
+}
 const DRY = {
   en:{ htmllang:"en", brand:"Agentic Runtime", title:"Dry Run — Architecture Walkthrough",
     lead:"Pick a use case and trace one full run through <b>A = ⟨S, H, X⟩</b> + the data subsystem 𝒟 — the spec call sequence, the layer instantiation, and the data-flow diagram.",
@@ -746,8 +849,10 @@ const DRY = {
 };
 
 function dryRunHTML(D){
-  const exs = EXAMPLES[D.htmllang==="en"?"en":"zh"];
   const lang = D.htmllang==="en"?"en":"zh";
+  const exs = EXAMPLES[lang];
+  // attach figure-consistent SVG diagram to the AI4Science example
+  for(const e of exs){ if(e.id==="ai4science") e.svg = diagramSVG(lang); }
   const tabs = exs.map((e,i)=>`<button class="tab${i===0?" on":""}" data-ex="${e.id}">${esc(e.tag)} · ${esc(e.name)}</button>`).join("");
   const panel = e=>{
     const layers = e.layers.map(([k,v])=>`<tr><td class="id">${esc(k)}</td><td>${esc(v)}</td></tr>`).join("");
@@ -762,7 +867,8 @@ function dryRunHTML(D){
       <h3 class="th">${D.L.layers}</h3><table class="tbl">${layers}</table>
       <h3 class="th">${D.L.seq}</h3>${phases}
       <h3 class="th">${D.L.inv}</h3><ul class="inv">${inv}</ul>
-      <h3 class="th">${D.L.diagram}</h3><pre class="diagram">${esc(e.diagram.join("\n"))}</pre>
+      <h3 class="th">${D.L.diagram}</h3>
+      <figure class="fig">${e.svg||""}</figure>
       <h3 class="th">${D.L.reading}</h3><ul class="reading">${reading}</ul>
     </section>`;
   };
@@ -801,8 +907,9 @@ function dryRunHTML(D){
   table.seq td.sa{font-weight:700;width:300px}
   table.seq td.sd{color:var(--mut)}
   .inv,.reading{font-size:14px;max-width:940px} .inv li,.reading li{margin:7px 0}
-  .diagram{background:#1f1b16;color:#e9e2d2;border-radius:12px;padding:18px 16px;overflow-x:auto;
-           font-family:ui-monospace,Menlo,'SFMono-Regular',monospace;font-size:11.5px;line-height:1.35;white-space:pre}
+  .fig{margin:14px 0 6px;padding:14px;background:var(--card);border:1px solid var(--line);
+       border-radius:18px;box-shadow:0 6px 22px rgba(60,45,20,.07)}
+  .fig svg{display:block;width:100%;height:auto;border-radius:10px}
   footer{padding:36px 0 70px;color:var(--mut);font-size:13px;border-top:1px solid var(--line);margin-top:30px}
   @media(max-width:720px){h1{font-size:28px}table.seq td.sa{width:auto}}
 </style></head>
