@@ -636,6 +636,69 @@ const EXAMPLES = {
         "Write-back is one-way & logical-append — results → Ω → distilled into new SummaryEntries fed back to D2 (with evidence_ref; old entries logically invalidated, not deleted) + D3 updates. A closed loop: offline summarize → online consume → execute → feed back, with every recallable claim back-traceable to source.",
       ],
     },
+    {
+      id:"kronos", tag:"FinTech",
+      name:"Kronos-based stock forecast",
+      goal:"Given a ticker and horizon, forecast the next N bars (OHLCV) with the Kronos foundation model, turn it into a trading signal, and produce a report with a backtest and a reproducible script.",
+      why:"Shows a foundation-model time-series skill end-to-end: data fetch (D1 AKShare/market), a GPU-served pretrained model (Scaffold serving), probabilistic sampling treated as part of the loop, multi-signal verification (backtest metrics + leakage check), and write-back of the forecast as a temporally-constrained record (the forecast is only valid for a stated window).",
+      layers:[
+        ["L3 Skills","stock-forecast.skill · signal-gen.skill · backtest-report.skill (I/O schema, call/stop/loop, verification)"],
+        ["L2 Harness","capsules: market_data_fetch(D1) · kronos_predict(GPU-served) · ensemble_sampling · backtest_run · doc_generation; + context assembly / verifier / policy gate / M"],
+        ["L1 Scaffold","ExecutionSpec: GPU serving (Kronos-small/base + Tokenizer from HF NeoQuasar) · microVM(backtest) · cloud · SSO · network allowlist(AKShare / data vendor)"],
+        ["D1","DataSourceCard: AKShare / market vendor — OHLCV + amount bars, ticker · interval · window"],
+        ["D2","temporally-constrained ForecastEntry (claim: 'pred close path for [t..t+N]', valid_from/to = forecast window, evidence_ref = run_id+inputs) in structured DB"],
+        ["D3","DataUsageSkill: which vendor/interval per ticker class, lookback/pred_len defaults, ensemble weights, fallback source"],
+        ["D4","lifetime: bar freshness (intraday vs EOD), trading-calendar conventions, forecast validity window, inference budget"],
+        ["Ω","RunTrace · forecast & backtest artifacts · IntermediateRelation(ticker↔features↔signal) · LLM Wiki(strategy notes)"],
+      ],
+      phases:[
+        {h:"Phase 0 · Intake (CP)", steps:[
+          ["01","parse_intent(ticker, horizon, risk)","resolve target, N bars, signal type, done-criteria"],
+          ["02","O4 plan","sub-goals {fetch bars → forecast → signal → backtest → report}"],
+        ]},
+        {h:"Phase 1 · Skill activation (CP)", steps:[
+          ["03","activate stock-forecast","required_capabilities = [market_data_fetch, kronos_predict]"],
+          ["04","activate signal-gen + backtest-report","output_format = report{metrics + script required}"],
+        ]},
+        {h:"Phase 2 · Context assembly (CP→DP)", steps:[
+          ["05","consult D3.DataUsageSkill(ticker class)","vendor/interval, lookback=400, pred_len=120, ensemble weights"],
+          ["06","consult D4.lifetime","bar freshness + trading calendar + forecast validity window"],
+          ["07","query D2.semantic_join(valid_at=now)","reuse a still-valid recent ForecastEntry if window covers request (skip recompute)"],
+          ["08","O3 output schema ← SkillSpec","signal schema {side, size, confidence}; report schema"],
+        ]},
+        {h:"Phase 3 · Capability routing + resources (CP)", steps:[
+          ["09","O1 tool selection","capsules {market_data_fetch, kronos_predict, ensemble_sampling, backtest_run, doc_generation}"],
+          ["10","O7 model + O8 token","kronos_predict on GPU (Kronos-small/base); analysis on Opus-tier; allocate inference budget"],
+          ["11","policy gate + ExecutionSpec","SSO; GPU serving pool; network allowlist=[AKShare]; no live-order capability (read-only)"],
+        ]},
+        {h:"Phase 4 · Execution loop (DP)", steps:[
+          ["12","execute market_data_fetch","D1: OHLCV+amount bars; x_timestamp / y_timestamp"],
+          ["13","execute kronos_predict","KronosPredictor.predict(df, pred_len, T, top_p, sample_count) → pred path"],
+          ["14","O5 (optional) ensemble_sampling","sample_count>1 / multi-seed → distribution, not point estimate"],
+          ["15","signal-gen + backtest_run on Scaffold","map forecast → {side,size}; backtest on held-out window"],
+          ["16","observe + verifier/reward","① no look-ahead leakage (y strictly after x) ② backtest sanity (Sharpe/maxDD in range) ③ calibration"],
+          ["17","if verify fails → O6 reflect","leakage / degenerate signal → revise lookback/pred_len/weights → back to 12/13"],
+        ]},
+        {h:"Phase 5 · Output + write-back (CP/DP)", steps:[
+          ["18","execute doc_generation","report artifact (forecast plot, backtest metrics, reproducible script)"],
+          ["19","writeback (M) → D2","ForecastEntry {claim:pred path, valid_from=t, valid_to=t+N, evidence_ref=run_id} — logical append"],
+          ["20","write RunTrace + IntermediateRelation → Ω",""],
+          ["21","distill DataUsageSkill → D3","winning interval/lookback/ensemble weights for this ticker class (P9)"],
+        ]},
+      ],
+      invariants:[
+        ["forecast = temporally-constrained record","a ForecastEntry is valid ONLY for [valid_from, valid_to]; past windows are logically invalidated, never silently reused → no stale-signal hallucination (§4.4.1 S3)"],
+        ["no look-ahead through the contract","y_timestamp strictly after x window; the verifier (step 16) enforces it — Skill never reaches raw future bars on Scaffold directly (P2/P3)"],
+        ["probabilistic sampling lives in the loop, audited","Kronos T/top_p/sample_count are O5/O8 choices logged in RunTrace; same inputs+seed replay → reproducible (N0)"],
+        ["read-only by policy","no live-order capability granted; policy gate fails-closed on any execution-venue tool (P3 capability containment)"],
+      ],
+      reading:[
+        "Pretrained model as a served capability — kronos_predict is a GPU-served capsule on Scaffold; adding more tickers scales on the physical axis (more serving) without touching the forecast Skill (P1).",
+        "The forecast is data with an expiry — it lands in D2 as a ForecastEntry valid only for its window; a later run reuses it only if still valid, else recomputes — preventing stale-signal reuse (RQ3/RQ4 lesson).",
+        "Verification is multi-signal — leakage check + backtest metrics + calibration, not a single accuracy number; mirrors the architecture's verifier/reward design (H9).",
+      ],
+      svg:null,   // set after diagramKronos() is defined
+    },
   ],
   zh: [
     {
@@ -729,8 +792,118 @@ const EXAMPLES = {
         "写回单向 + 逻辑追加 — 执行结果 → Ω → 蒸馏出新 SummaryEntry 回灌 D2(带 evidence_ref，旧条逻辑失效不删) + 更新 D3。闭环：离线总结 → 在线消费 → 执行产出 → 回灌总结，每个可召回结论都能回指原文。",
       ],
     },
+    {
+      id:"kronos", tag:"FinTech",
+      name:"基于 Kronos 的股票预测",
+      goal:"给定标的与预测时长，用 Kronos 基础模型预测未来 N 根 K 线(OHLCV)，转成交易信号，并产出带回测与可复现脚本的报告。",
+      why:"展示一个端到端的基础模型时序 skill：取数(D1 AKShare/行情)、GPU 托管的预训练模型(Scaffold serving)、把概率采样作为循环的一部分、多信号验证(回测指标 + 泄漏检查)、把预测作为带时序约束的记录回写(预测只在指定窗口内有效)。",
+      layers:[
+        ["L3 Skills","stock-forecast.skill · signal-gen.skill · backtest-report.skill（含 I/O schema、call/stop/loop、verification）"],
+        ["L2 Harness","capsule：market_data_fetch(D1) · kronos_predict(GPU 托管) · ensemble_sampling · backtest_run · doc_generation；+ context assembly / verifier / policy gate / M"],
+        ["L1 Scaffold","ExecutionSpec：GPU serving(Kronos-small/base + Tokenizer，HF NeoQuasar) · microVM(回测) · cloud · SSO · network allowlist(AKShare / 数据商)"],
+        ["D1","DataSourceCard：AKShare / 行情商 — OHLCV + amount K 线，ticker · interval · window"],
+        ["D2","带时序约束的 ForecastEntry（claim:'[t..t+N] 的预测收盘路径'，valid_from/to = 预测窗口，evidence_ref = run_id+输入）存结构化 DB"],
+        ["D3","DataUsageSkill：每类标的用哪个数据商/周期、lookback/pred_len 默认值、ensemble 权重、回退源"],
+        ["D4","lifetime：K 线时新性(盘中 vs 收盘)、交易日历口径、预测有效窗口、推理预算"],
+        ["Ω","RunTrace · 预测与回测 artifact · IntermediateRelation(标的↔特征↔信号) · LLM Wiki(策略笔记)"],
+      ],
+      phases:[
+        {h:"阶段 0 · Intake（CP）", steps:[
+          ["01","parse_intent(标的, 时长, 风险)","解析目标、N 根 K 线、信号类型、做完判据"],
+          ["02","O4 plan","sub-goals {取K线 → 预测 → 信号 → 回测 → 报告}"],
+        ]},
+        {h:"阶段 1 · Skill 激活（CP）", steps:[
+          ["03","activate stock-forecast","required_capabilities = [market_data_fetch, kronos_predict]"],
+          ["04","activate signal-gen + backtest-report","output_format = report{指标 + 脚本必填}"],
+        ]},
+        {h:"阶段 2 · Context 组装（CP→DP）", steps:[
+          ["05","consult D3.DataUsageSkill(标的类别)","数据商/周期、lookback=400、pred_len=120、ensemble 权重"],
+          ["06","consult D4.lifetime","K 线时新性 + 交易日历 + 预测有效窗口"],
+          ["07","query D2.semantic_join(valid_at=now)","若近期 ForecastEntry 窗口仍覆盖请求则复用(跳过重算)"],
+          ["08","O3 output schema ← SkillSpec","信号 schema {side, size, confidence}；报告 schema"],
+        ]},
+        {h:"阶段 3 · 能力路由 + 资源就绪（CP）", steps:[
+          ["09","O1 tool 选择","capsule {market_data_fetch, kronos_predict, ensemble_sampling, backtest_run, doc_generation}"],
+          ["10","O7 model + O8 token","kronos_predict 跑 GPU(Kronos-small/base)；分析用 Opus 级；分配推理预算"],
+          ["11","policy gate + ExecutionSpec","SSO；GPU serving pool；network allowlist=[AKShare]；不授予下单能力(只读)"],
+        ]},
+        {h:"阶段 4 · 执行循环（DP）", steps:[
+          ["12","execute market_data_fetch","D1：OHLCV+amount K 线；x_timestamp / y_timestamp"],
+          ["13","execute kronos_predict","KronosPredictor.predict(df, pred_len, T, top_p, sample_count) → 预测路径"],
+          ["14","O5（可选）ensemble_sampling","sample_count>1 / 多种子 → 分布而非点估计"],
+          ["15","signal-gen + backtest_run on Scaffold","预测 → {side,size}；在 held-out 窗口回测"],
+          ["16","observe + verifier/reward","① 无未来泄漏(y 严格晚于 x) ② 回测合理性(Sharpe/最大回撤在区间) ③ 校准度"],
+          ["17","验证失败 → O6 reflect","泄漏 / 退化信号 → 调 lookback/pred_len/权重 → 回 12/13"],
+        ]},
+        {h:"阶段 5 · 产出 + 回写（CP/DP）", steps:[
+          ["18","execute doc_generation","report artifact(预测图、回测指标、可复现脚本)"],
+          ["19","writeback(M) → D2","ForecastEntry {claim:预测路径, valid_from=t, valid_to=t+N, evidence_ref=run_id} — 逻辑追加"],
+          ["20","write RunTrace + IntermediateRelation → Ω",""],
+          ["21","distill DataUsageSkill → D3","本类标的的最优周期/lookback/ensemble 权重（P9）"],
+        ]},
+      ],
+      invariants:[
+        ["预测 = 带时序约束的记录","ForecastEntry 仅在 [valid_from, valid_to] 内有效；过期窗口逻辑失效、不静默复用 → 防陈旧信号幻觉（§4.4.1 S3）"],
+        ["泄漏防护经契约","y_timestamp 严格晚于 x 窗口；verifier(步骤16)强制；Skill 不直接在 Scaffold 上拿原始未来 K 线（P2/P3）"],
+        ["概率采样在循环内且可审计","Kronos T/top_p/sample_count 是 O5/O8 选择，记入 RunTrace；同输入+种子可复现（N0）"],
+        ["策略上只读","不授予下单能力；policy gate 对任何交易通道工具 fail-closed（P3 能力围栏）"],
+      ],
+      reading:[
+        "预训练模型作为被托管的能力 — kronos_predict 是 Scaffold 上 GPU 托管的 capsule；增加标的在物理轴扩(加 serving)，不动预测 Skill（P1）。",
+        "预测是带有效期的数据 — 以 ForecastEntry 落入 D2，仅在其窗口内有效；后续运行只在仍有效时复用，否则重算 — 防陈旧信号复用（RQ3/RQ4 教训）。",
+        "验证是多信号 — 泄漏检查 + 回测指标 + 校准度，而非单一准确率；对应架构的 verifier/reward 设计（H9）。",
+      ],
+      svg:null,
+    },
   ],
 };
+
+/* ===================================================================
+   HOW TO ADD A NEW DRY-RUN EXAMPLE
+   -------------------------------------------------------------------
+   1) Copy the TEMPLATE object below into BOTH EXAMPLES.en[] and
+      EXAMPLES.zh[] (translate the strings; keep `id` identical in both).
+   2) Optional SVG diagram: give it `svg: diagramFor_<id>(lang)` and add a
+      builder modeled on diagramSVG() (reuse dbox()/hArrow()/vArrow()/elbow()).
+      If you omit `svg`, the diagram section just renders empty — fine.
+   3) Re-run:  node build-figures.js   → the selector lists it automatically.
+
+const TEMPLATE_EXAMPLE = {
+  id:"my-usecase",                 // unique slug, SAME in en + zh
+  tag:"Domain",                    // chip label, e.g. "Finance" / "Bio"
+  name:"Short example name",
+  goal:"One-sentence task the agent must accomplish.",
+  why:"Why this use case is worth showing (which layers/props it exercises).",
+  layers:[                         // [layer/subsystem, what it is in THIS run]
+    ["L3 Skills","skill-a · skill-b (each with I/O schema, call/stop/loop, verification)"],
+    ["L2 Harness","capsules: ... ; + context assembly / policy gate / verifier / M"],
+    ["L1 Scaffold","ExecutionSpec: microVM + serving + cloud + SSO + network allowlist"],
+    ["D1","DataSourceCard: ..."],
+    ["D2","temporally-constrained SummaryEntry in structured DB"],
+    ["D3","DataUsageSkill: source selection + join plan + top-k weights"],
+    ["D4","lifetime: freshness · conventions · budget"],
+    ["Ω","RunTrace · IntermediateRelation · LLM Wiki"],
+  ],
+  phases:[                         // each phase: {h: title, steps:[[no, action, detail], ...]}
+    {h:"Phase 0 · Intake (CP)", steps:[
+      ["01","parse_intent(U)","..."],
+      ["02","O4 plan","decompose sub-goals {...}"],
+    ]},
+    // ... Phase 1 Skill activation / 2 Context / 3 Routing / 4 Loop / 5 Output+write-back
+  ],
+  invariants:[                     // [short rule, why it holds ↔ which proposition]
+    ["[..] precede [..]","... (P7)"],
+    ["go through Harness contract","Skill declares required_capabilities; H translates 𝓘→𝓔 (P2)"],
+    ["logical append + evidence_ref","overflow demotes, never hard-deletes (§4.4.1 S3/S4)"],
+  ],
+  reading:[                        // 2-4 takeaways for the data diagram
+    "Two separate data paths — offline pre-digest vs online consume ...",
+    "Shared read-only summary DB removes inter-agent contention ...",
+    "Write-back is one-way & logical-append ...",
+  ],
+  // svg: diagramFor_myUsecase(lang),   // optional; see diagramSVG() as the model
+};
+=================================================================== */
 
 /* ---- SVG data-flow diagram for the AI4Science dry-run (figure-consistent) ---- */
 const DIAGRAM_TX = {
@@ -835,6 +1008,81 @@ function diagramSVG(lang){
   s+=tline(966,oy+oh+34,t.wb,{size:10,weight:700,fill:C.dataText});
   return svgWrap(s);
 }
+/* ---- Kronos dry-run data-flow diagram (figure-consistent) ---- */
+const DIAGRAM_KRONOS_TX = {
+  en:{
+    title:"Kronos Forecast Dry Run — Data Diagram",
+    sub:"A GPU-served foundation model turns fetched bars into a forecast that is stored as a time-bounded record, then verified by backtest before write-back.",
+    src:["Market vendor","AKShare / data API"],
+    d1:["D1 Fetch API","OHLCV + amount bars","ticker · interval · window"],
+    l3:["L3 Skills","stock-forecast · signal-gen","backtest-report"],
+    l2:["L2 Harness","context assembly · O1 route · O7 model · O8 token","verifier (leakage + backtest) · policy gate (read-only)"],
+    kron:["kronos_predict  (GPU-served)","KronosPredictor.predict","pred_len · T · top_p · sample_count"],
+    scaf:["L1 Scaffold","GPU serving (Kronos-small/base + Tokenizer)","microVM backtest · SSO · network allowlist"],
+    fe:["ForecastEntry → D2","claim: pred path · valid_from/to","evidence_ref = run_id"],
+    omega:["Ω Workspace","RunTrace · forecast/backtest artifacts · LLM Wiki"],
+    d3:["D3 DataUsageSkill update","interval/lookback/ensemble weights (P9)"],
+    fetch:"fetch bars", predict:"predict (sampling)", signal:"signal + backtest 𝓔",
+    verify:"verify: no look-ahead + backtest sanity", wb:"writeback [19] time-bounded",
+  },
+  zh:{
+    title:"Kronos 预测 Dry Run — Data Diagram",
+    sub:"GPU 托管的基础模型把取到的 K 线变成预测，作为带有效期的记录存储，回测验证通过后再回写。",
+    src:["行情数据商","AKShare / 数据 API"],
+    d1:["D1 取数 API","OHLCV + amount K 线","ticker · interval · window"],
+    l3:["L3 Skills","stock-forecast · signal-gen","backtest-report"],
+    l2:["L2 Harness","context assembly · O1 路由 · O7 model · O8 token","verifier(泄漏+回测) · policy gate(只读)"],
+    kron:["kronos_predict （GPU 托管）","KronosPredictor.predict","pred_len · T · top_p · sample_count"],
+    scaf:["L1 Scaffold","GPU serving (Kronos-small/base + Tokenizer)","microVM 回测 · SSO · network allowlist"],
+    fe:["ForecastEntry → D2","claim: 预测路径 · valid_from/to","evidence_ref = run_id"],
+    omega:["Ω 工作区","RunTrace · 预测/回测 artifact · LLM Wiki"],
+    d3:["D3 DataUsageSkill 更新","周期/lookback/ensemble 权重 (P9)"],
+    fetch:"取 K 线", predict:"预测 (采样)", signal:"信号 + 回测 𝓔",
+    verify:"验证: 无未来泄漏 + 回测合理", wb:"writeback [19] 带有效期",
+  }
+};
+function diagramKronos(lang){
+  const t=DIAGRAM_KRONOS_TX[lang];
+  let s=frame(t.title,t.sub);
+  // left: source -> D1
+  s+=dbox(56,150,168,72,"neut",t.src);
+  s+=dbox(56,300,168,92,"data",t.d1);
+  s+=vArrow(140,222,300,{stroke:C.dataStroke,head:"t"});
+  // center column: L3 -> L2 -> Scaffold(+Kronos)
+  const CX=300, CW=540;
+  const y3=120, y2=250, ys=470;
+  s+=dbox(CX,y3,CW,66,"skill",t.l3);
+  s+=dbox(CX,y2,CW,120,"harn",t.l2,{strong:true});
+  s+=dbox(CX,ys,260,96,"scaf",t.scaf);
+  // kronos capsule: served model, sits to the right of the Scaffold box (own box, no overlap)
+  s+=dbox(CX+272,ys,CW-272,96,"harn",t.kron,{strong:true});
+  // arrows
+  s+=vArrow(CX+CW/2,y3+66,y2,{stroke:C.harnStroke});
+  s+=vArrow(CX+CW/2,y2+120,ys,{stroke:C.scafStroke,head:"o"});
+  s+=tline(CX+CW/2+12,(y2+120+ys)/2,t.signal,{size:10,fill:C.scafText});
+  // D1 -> L2 (fetch)
+  s+=hArrow(224,CX,y2+60,{stroke:C.dataStroke,head:"t"});
+  s+=tline(232,y2+52,t.fetch,{size:10,fill:C.dataText});
+  // L2 -> kronos (predict) and back
+  s+=elbow([[CX+CW,y2+60],[CX+CW+18,y2+60],[CX+CW+18,ys+48],[CX+CW,ys+48]],{stroke:C.harnStroke,sw:1.6,head:"a"});
+  s+=tline(CX+CW+24,(y2+60+ys+48)/2,t.predict,{size:10,fill:C.harnText});
+  // right column: ForecastEntry(D2) , Omega , D3
+  const RX=872, RW=272;
+  s+=dbox(RX,y2,RW,92,"data",t.fe);
+  s+=dbox(RX,ys,RW,72,"data",t.omega);
+  s+=dbox(RX,640,RW,60,"data",t.d3);
+  // scaffold/omega: results -> omega ; omega -> D3
+  s+=hArrow(CX+CW,RX,ys+40,{stroke:C.scafStroke,head:"t"});
+  s+=vArrow(RX+RW/2,ys+72,640,{stroke:C.dataStroke,head:"t"});
+  // verify label near harness verifier row
+  s+=tline(CX+20,y2+108,t.verify,{size:10,fill:C.harnText});
+  // writeback: Omega -> ForecastEntry(D2), routed up the LEFT edge of the right column
+  s+=elbow([[RX+44,ys],[RX+44,y2+92]],{stroke:C.dataStroke,sw:1.6,head:"t"});
+  s+=tline(RX+52,ys-8,t.wb,{size:10,weight:700,fill:C.dataText});
+  // D2 ForecastEntry consulted back into L2 (semantic_join reuse) — dashed, separate lane
+  s+=elbow([[RX,y2+30],[CX+CW+44,y2+30],[CX+CW+44,y2+96],[CX+CW,y2+96]],{stroke:C.dataStroke,sw:1.4,head:"a",dash:"5 4"});
+  return svgWrap(s);
+}
 const DRY = {
   en:{ htmllang:"en", brand:"Agentic Runtime", title:"Dry Run — Architecture Walkthrough",
     lead:"Pick a use case and trace one full run through <b>A = ⟨S, H, X⟩</b> + the data subsystem 𝒟 — the spec call sequence, the layer instantiation, and the data-flow diagram.",
@@ -851,8 +1099,11 @@ const DRY = {
 function dryRunHTML(D){
   const lang = D.htmllang==="en"?"en":"zh";
   const exs = EXAMPLES[lang];
-  // attach figure-consistent SVG diagram to the AI4Science example
-  for(const e of exs){ if(e.id==="ai4science") e.svg = diagramSVG(lang); }
+  // attach figure-consistent SVG diagrams per example
+  for(const e of exs){
+    if(e.id==="ai4science") e.svg = diagramSVG(lang);
+    else if(e.id==="kronos") e.svg = diagramKronos(lang);
+  }
   const tabs = exs.map((e,i)=>`<button class="tab${i===0?" on":""}" data-ex="${e.id}">${esc(e.tag)} · ${esc(e.name)}</button>`).join("");
   const panel = e=>{
     const layers = e.layers.map(([k,v])=>`<tr><td class="id">${esc(k)}</td><td>${esc(v)}</td></tr>`).join("");
