@@ -323,8 +323,91 @@ function wrap(text,maxw,size){
   if(cur)out.push(cur);return out;
 }
 
+/* ---------- FIGURE 4 : Code-as-Contract (probabilistic authoring, deterministic execution) ---------- */
+const D4 = {
+  en:{
+    title:"Code as the Contract — How Harness Turns a Plan into Action",
+    sub:"The LLM writes the orchestration code (probabilistic); the runtime runs it (deterministic & auditable). That generated code IS the “deterministic kernel”.",
+    left:"PROBABILISTIC — LLM authors",
+    right:"DETERMINISTIC — runtime executes",
+    n1:["Plan","NL sub-goal DAG · acceptance by PRD"],
+    n2:["Tool fan-out","many candidate calls per sub-goal (LLM-driven)"],
+    n3:["Generate orchestration code","dispatch + sub-agent dependency graph"],
+    n4:["Sub-agents run in parallel","on Scaffold (isolated)"],
+    n5:["Verify + select","keep the best candidate; replayable trace"],
+    reuse:"reward-gated success → crystallize as a Skill (code-loop)",
+    skill:["Skill = crystallized code-loop","shots + causal trace + reward → integrated tool, shared across users"],
+    couple:"Skill ⊥ Harness — coupled only through the code-loop; each side iterates on its own",
+    loopback:"not good enough → revise plan",
+  },
+  zh:{
+    title:"Code 即契约 — Harness 如何把 Plan 变成行动",
+    sub:"LLM 写编排代码（概率性）；runtime 运行它（确定、可审计）。这段被生成的代码，就是所谓的“确定性内核”。",
+    left:"概率性 — LLM 生成",
+    right:"确定性 — runtime 执行",
+    n1:["Plan","NL 子目标 DAG · 验收靠 PRD"],
+    n2:["工具 fan-out","每个子目标多个候选调用（LLM 驱动）"],
+    n3:["生成编排代码","dispatch + 子 agent 依赖图"],
+    n4:["子 agent 并行执行","在 Scaffold（隔离）"],
+    n5:["verify + 筛选","保留最优候选；可重放 trace"],
+    reuse:"reward-gated 成功 → 结晶为 Skill（code-loop）",
+    skill:["Skill = 结晶的 code-loop","shots + 因果 trace + reward → integrated tool，跨用户共享"],
+    couple:"Skill ⊥ Harness — 只通过 code-loop 耦合，两侧各自迭代",
+    loopback:"不够好 → 修订 plan",
+  }
+};
+function fig4(t){
+  let s=frame(t.title,t.sub);
+  // two vertical bands: left = probabilistic authoring, right = deterministic execution
+  const LX=70, LW=470, RX=660, RW=470;
+  s+=rect(LX,120,LW,470,{fill:"#f7f2ff",stroke:C.harnStroke,sw:1.3,rx:16,dash:"6 5",filter:false});
+  s+=rect(RX,120,RW,470,{fill:"#fff6ee",stroke:C.scafStroke,sw:1.3,rx:16,dash:"6 5",filter:false});
+  s+=tline(LX+20,146,t.left,{size:12,weight:800,fill:C.harnText});
+  s+=tline(RX+20,146,t.right,{size:12,weight:800,fill:C.scafText});
+  // left column steps 1-3 (authoring)
+  const bw=410, bh=66;
+  const L1=170, L2=266, L3=362;
+  const box=(x,y,pal,lines,strong)=>{
+    const fill=pal==="h"?(strong?C.harnStrong:"#fff"):(pal==="s"?C.scafFill:C.skillFill);
+    const stroke=pal==="h"?C.harnStroke:(pal==="s"?C.scafStroke:C.skillStroke);
+    const tc=pal==="h"?C.harnText:(pal==="s"?C.scafText:C.skillText);
+    let r=rect(x,y,bw,bh,{fill,stroke,sw:strong?1.7:1.2,rx:12,filter:false});
+    r+=tline(x+18,y+26,lines[0],{size:13.5,weight:800,fill:tc});
+    r+=leftLines(x+18,y+46,wrap(lines[1],bw-36,10.6),{size:10.6,fill:C.mut,lh:13});
+    return r;
+  };
+  s+=box(LX+30,L1,"h",t.n1,false);
+  s+=box(LX+30,L2,"h",t.n2,false);
+  s+=box(LX+30,L3,"h",t.n3,true);   // generate code — the seam
+  s+=vArrow(LX+30+bw/2,L1+bh,L2,{stroke:C.harnStroke});
+  s+=vArrow(LX+30+bw/2,L2+bh,L3,{stroke:C.harnStroke});
+  // right column steps 4-5 (execution)
+  const R4=200, R5=320;
+  s+=box(RX+30,R4,"s",t.n4,false);
+  s+=box(RX+30,R5,"h",t.n5,true);
+  s+=vArrow(RX+30+bw/2,R4+bh,R5,{stroke:C.scafStroke,head:"o"});
+  // seam arrow: generate code (L3) --> run (R4)  = probabilistic->deterministic handoff
+  s+=elbow([[LX+30+bw,L3+bh/2],[600,L3+bh/2],[600,R4+bh/2],[RX+30,R4+bh/2]],{stroke:C.harnStroke,sw:2.2,head:"a"});
+  s+=tline(566,L3+bh/2-10,"code",{size:11,weight:800,fill:C.harnText,mono:true});
+  // verify loopback -> plan (dashed up the middle)
+  s+=elbow([[RX+30,R5+bh/2],[610,R5+bh/2],[610,110],[LX+30+bw/2,110],[LX+30+bw/2,L1]],{stroke:C.scafStroke,sw:1.5,head:"a",dash:"6 5"});
+  s+=tline(300,104,t.loopback,{size:10.5,weight:700,fill:C.scafStroke});
+  // bottom: crystallized skill band + coupling note
+  const BY=470, BW2=RX+RW-LX;
+  s+=rect(LX,BY,BW2,54,{fill:C.skillFill,stroke:C.skillStroke,sw:1.4,rx:13,filter:false});
+  s+=tline(LX+18,BY+22,t.skill[0],{size:13,weight:800,fill:C.skillText});
+  s+=leftLines(LX+18,BY+40,wrap(t.skill[1],BW2-36,11),{size:11,fill:"#2c5e47",lh:14});
+  // verify -> skill (reward-gated)
+  s+=elbow([[RX+30+bw/2,R5+bh],[RX+30+bw/2,BY]],{stroke:C.skillStroke,sw:1.8,head:"g"});
+  s+=tline(RX+30+bw/2+10,R5+bh+22,t.reuse,{size:10,fill:C.skillText});
+  // coupling note
+  s+=rect(LX,BY+66,BW2,40,{fill:"#f1ebe0",stroke:C.harnStroke,sw:1.2,rx:11,dash:"6 6",filter:false});
+  s+=center(LX+BW2/2,BY+86,[t.couple],{size:12,weight:700,fill:C.harnText});
+  return svgWrap(s);
+}
+
 /* ---------- emit ---------- */
-const FIGS={f1:fig1,f2:fig2,f3:fig3}, DICT={f1:D1,f2:D2,f3:D3};
+const FIGS={f1:fig1,f2:fig2,f3:fig3,f4:fig4}, DICT={f1:D1,f2:D2,f3:D3,f4:D4};
 const standalone=(svg,lang)=>`<!DOCTYPE html><html lang="${lang}"><head><meta charset="UTF-8">
 <style>@page{size:${W}px ${H}px;margin:0}html,body{margin:0;padding:0;background:${C.page}}#p{width:${W}px;height:${H}px}#p svg{display:block;width:${W}px;height:${H}px}</style></head>
 <body><div id="p">${svg}</div></body></html>`;
@@ -358,11 +441,16 @@ const PAGE = {
       {n:"3", h:"How the agent works — a step-by-step walkthrough", fig:"f3",
        p:[ "The Harness runs a loop. The <b>LLM makes the choices</b> — it plans, picks the next tool (<b>O1</b>), selects the model for the step (<b>O7</b>) and allocates the token budget (<b>O8</b>) — while typed contracts, a policy gate and a verifier keep it safe and on track. This is what we call a <b>probabilistic control plane</b> (claim N0): the decisions are LLM-driven, so they must be constrained by audit logs and invariants.",
             "Each step is checked before it runs, executed on the Scaffold or sent as a query to the data subsystem, then scored by a verifier/reward. If the score is good enough the artifact is delivered; otherwise the agent reflects, revises the plan and loops back. Quietly in the background, system skills keep memory compact and relevant between steps." ]},
+      {n:"4", h:"Code as the contract — the real engine of the Harness", fig:"f4",
+       p:[ "Under the hood the Harness is not just a bag of tools; it is a <b>managed runtime whose contract is code</b>. From a Skill’s requirements the LLM drafts a <b>plan</b> — sub-goals and their order, written in natural language and governed by a PRD (the skill’s acceptance spec). For each sub-goal several tools may apply, so the LLM does a <b>probabilistic fan-out</b>: it writes <b>orchestration code</b> for competing candidates, dispatches them to sub-agents (whose dependencies are themselves expressed in that generated code), then <b>verifies and selects</b> the best. That is the agent loop.",
+            "This resolves an apparent contradiction. Recent systems argue the scheduler should be pulled <i>out</i> of the LLM into a deterministic kernel. Our answer (<b>N6</b>): <b>the LLM authors the code probabilistically, and the runtime executes it deterministically</b> — the generated, verified code <i>is</i> that deterministic kernel. A successful, reward-gated loop is then <b>crystallized as a Skill</b> (<b>N7</b>): its tool calls and result-causality are frozen into a code-loop that can be shared across users and invoked as a single integrated tool. Because Skill and Harness meet only through this code-loop, each can evolve on its own (<b>N8 / P10</b>): Skills add stronger tools; the Harness absorbs successful skills and rides ever-stronger reasoning models." ]},
     ],
     claimsH:"The falsifiable core",
     claims:[
       ["C5","Logical and physical scaling are <b>orthogonal</b>, with the Harness contract as the decoupling point."],
       ["P1","Adding Skills doesn’t drag down throughput (∂Θ/∂|S|≈0); adding Scaffold doesn’t change coverage (∂𝒯/∂|X|=0)."],
+      ["N6","<b>Code is the contract</b>: the LLM authors orchestration code probabilistically; the runtime executes it deterministically & auditably."],
+      ["P10","Skill ⊥ Harness — coupled only through the code-loop, so each side iterates independently (co-evolution stays at the interface)."],
       ["N0","The control plane is <b>probabilistic</b> (LLM-driven) and is made trustworthy by audit logs + invariants."],
       ["P3","Adding a Skill must preserve safety invariants — benign-in-isolation skills can be harmful in composition."],
     ],
@@ -378,6 +466,7 @@ const PAGE = {
       ["P7","Data","fixed use case ⇒ ∂ℓ/∂|src| ≈ 0","adding a data source raises per-request token cost"],
       ["P8","Data","off-policy summary Σ balances coverage and precision","Σ beats neither live discovery nor manual metadata"],
       ["P9","Data","data-usage skill makes fetch decisions converge","repeated use cases keep diverging / oscillating"],
+      ["P10","Coupling","Skill ⊥ Harness through the code-loop; each side iterates alone","stronger model or new tool forces rewriting the other side"],
     ],
     novH:"What is genuinely new (novelty ledger)",
     novCols:["#","Claim","The gap it fills"],
@@ -387,9 +476,12 @@ const PAGE = {
       ["N1","Off-policy, schema-on-read semantic summaries of data sources","fills the middle path left open by ‘Do Agents Need Semantic Metadata?’"],
       ["N2","Data governance as a reusable skill, not just boundary enforcement","governance work only does compliance enforcement"],
       ["N5","Skills split three ways: task / system / data-usage","existing skill surveys don’t treat data-usage as its own class"],
+      ["N6","Code-as-Contract: orchestration is LLM-authored code — probabilistic authoring, deterministic execution","KAIJU/ActPlane move the kernel out of the LLM but never note the kernel IS the generated code"],
+      ["N7","Skill = crystallized code-loop: reward-gated success frozen as a shareable integrated tool (with causal trace)","Voyager/AWM store executable skills but without reward-gate + causality + cross-user sharing"],
+      ["N8","Dual decoupling: Skill⊥Scaffold and Skill⊥Harness, meeting only at the code-loop","SkillSmith argues co-evolution but gives no loose-coupling boundary"],
     ],
-    figcaps:{f1:"Figure 1 — the three layers and what each is for.",f2:"Figure 2 — the spec list inside each layer.",f3:"Figure 3 — the agent loop, step by step."},
-    foot:"Discussion draft · 2026-06-28 · companion to the synthesized paper draft v0.3.",
+    figcaps:{f1:"Figure 1 — the three layers and what each is for.",f2:"Figure 2 — the spec list inside each layer.",f3:"Figure 3 — the agent loop, step by step.",f4:"Figure 4 — code as the contract: probabilistic authoring, deterministic execution."},
+    foot:"Discussion draft · 2026-07-03 · companion to the synthesized paper draft v0.5.",
     other:"ZH",
     otherHref:"arch-zh.html",
   },
@@ -409,11 +501,16 @@ const PAGE = {
       {n:"3", h:"Agent 是怎么工作的 — 分步走查", fig:"f3",
        p:[ "Harness 运行一个循环。由 <b>LLM 做选择</b> —— 它制定计划、选下一个工具（<b>O1</b>）、为该步选模型（<b>O7</b>）、分配 token 预算（<b>O8</b>）—— 同时 typed contract、policy gate 与 verifier 保证它安全、不跑偏。这就是我们说的<b>概率性控制面</b>（命题 N0）：决策由 LLM 驱动，因此必须用审计日志 + 不变量来约束。",
             "每一步先被检查再执行：在 Scaffold 上运行，或作为查询发往数据子系统，然后由 verifier/reward 打分。够好就交付产物；否则 agent 反思、修订计划并回到循环。后台里，system skills 在步骤之间持续保持记忆的精简与相关。" ]},
+      {n:"4", h:"Code 即契约 —— Harness 真正的引擎", fig:"f4",
+       p:[ "深入看，Harness 不是「一堆工具」，而是一个<b>以 code 为契约的可管理运行时</b>。LLM 依 Skill 的要求产出 <b>plan</b>——子目标及其顺序，主体是自然语言、验收由 PRD（skill 的验收规约）控制。每个子目标可能有多个工具适用，于是 LLM 做<b>概率性 fan-out</b>：为竞争候选<b>生成编排代码</b>、派给子 agent（子 agent 之间的依赖也写在这段生成代码里），再<b>verify 并筛选</b>出最优。这就是 agent 循环。",
+            "这化解了一个表面矛盾：近期系统主张把调度器从 LLM 里<i>移出</i>到确定性内核。我们的回答（<b>N6</b>）：<b>LLM 概率性地「写」代码、runtime 确定性地「跑」代码</b> —— 那段被生成、被验证的代码<i>就是</i>确定性内核。一个 reward-gated 的成功循环随后<b>结晶为 Skill</b>（<b>N7</b>）：其工具调用与结果因果被固化成一段 code-loop，可跨用户共享、作为单个 integrated tool 调用。因为 Skill 与 Harness 只经这段 code-loop 相遇，二者可各自演化（<b>N8 / P10</b>）：Skill 引入更强的工具；Harness 吸收成功 skill 并搭上越来越强的推理模型。" ]},
     ],
     claimsH:"可证伪的内核",
     claims:[
       ["C5","逻辑扩展与物理扩展<b>正交</b>，Harness 契约是解耦点。"],
       ["P1","加 Skills 不拖垮吞吐（∂Θ/∂|S|≈0）；加 Scaffold 不改变覆盖（∂𝒯/∂|X|=0）。"],
+      ["N6","<b>Code 即契约</b>：LLM 概率性地写编排代码，runtime 确定、可审计地执行。"],
+      ["P10","Skill ⊥ Harness —— 只经 code-loop 耦合，两侧各自迭代（协同演化止于接口）。"],
       ["N0","控制面是<b>概率性</b>的（LLM 驱动），靠审计日志 + 不变量使其可信。"],
       ["P3","加 Skill 必须保持安全不变量 —— 单独 benign 的 skill 组合后可能有害。"],
     ],
@@ -429,6 +526,7 @@ const PAGE = {
       ["P7","数据","固定 use case ⇒ ∂ℓ/∂|src| ≈ 0","加数据源抬高单请求 token 成本"],
       ["P8","数据","off-policy 摘要 Σ 兼顾覆盖与精度","Σ 既不优于在线发现也不优于人工元数据"],
       ["P9","数据","data-usage skill 使取数决策收敛","重复 use case 仍发散 / 震荡"],
+      ["P10","耦合","Skill ⊥ Harness 经 code-loop；两侧各自迭代","换更强模型或引新工具却必须改写对方"],
     ],
     novH:"真正的新意（创新点登记）",
     novCols:["#","主张","填补的空白"],
@@ -438,9 +536,12 @@ const PAGE = {
       ["N1","对数据源做 off-policy、schema-on-read 的语义摘要","填补《Do Agents Need Semantic Metadata?》留空的折中路"],
       ["N2","数据治理即可复用 skill，而非只做边界 enforcement","治理类工作只做合规 enforcement"],
       ["N5","skill 三分：task / system / data-usage","现有 skill 综述未把 data-usage 当独立一类"],
+      ["N6","Code 即契约：编排是 LLM 生成的代码——概率生成、确定执行","KAIJU/ActPlane 把内核移出 LLM 却未点出内核即被生成的代码"],
+      ["N7","Skill = 结晶 code-loop：reward-gated 成功固化为可共享 integrated tool（含因果 trace）","Voyager/AWM 存可执行技能但缺 reward-gate + 因果 + 跨用户共享"],
+      ["N8","双解耦：Skill⊥Scaffold 且 Skill⊥Harness，只在 code-loop 相遇","SkillSmith 主张协同演化但未给松耦合边界"],
     ],
-    figcaps:{f1:"图 1 — 三个层及各自的用途。",f2:"图 2 — 每一层里的 spec 清单。",f3:"图 3 — agent loop 的分步走查。"},
-    foot:"讨论稿 · 2026-06-28 · 配套综合论文草稿 v0.3。",
+    figcaps:{f1:"图 1 — 三个层及各自的用途。",f2:"图 2 — 每一层里的 spec 清单。",f3:"图 3 — agent loop 的分步走查。",f4:"图 4 — code 即契约：概率生成、确定执行。"},
+    foot:"讨论稿 · 2026-07-03 · 配套综合论文草稿 v0.5。",
     other:"English",
     otherHref:"arch-en.html",
   }
@@ -985,9 +1086,9 @@ function diagramSVG(lang){
   const SK=66, SKW=200;
   s+=dbox(SK,y2,SKW,bh2,"skill",["Skills","→ activate","specs / schema"]);
   // ---- arrows (online) ----
-  // db --(semantic_join)--> harness
-  s+=elbow([[966,oy+oh],[966,300],[560,300],[560,y2]],{stroke:C.dataStroke,sw:1.8,head:"t"});
-  s+=tline(575,296,t.join,{size:10.5,fill:C.dataText});
+  // db --(semantic_join)--> harness, routed through the L3–L2 gap (no crossing L3)
+  s+=elbow([[900,oy+oh],[900,400],[560,400],[560,y2]],{stroke:C.dataStroke,sw:1.8,head:"t"});
+  s+=tline(596,394,t.join,{size:10.5,fill:C.dataText});
   // skills -> L3 -> L2
   s+=hArrow(SK+SKW,LX,y3+bh3/2,{stroke:C.skillStroke,head:"g"});
   s+=tline(SK+SKW+8,y3+bh3/2-8,t.intent,{size:10,fill:C.skillText});
@@ -1024,6 +1125,7 @@ const DIAGRAM_KRONOS_TX = {
     d3:["D3 DataUsageSkill update","interval/lookback/ensemble weights (P9)"],
     fetch:"fetch bars", predict:"predict (sampling)", signal:"signal + backtest 𝓔",
     verify:"verify: no look-ahead + backtest sanity", wb:"writeback [19] time-bounded",
+    join:"reuse if still valid", results:"results → Ω",
   },
   zh:{
     title:"Kronos 预测 Dry Run — Data Diagram",
@@ -1039,48 +1141,54 @@ const DIAGRAM_KRONOS_TX = {
     d3:["D3 DataUsageSkill 更新","周期/lookback/ensemble 权重 (P9)"],
     fetch:"取 K 线", predict:"预测 (采样)", signal:"信号 + 回测 𝓔",
     verify:"验证: 无未来泄漏 + 回测合理", wb:"writeback [19] 带有效期",
+    join:"仍有效则复用", results:"结果 → Ω",
   }
 };
 function diagramKronos(lang){
   const t=DIAGRAM_KRONOS_TX[lang];
   let s=frame(t.title,t.sub);
+  // enclosing frame for visual grouping (matches the AI4Science structured look)
+  s+=rect(40,100,1120,640,{fill:"#fefcf7",stroke:C.neutStroke,sw:1.3,rx:18,filter:false});
+  // ---- geometry: left data column · center S/H/X stack · right data column ----
+  const CX=320, CW=480, cxc=CX+CW/2;
+  const y3=140, h3=64, y2=250, h2=126, ys=478, hsb=110;
   // left: source -> D1
-  s+=dbox(56,150,168,72,"neut",t.src);
-  s+=dbox(56,300,168,92,"data",t.d1);
-  s+=vArrow(140,222,300,{stroke:C.dataStroke,head:"t"});
-  // center column: L3 -> L2 -> Scaffold(+Kronos)
-  const CX=300, CW=540;
-  const y3=120, y2=250, ys=470;
-  s+=dbox(CX,y3,CW,66,"skill",t.l3);
-  s+=dbox(CX,y2,CW,120,"harn",t.l2,{strong:true});
-  s+=dbox(CX,ys,260,96,"scaf",t.scaf);
-  // kronos capsule: served model, sits to the right of the Scaffold box (own box, no overlap)
-  s+=dbox(CX+272,ys,CW-272,96,"harn",t.kron,{strong:true});
-  // arrows
-  s+=vArrow(CX+CW/2,y3+66,y2,{stroke:C.harnStroke});
-  s+=vArrow(CX+CW/2,y2+120,ys,{stroke:C.scafStroke,head:"o"});
-  s+=tline(CX+CW/2+12,(y2+120+ys)/2,t.signal,{size:10,fill:C.scafText});
-  // D1 -> L2 (fetch)
-  s+=hArrow(224,CX,y2+60,{stroke:C.dataStroke,head:"t"});
-  s+=tline(232,y2+52,t.fetch,{size:10,fill:C.dataText});
-  // L2 -> kronos (predict) and back
-  s+=elbow([[CX+CW,y2+60],[CX+CW+18,y2+60],[CX+CW+18,ys+48],[CX+CW,ys+48]],{stroke:C.harnStroke,sw:1.6,head:"a"});
-  s+=tline(CX+CW+24,(y2+60+ys+48)/2,t.predict,{size:10,fill:C.harnText});
-  // right column: ForecastEntry(D2) , Omega , D3
-  const RX=872, RW=272;
-  s+=dbox(RX,y2,RW,92,"data",t.fe);
-  s+=dbox(RX,ys,RW,72,"data",t.omega);
-  s+=dbox(RX,640,RW,60,"data",t.d3);
-  // scaffold/omega: results -> omega ; omega -> D3
-  s+=hArrow(CX+CW,RX,ys+40,{stroke:C.scafStroke,head:"t"});
-  s+=vArrow(RX+RW/2,ys+72,640,{stroke:C.dataStroke,head:"t"});
-  // verify label near harness verifier row
-  s+=tline(CX+20,y2+108,t.verify,{size:10,fill:C.harnText});
-  // writeback: Omega -> ForecastEntry(D2), routed up the LEFT edge of the right column
-  s+=elbow([[RX+44,ys],[RX+44,y2+92]],{stroke:C.dataStroke,sw:1.6,head:"t"});
-  s+=tline(RX+52,ys-8,t.wb,{size:10,weight:700,fill:C.dataText});
-  // D2 ForecastEntry consulted back into L2 (semantic_join reuse) — dashed, separate lane
-  s+=elbow([[RX,y2+30],[CX+CW+44,y2+30],[CX+CW+44,y2+96],[CX+CW,y2+96]],{stroke:C.dataStroke,sw:1.4,head:"a",dash:"5 4"});
+  s+=dbox(70,168,176,72,"neut",t.src);
+  s+=dbox(70,316,176,96,"data",t.d1);
+  s+=vArrow(158,240,316,{stroke:C.dataStroke,head:"t"});
+  // center stack
+  s+=dbox(CX,y3,CW,h3,"skill",t.l3);
+  s+=dbox(CX,y2,CW,h2,"harn",t.l2,{strong:true});
+  // scaffold band contains the kronos capsule (nested, no gap)
+  s+=dbox(CX,ys,CW,hsb,"scaf",t.scaf);
+  s+=dbox(CX+196,ys+13,CW-212,hsb-26,"harn",t.kron,{strong:true});
+  // center vertical flow (land on scaffold-label area at left third → x = CX+98)
+  s+=vArrow(cxc,y3+h3,y2,{stroke:C.harnStroke});
+  s+=vArrow(CX+98,y2+h2,ys,{stroke:C.scafStroke,head:"o"});
+  s+=tline(CX+106,(y2+h2+ys)/2,t.signal,{size:10,fill:C.scafText});
+  // D1 -> L2 (fetch), into L2 left edge
+  s+=hArrow(246,CX,y2+62,{stroke:C.dataStroke,head:"t"});
+  s+=tline(254,y2+54,t.fetch,{size:10,fill:C.dataText});
+  // L2 -> kronos predict (down into the nested capsule, own short lane on the right third)
+  s+=vArrow(CX+CW-120,y2+h2,ys+13,{stroke:C.harnStroke});
+  s+=tline(CX+CW-112,(y2+h2+ys)/2,t.predict,{size:10,fill:C.harnText});
+  s+=tline(CX+16,y2+h2-14,t.verify,{size:10,fill:C.harnText});
+  // ---- right data column (aligned to center rows) ----
+  const RX=872, RW=248;
+  s+=dbox(RX,y2,RW,h2,"data",t.fe);          // ForecastEntry aligned to Harness row
+  s+=dbox(RX,ys,RW,hsb-34,"data",t.omega);    // Omega aligned to Scaffold row
+  s+=dbox(RX,648,RW,60,"data",t.d3);          // D3 below
+  // Scaffold -> Omega (results), single horizontal lane
+  s+=hArrow(CX+CW,RX,ys+(hsb-34)/2,{stroke:C.scafStroke,head:"t"});
+  s+=tline(CX+CW+10,ys+(hsb-34)/2-8,t.results,{size:10,fill:C.scafText});
+  // Omega -> D3 (down)
+  s+=vArrow(RX+RW/2,ys+hsb-34,648,{stroke:C.dataStroke,head:"t"});
+  // writeback: Omega -> ForecastEntry, vertical in the right column (x = RX+40)
+  s+=elbow([[RX+40,ys],[RX+40,y2+h2]],{stroke:C.dataStroke,sw:1.6,head:"t"});
+  s+=tline(RX+48,ys-8,t.wb,{size:10,weight:700,fill:C.dataText});
+  // ForecastEntry -> L2 (semantic_join reuse): dashed, straight horizontal, arrow into L2 right edge
+  s+=elbow([[RX,y2+28],[CX+CW,y2+28]],{stroke:C.dataStroke,sw:1.4,head:"a",dash:"5 4"});
+  s+=tline(CX+CW+10,y2+22,t.join||"reuse",{size:10,fill:C.dataText});
   return svgWrap(s);
 }
 const DRY = {
