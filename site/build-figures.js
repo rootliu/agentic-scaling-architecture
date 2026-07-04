@@ -423,7 +423,7 @@ const D5 = {
       ["T7","Human-in-the-loop","ask · confirm · approve — human as a callable capability","human"],
       ["T8","Ephemeral code tool","LLM writes a program on the fly (O5) — not yet crystallized","eph"],
     ],
-    note:"T8 → T3: an on-the-fly generated tool becomes a reusable skill after verify + reward-gate + generalization. Sub-agent derivation splits into {Scaffold +X (compute) | T8 (generated tool) | N6 code-loop (dispatch)} — not a separate kind. New vs. prior enums: T2 (model-as-tool) & T5 (LLM-invoked maintenance).",
+    note:"T8 → T3: an on-the-fly generated tool becomes a reusable skill after verify + reward-gate + generalization. Deriving a sub-agent is not a tool kind: LAUNCHING it is a Scaffold interface (fork = new CPU/isolation, +X); what it runs is existing tools or a T8 program; N6 code-loop dispatches. New vs. prior enums: T2 (model-as-tool) & T5 (LLM-invoked maintenance).",
   },
   zh:{
     title:"八种工具 — 同一 Capsule 接口",
@@ -440,7 +440,7 @@ const D5 = {
       ["T7","human-in-the-loop","追问 · 确认 · 审批 —— 把人当作可调用的能力","human"],
       ["T8","即时生成 code 工具","LLM 当场编写程序（O5）—— 尚未结晶","eph"],
     ],
-    note:"T8 → T3：即时生成的工具经 verify + reward-gate + 泛化测试后升为可复用 skill。sub-agent 派生分解为 {Scaffold +X（算力）| T8（生成工具）| N6 code-loop（派发）}，不单列。相对原枚举新增：T2（model-as-tool）与 T5（LLM 可调用的维护）。",
+    note:"T8 → T3：即时生成的工具经 verify + reward-gate + 泛化测试后升为可复用 skill。派生 sub-agent 不是一种工具：把它「启动」是 Scaffold 接口（fork = 新 CPU/隔离，+X）；它「跑什么」= 已有工具或 T8 程序；N6 code-loop 负责派发。相对原枚举新增：T2（model-as-tool）与 T5（LLM 可调用的维护）。",
   }
 };
 function fig5(t){
@@ -519,7 +519,7 @@ const PAGE = {
             "This resolves an apparent contradiction. Recent systems argue the scheduler should be pulled <i>out</i> of the LLM into a deterministic kernel. Our answer (<b>N6</b>): <b>the LLM authors the code probabilistically, and the runtime executes it deterministically</b> — the generated, verified code <i>is</i> that deterministic kernel. A successful, reward-gated loop is then <b>crystallized as a Skill</b> (<b>N7</b>): its tool calls and result-causality are frozen into a code-loop that can be shared across users and invoked as a single integrated tool. Because Skill and Harness meet only through this code-loop, each can evolve on its own (<b>N8 / P10</b>): Skills add stronger tools; the Harness absorbs successful skills and rides ever-stronger reasoning models." ]},
       {n:"5", h:"Eight kinds of tool — one capsule interface", fig:"f5",
        p:[ "A Harness “tool” is not one thing. We classify them into eight kinds that all expose the <i>same</i> intent + I/O contract to the LLM, differing only in implementation and governance: <b>T1</b> standard tools (web search); <b>T2</b> model tools (a fine-tuned OCR / classifier called as a tool); <b>T3</b> crystallized skills (reusable, skill-verified code-loops — N7); <b>T4</b> data-theme queries (external: TianYanCha / GitHub / arXiv; internal: roster, org chart, quota, territory); <b>T5</b> harness meta-tools the LLM can call on itself (compact, recap, writeback); <b>T6</b> scaffold commands (bash, file); <b>T7</b> human-in-the-loop (ask / confirm / approve — the human as a callable capability); <b>T8</b> ephemeral code tools the LLM writes on the fly (O5), not yet crystallized.",
-            "Genuine additions over the usual tool enum: <b>T2 model-as-tool</b> (a served small model is a first-class capability), <b>T5</b> (maintenance as an <i>LLM-invoked</i> meta-tool), and the <b>T8 → T3</b> lifecycle (an on-the-fly generated tool becomes a reusable skill after verify + reward-gate + generalization). <b>T7</b> makes human-in-the-loop a first-class, auditable tool — and every human confirmation feeds a T3 skill as a positive example. Deriving a sub-agent is not a separate kind: it splits into <i>Scaffold +X</i> (more compute for existing tools), a <i>T8</i> generated tool (a freshly written program), and the <i>N6 code-loop</i> that dispatches them." ]},
+            "Genuine additions over the usual tool enum: <b>T2 model-as-tool</b> (a served small model is a first-class capability), <b>T5</b> (maintenance as an <i>LLM-invoked</i> meta-tool), and the <b>T8 → T3</b> lifecycle (an on-the-fly generated tool becomes a reusable skill after verify + reward-gate + generalization). <b>T7</b> makes human-in-the-loop a first-class, auditable tool — and every human confirmation feeds a T3 skill as a positive example. Deriving a sub-agent is not a separate kind: <i>launching</i> one is a Scaffold interface (a fork that claims new CPU / isolation — physical scaling +X); what it <i>runs</i> is either existing tools or a freshly written T8 program; and the N6 code-loop dispatches them." ]},
     ],
     claimsH:"The falsifiable core",
     claims:[
@@ -582,7 +582,7 @@ const PAGE = {
             "这化解了一个表面矛盾：近期系统主张把调度器从 LLM 里<i>移出</i>到确定性内核。我们的回答（<b>N6</b>）：<b>LLM 概率性地「写」代码、runtime 确定性地「跑」代码</b> —— 那段被生成、被验证的代码<i>就是</i>确定性内核。一个 reward-gated 的成功循环随后<b>结晶为 Skill</b>（<b>N7</b>）：其工具调用与结果因果被固化成一段 code-loop，可跨用户共享、作为单个 integrated tool 调用。因为 Skill 与 Harness 只经这段 code-loop 相遇，二者可各自演化（<b>N8 / P10</b>）：Skill 引入更强的工具；Harness 吸收成功 skill 并搭上越来越强的推理模型。" ]},
       {n:"5", h:"八种工具 —— 同一 Capsule 接口", fig:"f5",
        p:[ "Harness 的「工具」并非同质，可分为八类，它们对 LLM 暴露<i>同一份</i> intent + I/O 契约，差异只在实现与治理：<b>T1</b> 标准工具（web search）；<b>T2</b> 定制模型工具（把微调 OCR / 分类器当工具调用）；<b>T3</b> code 化可复用 skill（可复用、skill 层验证的 code-loop —— N7）；<b>T4</b> 数据主题查询（外部：天眼查 / GitHub / arXiv；内部：人员名录、组织结构、quota、territory）；<b>T5</b> LLM 可对自身调用的 harness meta-tool（compact、recap、writeback）；<b>T6</b> scaffold 能力（bash、file）；<b>T7</b> human-in-the-loop（追问 / 确认 / 审批 —— 把人当作可调用的能力）；<b>T8</b> LLM 即时生成的 code 工具（O5，尚未结晶）。",
-            "相对常规枚举的真增量：<b>T2 model-as-tool</b>（被 serving 的小模型是一等能力单元）、<b>T5</b>（维护升级为 <i>LLM 可主动调用</i> 的 meta-tool），以及 <b>T8 → T3</b> 生命周期（即时生成的工具经 verify + reward-gate + 泛化后升为可复用 skill）。<b>T7</b> 把 human-in-the-loop 提升为一等可审计工具——每次人确认都作正例回灌 T3。<b>派生 sub-agent 不单列</b>：它分解为 <i>Scaffold +X</i>（给已有工具加算力）、一个 <i>T8</i> 生成工具（现编程序）、以及派发它们的 <i>N6 code-loop</i>。" ]},
+            "相对常规枚举的真增量：<b>T2 model-as-tool</b>（被 serving 的小模型是一等能力单元）、<b>T5</b>（维护升级为 <i>LLM 可主动调用</i> 的 meta-tool），以及 <b>T8 → T3</b> 生命周期（即时生成的工具经 verify + reward-gate + 泛化后升为可复用 skill）。<b>T7</b> 把 human-in-the-loop 提升为一等可审计工具——每次人确认都作正例回灌 T3。<b>派生 sub-agent 不单列</b>：把它<i>启动</i>是 Scaffold 接口（fork，占用新 CPU / 隔离 —— 物理扩展 +X）；它<i>跑什么</i> = 已有工具或现编的 T8 程序；再由 N6 code-loop 派发。" ]},
     ],
     claimsH:"可证伪的内核",
     claims:[
