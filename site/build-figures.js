@@ -406,8 +406,81 @@ function fig4(t){
   return svgWrap(s);
 }
 
+/* ---------- FIGURE 5 : the 7 tool types under one CapabilityCapsule interface ---------- */
+const D5 = {
+  en:{
+    title:"Eight Kinds of Tool — One Capsule Interface",
+    sub:"The Harness is not just “a bag of tools”. All eight kinds expose the SAME intent + I/O contract to the LLM; they differ only in implementation and governance.",
+    iface:"CapabilityCapsule — intent + I/O contract (what the LLM sees)",
+    o1:"O1 tool selection · intent-scoped top-k over all 8 kinds",
+    tools:[
+      ["T1","Standard tool","web search · fetch · calculator · code exec","std"],
+      ["T2","Model tool","fine-tuned OCR · classifier · embedding · rerank","model"],
+      ["T3","Crystallized skill","reusable, skill-verified code-loop (N7)","skill"],
+      ["T4","Data-theme query","ext: TianYanCha · GitHub · arXiv / int: roster · org · quota · territory","data"],
+      ["T5","Harness meta-tool","compact · recap · writeback · retrieve · fork (LLM-invoked)","meta"],
+      ["T6","Scaffold command","bash · file (read/write/edit) · process · network","scaf"],
+      ["T7","Human-in-the-loop","ask · confirm · approve — human as a callable capability","human"],
+      ["T8","Ephemeral code tool","LLM writes a program on the fly (O5) — not yet crystallized","eph"],
+    ],
+    note:"T8 → T3: an on-the-fly generated tool becomes a reusable skill after verify + reward-gate + generalization. Sub-agent derivation splits into {Scaffold +X (compute) | T8 (generated tool) | N6 code-loop (dispatch)} — not a separate kind. New vs. prior enums: T2 (model-as-tool) & T5 (LLM-invoked maintenance).",
+  },
+  zh:{
+    title:"八种工具 — 同一 Capsule 接口",
+    sub:"Harness 不只是「一堆工具」。八类对 LLM 暴露同一份 intent + I/O 契约，差异只在实现与治理。",
+    iface:"CapabilityCapsule — intent + I/O 契约（LLM 看到的）",
+    o1:"O1 工具选择 · 在全部 8 类上做 intent-scoped top-k",
+    tools:[
+      ["T1","标准工具","web search · fetch · 计算器 · code exec","std"],
+      ["T2","定制模型工具","微调 OCR · 分类器 · embedding · rerank","model"],
+      ["T3","code 化 skill","可复用、skill 层验证的 code-loop (N7)","skill"],
+      ["T4","数据主题查询","外部：天眼查 · GitHub · arXiv / 内部：名录 · 组织 · quota · territory","data"],
+      ["T5","harness meta-tool","compact · recap · writeback · retrieve · fork（LLM 可调用）","meta"],
+      ["T6","scaffold 能力","bash · file（读/写/改）· process · network","scaf"],
+      ["T7","human-in-the-loop","追问 · 确认 · 审批 —— 把人当作可调用的能力","human"],
+      ["T8","即时生成 code 工具","LLM 当场编写程序（O5）—— 尚未结晶","eph"],
+    ],
+    note:"T8 → T3：即时生成的工具经 verify + reward-gate + 泛化测试后升为可复用 skill。sub-agent 派生分解为 {Scaffold +X（算力）| T8（生成工具）| N6 code-loop（派发）}，不单列。相对原枚举新增：T2（model-as-tool）与 T5（LLM 可调用的维护）。",
+  }
+};
+function fig5(t){
+  const palOf={std:["#e6f4ec",C.skillStroke,C.skillText],model:["#fbe7d3",C.scafStroke,C.scafText],
+    skill:["#ece4fb",C.harnStroke,C.harnText],data:["#ddeff8",C.dataStroke,C.dataText],
+    meta:["#f4eeff",C.harnStroke,C.harnText],scaf:["#fbe7d3",C.scafStroke,C.scafText],
+    human:["#eef7e6","#5a8c1a","#3f6410"],eph:["#eeeafc","#6d3fd4","#4f2da0"]};
+  let s=frame(t.title,t.sub);
+  // top: LLM-facing unified interface bar
+  s+=rect(70,116,1060,48,{fill:C.harnStrong,stroke:C.harnStroke,sw:1.6,rx:13,filter:false});
+  s+=center(600,140,[t.iface],{size:13.5,weight:800,fill:C.harnText});
+  // O1 selection band
+  s+=rect(70,176,1060,32,{fill:"#fbfaf6",stroke:C.neutStroke,sw:1.2,rx:9,filter:false});
+  s+=center(600,192,[t.o1],{size:11.5,weight:700,fill:C.mut});
+  s+=vArrow(600,208,236,{stroke:C.harnStroke,sw:1.6});
+  // 8 tool cards: 4 top + 4 bottom
+  const cw=258, chh=116, gapx=18, gapy=22;
+  const rowW=n=>n*cw+(n-1)*gapx;
+  const drawCard=(x,y,tt)=>{
+    const [f,st,tc]=palOf[tt[3]];
+    let r=rect(x,y,cw,chh,{fill:f,stroke:st,sw:1.5,rx:13});
+    r+=`<circle cx="${x+26}" cy="${y+26}" r="15" fill="${st}"/>`;
+    r+=`<text x="${x+26}" y="${y+27}" text-anchor="middle" dominant-baseline="middle" font-size="12.5" font-weight="800" fill="#fff">${tt[0]}</text>`;
+    r+=tline(x+50,y+31,tt[1],{size:13,weight:800,fill:tc});
+    r+=leftLines(x+18,y+60,wrap(tt[2],cw-34,10.4),{size:10.4,fill:C.mut,lh:15});
+    return r;
+  };
+  const y1=244, y2=244+chh+gapy;
+  const x0=(1200-rowW(4))/2;
+  for(let i=0;i<4;i++) s+=drawCard(x0+i*(cw+gapx),y1,t.tools[i]);
+  for(let i=0;i<4;i++) s+=drawCard(x0+i*(cw+gapx),y2,t.tools[4+i]);
+  // note band
+  const NY=y2+chh+20;
+  s+=rect(70,NY,1060,68,{fill:"#f1ebe0",stroke:C.neutStroke,sw:1.2,rx:12,dash:"6 6",filter:false});
+  s+=leftLines(90,NY+22,wrap(t.note,1020,11.5),{size:11.5,fill:C.ink,lh:16});
+  return svgWrap(s);
+}
+
 /* ---------- emit ---------- */
-const FIGS={f1:fig1,f2:fig2,f3:fig3,f4:fig4}, DICT={f1:D1,f2:D2,f3:D3,f4:D4};
+const FIGS={f1:fig1,f2:fig2,f3:fig3,f4:fig4,f5:fig5}, DICT={f1:D1,f2:D2,f3:D3,f4:D4,f5:D5};
 const standalone=(svg,lang)=>`<!DOCTYPE html><html lang="${lang}"><head><meta charset="UTF-8">
 <style>@page{size:${W}px ${H}px;margin:0}html,body{margin:0;padding:0;background:${C.page}}#p{width:${W}px;height:${H}px}#p svg{display:block;width:${W}px;height:${H}px}</style></head>
 <body><div id="p">${svg}</div></body></html>`;
@@ -444,6 +517,9 @@ const PAGE = {
       {n:"4", h:"Code as the contract — the real engine of the Harness", fig:"f4",
        p:[ "Under the hood the Harness is not just a bag of tools; it is a <b>managed runtime whose contract is code</b>. From a Skill’s requirements the LLM drafts a <b>plan</b> — sub-goals and their order, written in natural language and governed by a PRD (the skill’s acceptance spec). For each sub-goal several tools may apply, so the LLM does a <b>probabilistic fan-out</b>: it writes <b>orchestration code</b> for competing candidates, dispatches them to sub-agents (whose dependencies are themselves expressed in that generated code), then <b>verifies and selects</b> the best. That is the agent loop.",
             "This resolves an apparent contradiction. Recent systems argue the scheduler should be pulled <i>out</i> of the LLM into a deterministic kernel. Our answer (<b>N6</b>): <b>the LLM authors the code probabilistically, and the runtime executes it deterministically</b> — the generated, verified code <i>is</i> that deterministic kernel. A successful, reward-gated loop is then <b>crystallized as a Skill</b> (<b>N7</b>): its tool calls and result-causality are frozen into a code-loop that can be shared across users and invoked as a single integrated tool. Because Skill and Harness meet only through this code-loop, each can evolve on its own (<b>N8 / P10</b>): Skills add stronger tools; the Harness absorbs successful skills and rides ever-stronger reasoning models." ]},
+      {n:"5", h:"Eight kinds of tool — one capsule interface", fig:"f5",
+       p:[ "A Harness “tool” is not one thing. We classify them into eight kinds that all expose the <i>same</i> intent + I/O contract to the LLM, differing only in implementation and governance: <b>T1</b> standard tools (web search); <b>T2</b> model tools (a fine-tuned OCR / classifier called as a tool); <b>T3</b> crystallized skills (reusable, skill-verified code-loops — N7); <b>T4</b> data-theme queries (external: TianYanCha / GitHub / arXiv; internal: roster, org chart, quota, territory); <b>T5</b> harness meta-tools the LLM can call on itself (compact, recap, writeback); <b>T6</b> scaffold commands (bash, file); <b>T7</b> human-in-the-loop (ask / confirm / approve — the human as a callable capability); <b>T8</b> ephemeral code tools the LLM writes on the fly (O5), not yet crystallized.",
+            "Genuine additions over the usual tool enum: <b>T2 model-as-tool</b> (a served small model is a first-class capability), <b>T5</b> (maintenance as an <i>LLM-invoked</i> meta-tool), and the <b>T8 → T3</b> lifecycle (an on-the-fly generated tool becomes a reusable skill after verify + reward-gate + generalization). <b>T7</b> makes human-in-the-loop a first-class, auditable tool — and every human confirmation feeds a T3 skill as a positive example. Deriving a sub-agent is not a separate kind: it splits into <i>Scaffold +X</i> (more compute for existing tools), a <i>T8</i> generated tool (a freshly written program), and the <i>N6 code-loop</i> that dispatches them." ]},
     ],
     claimsH:"The falsifiable core",
     claims:[
@@ -480,7 +556,7 @@ const PAGE = {
       ["N7","Skill = crystallized code-loop: reward-gated success frozen as a shareable integrated tool (with causal trace)","Voyager/AWM store executable skills but without reward-gate + causality + cross-user sharing"],
       ["N8","Dual decoupling: Skill⊥Scaffold and Skill⊥Harness, meeting only at the code-loop","SkillSmith argues co-evolution but gives no loose-coupling boundary"],
     ],
-    figcaps:{f1:"Figure 1 — the three layers and what each is for.",f2:"Figure 2 — the spec list inside each layer.",f3:"Figure 3 — the agent loop, step by step.",f4:"Figure 4 — code as the contract: probabilistic authoring, deterministic execution."},
+    figcaps:{f1:"Figure 1 — the three layers and what each is for.",f2:"Figure 2 — the spec list inside each layer.",f3:"Figure 3 — the agent loop, step by step.",f4:"Figure 4 — code as the contract: probabilistic authoring, deterministic execution.",f5:"Figure 5 — the eight kinds of tool under one capsule interface."},
     foot:"Discussion draft · 2026-07-03 · companion to the synthesized paper draft v0.5.",
     other:"ZH",
     otherHref:"arch-zh.html",
@@ -504,6 +580,9 @@ const PAGE = {
       {n:"4", h:"Code 即契约 —— Harness 真正的引擎", fig:"f4",
        p:[ "深入看，Harness 不是「一堆工具」，而是一个<b>以 code 为契约的可管理运行时</b>。LLM 依 Skill 的要求产出 <b>plan</b>——子目标及其顺序，主体是自然语言、验收由 PRD（skill 的验收规约）控制。每个子目标可能有多个工具适用，于是 LLM 做<b>概率性 fan-out</b>：为竞争候选<b>生成编排代码</b>、派给子 agent（子 agent 之间的依赖也写在这段生成代码里），再<b>verify 并筛选</b>出最优。这就是 agent 循环。",
             "这化解了一个表面矛盾：近期系统主张把调度器从 LLM 里<i>移出</i>到确定性内核。我们的回答（<b>N6</b>）：<b>LLM 概率性地「写」代码、runtime 确定性地「跑」代码</b> —— 那段被生成、被验证的代码<i>就是</i>确定性内核。一个 reward-gated 的成功循环随后<b>结晶为 Skill</b>（<b>N7</b>）：其工具调用与结果因果被固化成一段 code-loop，可跨用户共享、作为单个 integrated tool 调用。因为 Skill 与 Harness 只经这段 code-loop 相遇，二者可各自演化（<b>N8 / P10</b>）：Skill 引入更强的工具；Harness 吸收成功 skill 并搭上越来越强的推理模型。" ]},
+      {n:"5", h:"八种工具 —— 同一 Capsule 接口", fig:"f5",
+       p:[ "Harness 的「工具」并非同质，可分为八类，它们对 LLM 暴露<i>同一份</i> intent + I/O 契约，差异只在实现与治理：<b>T1</b> 标准工具（web search）；<b>T2</b> 定制模型工具（把微调 OCR / 分类器当工具调用）；<b>T3</b> code 化可复用 skill（可复用、skill 层验证的 code-loop —— N7）；<b>T4</b> 数据主题查询（外部：天眼查 / GitHub / arXiv；内部：人员名录、组织结构、quota、territory）；<b>T5</b> LLM 可对自身调用的 harness meta-tool（compact、recap、writeback）；<b>T6</b> scaffold 能力（bash、file）；<b>T7</b> human-in-the-loop（追问 / 确认 / 审批 —— 把人当作可调用的能力）；<b>T8</b> LLM 即时生成的 code 工具（O5，尚未结晶）。",
+            "相对常规枚举的真增量：<b>T2 model-as-tool</b>（被 serving 的小模型是一等能力单元）、<b>T5</b>（维护升级为 <i>LLM 可主动调用</i> 的 meta-tool），以及 <b>T8 → T3</b> 生命周期（即时生成的工具经 verify + reward-gate + 泛化后升为可复用 skill）。<b>T7</b> 把 human-in-the-loop 提升为一等可审计工具——每次人确认都作正例回灌 T3。<b>派生 sub-agent 不单列</b>：它分解为 <i>Scaffold +X</i>（给已有工具加算力）、一个 <i>T8</i> 生成工具（现编程序）、以及派发它们的 <i>N6 code-loop</i>。" ]},
     ],
     claimsH:"可证伪的内核",
     claims:[
@@ -540,7 +619,7 @@ const PAGE = {
       ["N7","Skill = 结晶 code-loop：reward-gated 成功固化为可共享 integrated tool（含因果 trace）","Voyager/AWM 存可执行技能但缺 reward-gate + 因果 + 跨用户共享"],
       ["N8","双解耦：Skill⊥Scaffold 且 Skill⊥Harness，只在 code-loop 相遇","SkillSmith 主张协同演化但未给松耦合边界"],
     ],
-    figcaps:{f1:"图 1 — 三个层及各自的用途。",f2:"图 2 — 每一层里的 spec 清单。",f3:"图 3 — agent loop 的分步走查。",f4:"图 4 — code 即契约：概率生成、确定执行。"},
+    figcaps:{f1:"图 1 — 三个层及各自的用途。",f2:"图 2 — 每一层里的 spec 清单。",f3:"图 3 — agent loop 的分步走查。",f4:"图 4 — code 即契约：概率生成、确定执行。",f5:"图 5 — 八种工具，同一 Capsule 接口。"},
     foot:"讨论稿 · 2026-07-03 · 配套综合论文草稿 v0.5。",
     other:"English",
     otherHref:"arch-en.html",
