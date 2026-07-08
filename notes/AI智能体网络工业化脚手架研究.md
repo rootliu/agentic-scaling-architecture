@@ -142,65 +142,76 @@
 
 ### 一、Scaffold 层产出物 Spec
 
-| Spec 编号 | Spec 名称 | 对应研究方向 | 核心内容 | 关键指标 / 验证标准 |
-|-----------|-----------|-------------|----------|-------------------|
-| S-01 | **Agentic MicroVM Spec** | 方向二·可扩展的智能体服务框架 | microVM / container / WASM sandbox 的隔离执行单元定义：runtime_kind、image/snapshot、资源配额、syscall filter、冷启动与快照恢复 | escape rate < 0.01%；cold start < 500ms；snapshot restore < 100ms |
-| S-02 | **Agentic Scaling Benchmark** | 方向一·Benchmark 输出维度 + 方向二·可扩展框架 | 面向 Agentic Runtime 的扩展性评估框架：subagent 并发上限、fork 延迟、KV cache 多租户调度、GPU Serving 排队模型 | TTFT p95 < 2s；并发扩展线性度 R² > 0.95；资源冲突率 < 1% |
-| S-03 | **Token Efficiency Benchmark** | 方向一·Benchmark 输出维度 | 任务级 Token 效率评估：单位任务消耗的 Token 数、迭代次数、context 膨胀率、compact/recap 触发频率 | Token 效率比（任务完成度 / Token 消耗）> 基准模型 2x |
-| S-04 | **Enterprise SSO / Identity Spec** | 方向三·跨网络边界安全治理 | OIDC / SAML 2.0 联合登录、SCIM 用户/组同步、RBAC/ABAC、租户隔离、JIT 授权、审计登录事件 | SSO 成功率 > 99.9%；token 刷新失败 < 0.1%；越权访问 = 0 |
-| S-05 | **Cloud Integration Spec** | 方向二·可扩展与可管理的集成 | AWS/GCP/Azure 接入：Workload Identity（免静态密钥）、KMS/Secrets Manager、对象存储（S3/GCS/Blob）、VPC/PrivateLink、Bedrock/Vertex 模型端点 | 跨云延迟 < 50ms；密钥泄漏面 = 0；provider 故障切换 < 5s |
-| S-06 | **Subagent Launch / Fork Spec** | 方向二·可扩展的智能体服务框架 | 启动/供给 subagent 运行时的完整接口：分配 CPU/隔离单元/serving 槽位、fork 可调度执行体、生命周期管理（create/pause/resume/snapshot/terminate） | subagent 冷启动 < 1s；资源占用可预测；并发上限可配置 |
-| S-07 | **Security Policy Enforcement Spec** | 方向三·安全等级适配体系 | syscall filter、path/network policy、malware scan、prompt/tool boundary、data boundary 的统一下发与审计 | policy violation = 0（阻断模式）；audit completeness = 100% |
-| S-08 | **Serving Capacity Scheduling Spec** | 方向二·可扩展的智能体服务框架 | 模型端点、KV cache、batching、speculative decoding、多租户调度、背压与优先级 | tokens/s 利用率 > 80%；p95 latency < 3s；cost per task 可预测 |
+> **Scaffold 层 = 基础设施层**。面向云平台工程师和 DevOps 团队，解决"agent 在哪里跑、跑多少、跑多快、跑多安全"的物理扩展问题。没有 Scaffold，agent 就是无根之木——无法隔离、无法扩展、无法计量。
+
+| Spec 编号 | Spec 名称 | 一句话定位 | 对应研究方向 | 核心内容 | 关键指标 / 验证标准 |
+|-----------|-----------|-----------|-------------|----------|-------------------|
+| S-01 | **Agentic MicroVM Spec** | 定义 agent 的"数字工位"——一个安全隔离的最小执行单元，谁都能启动，但谁也逃不出去。 | 方向二·可扩展的智能体服务框架 | microVM / container / WASM sandbox 的隔离执行单元定义：runtime_kind、image/snapshot、资源配额、syscall filter、冷启动与快照恢复 | escape rate < 0.01%；cold start < 500ms；snapshot restore < 100ms |
+| S-02 | **Agentic Scaling Benchmark** | 回答"从 1 个 agent 到 10000 个 agent，系统会不会崩"的标准化度量尺。 | 方向一·Benchmark 输出维度 + 方向二·可扩展框架 | 面向 Agentic Runtime 的扩展性评估框架：subagent 并发上限、fork 延迟、KV cache 多租户调度、GPU Serving 排队模型 | TTFT p95 < 2s；并发扩展线性度 R² > 0.95；资源冲突率 < 1% |
+| S-03 | **Token Efficiency Benchmark** | 让"花多少 Token 办多少事"变得可比较、可优化——终结"模型越大越好"的迷信。 | 方向一·Benchmark 输出维度 | 任务级 Token 效率评估：单位任务消耗的 Token 数、迭代次数、context 膨胀率、compact/recap 触发频率 | Token 效率比（任务完成度 / Token 消耗）> 基准模型 2x |
+| S-04 | **Enterprise SSO / Identity Spec** | 企业 agent 的"门禁系统"——谁可以进、能进哪间、待多久、干了什么，全部留痕。 | 方向三·跨网络边界安全治理 | OIDC / SAML 2.0 联合登录、SCIM 用户/组同步、RBAC/ABAC、租户隔离、JIT 授权、审计登录事件 | SSO 成功率 > 99.9%；token 刷新失败 < 0.1%；越权访问 = 0 |
+| S-05 | **Cloud Integration Spec** | 让 agent 无缝接入企业现有云资产（AWS/Azure/GCP），不用重新造轮子，也不泄露一把密钥。 | 方向二·可扩展与可管理的集成 | AWS/GCP/Azure 接入：Workload Identity（免静态密钥）、KMS/Secrets Manager、对象存储（S3/GCS/Blob）、VPC/PrivateLink、Bedrock/Vertex 模型端点 | 跨云延迟 < 50ms；密钥泄漏面 = 0；provider 故障切换 < 5s |
+| S-06 | **Subagent Launch / Fork Spec** | 定义"生一个子 agent"的标准动作——分配资源、隔离环境、启动运行、回收清理的全生命周期。 | 方向二·可扩展的智能体服务框架 | 启动/供给 subagent 运行时的完整接口：分配 CPU/隔离单元/serving 槽位、fork 可调度执行体、生命周期管理（create/pause/resume/snapshot/terminate） | subagent 冷启动 < 1s；资源占用可预测；并发上限可配置 |
+| S-07 | **Security Policy Enforcement Spec** | agent 的"安全护栏"——能访问什么文件、能连什么网、能执行什么命令，统一下发、强制生效。 | 方向三·安全等级适配体系 | syscall filter、path/network policy、malware scan、prompt/tool boundary、data boundary 的统一下发与审计 | policy violation = 0（阻断模式）；audit completeness = 100% |
+| S-08 | **Serving Capacity Scheduling Spec** | GPU 算力的"交通指挥中心"——谁先用、用多少、用多久，保证不堵车、不空跑、不超支。 | 方向二·可扩展的智能体服务框架 | 模型端点、KV cache、batching、speculative decoding、多租户调度、背压与优先级 | tokens/s 利用率 > 80%；p95 latency < 3s；cost per task 可预测 |
+
 
 ### 二、Harness 层产出物 Spec
 
-| Spec 编号 | Spec 名称 | 对应研究方向 | 核心内容 | 关键指标 / 验证标准 |
-|-----------|-----------|-------------|----------|-------------------|
-| H-01 | **Capability Registry Spec** | 方向四·智能体构建的服务框架 | 工具、数据接口、sub-agent、Scaffold 能力、模型能力的统一注册与发现：CapabilityCapsule 的 intent / contract / implementation / validation / lifecycle | 注册延迟 < 100ms；发现准确率 > 99%；版本兼容性可检测 |
-| H-02 | **Tool Synthesis (Live Coding) Spec** | 方向二·可组装的智能体服务 | 当缺少能力时，LLM 当场生成代码工具 → sandbox 测试 → validation evidence → 注册为 capsule 的完整闭环（T8 → T3 结晶路径） | 生成工具成功率 > 80%；sandbox 验证通过率 > 95%；结晶后复用率 > 60% |
-| H-03 | **Code Generation for Skills Stable** | 方向四·智能体构建的服务框架 | 面向交付物的代码生成：Read/Grep/Glob 检索 → Edit/Write 改写 → Bash 跑测试/lint → diff/patch → 迭代修复（对标 Claude Code + SWE-agent ACI） | 代码生成任务成功率 > 70%；测试通过率 > 90%；patch 可应用率 > 95% |
-| H-04 | **OCR SaaS Spec** | 方向四·智能体构建的服务框架 | 微调 OCR 小模型作为 T2 定制模型工具：文档解析、表格提取、图像 OCR、layout parser，集成到 CapabilityCapsule 的 model_ref + served_on | OCR 准确率 > 98%（印刷体）/ > 90%（手写体）；latency < 2s/页 |
-| H-05 | **Orchestration Eight Primitives Spec** | 方向四·智能体构建的服务框架 | O1–O8 编排原语的形式化定义与接口：tool 选择、shots 构造、output format、plan、live coding、reflection、model 选择、token 分发 | 每原语的决策延迟 < 500ms；plan 成功率 > 85%；token 预算遵守率 = 100% |
-| H-06 | **Human-in-the-Loop (Elicitation) Spec** | 方向三·模型幻觉与决策可靠性 | 运行中向人追问/澄清/确认/审批/打分的结构化工具（T7）：schema 定义、超时兜底、审批留痕、闭环回 T3 正例 | 用户响应率 > 80%；审批留痕完整性 = 100%；正例闭环转化率 > 50% |
-| H-07 | **Context Assembly & Token Budget Spec** | 方向一·Token 智能计量 | task state、memory、shots、tool docs、data summary、output format 的按需组装 + context 预算切分 + KV 预留与背压 | context 组装延迟 < 200ms；token 预算超限 = 0；KV 预留命中率 > 90% |
-| H-08 | **Data Bridge (D1/D2/D3/D4) Spec** | 方向四·松散耦合的数据基盘 | Harness 与数据子系统的统一桥接：D1 查询、D2 semantic join、D3 governance memory 咨询、D4 时效校验 | 取数延迟 < 1s；semantic join 准确率 > 95%；时效校验覆盖率 = 100% |
+> **Harness 层 = 能力编排层**。面向 AI 平台工程师和工具链开发者，解决"agent 能用什么、怎么用、用坏了怎么办"的逻辑扩展问题。没有 Harness，agent 就是无臂之人——有想法，没工具。
+
+| Spec 编号 | Spec 名称 | 一句话定位 | 对应研究方向 | 核心内容 | 关键指标 / 验证标准 |
+|-----------|-----------|-----------|-------------|----------|-------------------|
+| H-01 | **Capability Registry Spec** | agent 的"工具箱目录"——所有能用的能力统一注册、分类、发现，新工具即插即用。 | 方向四·智能体构建的服务框架 | 工具、数据接口、sub-agent、Scaffold 能力、模型能力的统一注册与发现：CapabilityCapsule 的 intent / contract / implementation / validation / lifecycle | 注册延迟 < 100ms；发现准确率 > 99%；版本兼容性可检测 |
+| H-02 | **Tool Synthesis (Live Coding) Spec** | agent 的"现场造工具"能力——缺什么造什么，造完即用，用完可沉淀为复用资产。 | 方向二·可组装的智能体服务 | 当缺少能力时，LLM 当场生成代码工具 → sandbox 测试 → validation evidence → 注册为 capsule 的完整闭环（T8 → T3 结晶路径） | 生成工具成功率 > 80%；sandbox 验证通过率 > 95%；结晶后复用率 > 60% |
+| H-03 | **Code Generation for Skills Stable** | 让 agent 像资深工程师一样写代码——读、改、测、修，循环迭代直到通过。 | 方向四·智能体构建的服务框架 | 面向交付物的代码生成：Read/Grep/Glob 检索 → Edit/Write 改写 → Bash 跑测试/lint → diff/patch → 迭代修复（对标 Claude Code + SWE-agent ACI） | 代码生成任务成功率 > 70%；测试通过率 > 90%；patch 可应用率 > 95% |
+| H-04 | **OCR SaaS Spec** | 给 agent 配一副"好眼镜"——文档、表格、图片里的文字，精准识别、结构化输出。 | 方向四·智能体构建的服务框架 | 微调 OCR 小模型作为 T2 定制模型工具：文档解析、表格提取、图像 OCR、layout parser，集成到 CapabilityCapsule 的 model_ref + served_on | OCR 准确率 > 98%（印刷体）/ > 90%（手写体）；latency < 2s/页 |
+| H-05 | **Orchestration Eight Primitives Spec** | agent 的"大脑指令集"——选工具、造示例、定格式、做计划、写代码、反思、选模型、分预算，八招搞定一切任务。 | 方向四·智能体构建的服务框架 | O1–O8 编排原语的形式化定义与接口：tool 选择、shots 构造、output format、plan、live coding、reflection、model 选择、token 分发 | 每原语的决策延迟 < 500ms；plan 成功率 > 85%；token 预算遵守率 = 100% |
+| H-06 | **Human-in-the-Loop (Elicitation) Spec** | agent 的"求助热线"——不确定时问人、审批时找人、确认时@人，人的反馈还能反哺 agent 学习。 | 方向三·模型幻觉与决策可靠性 | 运行中向人追问/澄清/确认/审批/打分的结构化工具（T7）：schema 定义、超时兜底、审批留痕、闭环回 T3 正例 | 用户响应率 > 80%；审批留痕完整性 = 100%；正例闭环转化率 > 50% |
+| H-07 | **Context Assembly & Token Budget Spec** | agent 的"弹药分配官"——context 不是无限长的，得精打细算：装什么、扔什么、留多少余地。 | 方向一·Token 智能计量 | task state、memory、shots、tool docs、data summary、output format 的按需组装 + context 预算切分 + KV 预留与背压 | context 组装延迟 < 200ms；token 预算超限 = 0；KV 预留命中率 > 90% |
+| H-08 | **Data Bridge (D1/D2/D3/D4) Spec** | agent 与数据的"翻译官"——不管数据在哪、什么格式、多旧多新，都能按需取来、准确理解。 | 方向四·松散耦合的数据基盘 | Harness 与数据子系统的统一桥接：D1 查询、D2 semantic join、D3 governance memory 咨询、D4 时效校验 | 取数延迟 < 1s；semantic join 准确率 > 95%；时效校验覆盖率 = 100% |
 
 ### 三、Skill 层产出物 Spec
 
-| Spec 编号 | Spec 名称 | 对应研究方向 | 核心内容 | 关键指标 / 验证标准 |
-|-----------|-----------|-------------|----------|-------------------|
-| X-01 | **Document Parsing Skill Spec** | 方向四·智能体构建的服务框架 | 文档解析 Skill：文件类型识别、抽取范围、引用格式、表格/图像策略、PDF/OCR/layout parser 协调、渐进式披露（L1/L2/L3） | 解析准确率 > 95%；表格保留率 > 90%；L1 注入 tokens < 100/skill |
-| X-02 | **Code Generation Skill Spec** | 方向四·智能体构建的服务框架 | Code 生成 Skill：repo 边界、测试命令、风格约束、patch 格式、回滚策略、git 集成、verifier 闭环 | 代码生成任务成功率 > 70%；测试通过率 > 90%；patch 可应用率 > 95% |
-| X-03 | **Git Management Skill Spec** | 方向四·智能体构建的服务框架 | Git 管理 Skill：branch 策略、diff/commit policy、PR rubric、冲突解决、review harness、audit trail | commit 合规率 = 100%；PR 评审通过率 > 80%；冲突自动解决率 > 60% |
-| X-04 | **Data Report Generation Skill Spec** | 方向四·智能体构建的服务框架 | 数据报表生成 Skill：指标口径、时间范围、图表类型、交付格式（markdown/json/docx/xlsx）、数据源选择、刷新策略 | 报表准确率 > 99%；格式合规率 = 100%；数据新鲜度满足 SLA |
-| X-05 | **Research Synthesis Skill Spec** | 方向四·智能体构建的服务框架 | 研究综述 Skill：source policy、检索范围、引用格式、novelty ledger、web search / PDF / note reading 协调 | 引用准确率 > 95%；novelty 检测率 > 80%；综述覆盖率 > 90% |
-| X-06 | **System Skill (Memory Maintenance) Spec** | 方向三·模型幻觉与决策可靠性 | 系统 Skill：memory compaction、reflection、retrieval、writeback、GC、verification trigger 的触发条件与执行标准 | compaction 后信息保留率 > 95%；reflection 触发准确率 > 80%；GC 无泄漏 |
-| X-07 | **Personalized Writing Skill Spec** | 方向四·智能体构建的服务框架 | 个性化写作 Skill：语气、结构偏好、术语表、禁用表达、style profile、domain memory、user preference 适配 | 风格匹配度 > 85%（人工评分）；术语一致性 = 100% |
-| X-08 | **Skill Packaging & Distribution Spec** | 方向四·智能体构建的服务框架 | Skill 打包标准：SKILL.md 三级渐进披露（L1 元数据/L2 正文/L3 资源脚本）、目录结构、版本管理、兼容性声明 | 包体积 < 5MB；L1 加载时间 < 50ms；版本兼容性可检测 |
+> **Skill 层 = 任务技能层**。面向业务开发者和领域专家，解决"agent 具体能干什么活、怎么干、干成什么样"的个性化问题。没有 Skill，agent 就是无业游民——有手有脚，不知道干什么。
+
+| Spec 编号 | Spec 名称 | 一句话定位 | 对应研究方向 | 核心内容 | 关键指标 / 验证标准 |
+|-----------|-----------|-----------|-------------|----------|-------------------|
+| X-01 | **Document Parsing Skill Spec** | agent 的"阅读理解课"——PDF、Word、Excel 扔进来，结构化知识吐出去。 | 方向四·智能体构建的服务框架 | 文档解析 Skill：文件类型识别、抽取范围、引用格式、表格/图像策略、PDF/OCR/layout parser 协调、渐进式披露（L1/L2/L3） | 解析准确率 > 95%；表格保留率 > 90%；L1 注入 tokens < 100/skill |
+| X-02 | **Code Generation Skill Spec** | agent 的"编程外包服务"——从需求到代码到测试到提交，一条龙搞定。 | 方向四·智能体构建的服务框架 | Code 生成 Skill：repo 边界、测试命令、风格约束、patch 格式、回滚策略、git 集成、verifier 闭环 | 代码生成任务成功率 > 70%；测试通过率 > 90%；patch 可应用率 > 95% |
+| X-03 | **Git Management Skill Spec** | agent 的"代码管家"——分支、提交、PR、评审、冲突解决，规矩做事不添乱。 | 方向四·智能体构建的服务框架 | Git 管理 Skill：branch 策略、diff/commit policy、PR rubric、冲突解决、review harness、audit trail | commit 合规率 = 100%；PR 评审通过率 > 80%；冲突自动解决率 > 60% |
+| X-04 | **Data Report Generation Skill Spec** | agent 的"数据分析师"——从原始数据到可视化报表，口径准确、格式规范、时效达标。 | 方向四·智能体构建的服务框架 | 数据报表生成 Skill：指标口径、时间范围、图表类型、交付格式（markdown/json/docx/xlsx）、数据源选择、刷新策略 | 报表准确率 > 99%；格式合规率 = 100%；数据新鲜度满足 SLA |
+| X-05 | **Research Synthesis Skill Spec** | agent 的"研究助理"——搜文献、读论文、写综述、标引用，学术规范不踩线。 | 方向四·智能体构建的服务框架 | 研究综述 Skill：source policy、检索范围、引用格式、novelty ledger、web search / PDF / note reading 协调 | 引用准确率 > 95%；novelty 检测率 > 80%；综述覆盖率 > 90% |
+| X-06 | **System Skill (Memory Maintenance) Spec** | agent 的"自我保健医生"——内存满了压缩、做错了反思、用完了归档，保持头脑清醒。 | 方向三·模型幻觉与决策可靠性 | 系统 Skill：memory compaction、reflection、retrieval、writeback、GC、verification trigger 的触发条件与执行标准 | compaction 后信息保留率 > 95%；reflection 触发准确率 > 80%；GC 无泄漏 |
+| X-07 | **Personalized Writing Skill Spec** | agent 的"私人秘书"——知道老板喜欢什么风格、用什么术语、忌讳什么表达。 | 方向四·智能体构建的服务框架 | 个性化写作 Skill：语气、结构偏好、术语表、禁用表达、style profile、domain memory、user preference 适配 | 风格匹配度 > 85%（人工评分）；术语一致性 = 100% |
+| X-08 | **Skill Packaging & Distribution Spec** | agent 能力的"App Store 规范"——怎么打包、怎么发布、怎么版本控制、怎么兼容升级。 | 方向四·智能体构建的服务框架 | Skill 打包标准：SKILL.md 三级渐进披露（L1 元数据/L2 正文/L3 资源脚本）、目录结构、版本管理、兼容性声明 | 包体积 < 5MB；L1 加载时间 < 50ms；版本兼容性可检测 |
 
 ### 四、Data 层产出物 Spec
 
-| Spec 编号 | Spec 名称 | 对应研究方向 | 核心内容 | 关键指标 / 验证标准 |
-|-----------|-----------|-------------|----------|-------------------|
-| D-01 | **5W1H+Which Fact Index Spec** | 方向四·松散耦合的数据基盘 | Tier 2 Index & Link 的 5W1H+Which 结构化事实定义：what/who/where/when/why/how/which 七维字段、时序约束、evidence_ref、supersedes 链 | fact 提取覆盖率 > 90%；时序查询准确率 > 95%；evidence_ref 可回指率 = 100% |
-| D-02 | **Data Theme Spec** | 方向四·松散耦合的数据基盘 | Tier 3 Data Theme 的 5W1H 记录结构：theme_name/intent_type/output_spec、检索策略、关联逻辑、回退行为、复用/继承/演化/废弃机制 | Theme 匹配命中率 > 80%（同类 use case 重复 10 次后）；决策熵 ℋ 下降 > 50% |
-| D-03 | **Off-Policy Indexing Cluster (OPIC) Spec** | 方向四·松散耦合的数据基盘 | 离线索引 agent 集群：observe → extract → link → write → 触发增量更新的完整 loop、专用 sub-agents（文档提取/schema 探查/关联推断/质量校验） | 索引延迟 < 5min（增量）；fact 质量评分 > 0.85；索引成本可控（每千页 < $0.5） |
-| D-04 | **Lakehouse Integration Spec** | 方向四·松散耦合的数据基盘 | Raw Data 层与 Lakehouse 对接：Object Store（S3/OSS/GCS）、Table Format（Iceberg/Delta）、Catalog（Polaris/Hive）、Streaming Ingestion（Kafka/Flink） | 数据入湖延迟 < 1min；ACID 事务完整性 = 100%；Catalog 查询延迟 < 100ms |
-| D-05 | **Semantic Summary Storage Spec** | 方向四·松散耦合的数据基盘 | D2 结构化摘要存储：SummaryEntry 的 claim/valid_from/valid_to/evidence_ref/supersedes/themes、结构化 DB 索引、MVCC 快照读、分级降冷（热层→冷层→归档） | 时点查询延迟 < 200ms；unverifiable 率 < 1%；降冷后 evidence_ref 保留率 = 100% |
-| D-06 | **Data Usage Skill (D3) Spec** | 方向四·松散耦合的数据基盘 | 数据使用 Skill：usecase_id/intent_pattern/preferred_sources/semantic_join_plan/access_plan/evidence/governance 的完整定义与沉淀 | 数据源选择准确率 > 90%；join 成功率 > 85%；governance 合规率 = 100% |
-| D-07 | **Data Lifetime & Freshness Spec** | 方向四·松散耦合的数据基盘 | D4 数据生命周期：freshness 阈值、业务口径版本、validity 窗口、NFR budget、retention policy、自动失效与刷新触发 | 时效告警延迟 < 1min；口径版本一致性 = 100%；retention 合规率 = 100% |
-| D-08 | **Workspace (Ω) Artifact Spec** | 方向四·松散耦合的数据基盘 | Agent 工作区：RunTrace、IntermediateRelation、LLM Wiki、ArtifactManifest、ReflectionRecord 的最小对象定义与持久化 | artifact 完整性 = 100%；trace 可回放率 = 100%；wiki 查询延迟 < 100ms |
+> **Data 层 = 记忆与数据基盘层**。面向数据工程师和知识管理团队，解决"agent 记得住、找得到、用得好企业数据"的持久化问题。没有 Data 层，agent 就是金鱼——每次对话从零开始，永远长不大。
+
+| Spec 编号 | Spec 名称 | 一句话定位 | 对应研究方向 | 核心内容 | 关键指标 / 验证标准 |
+|-----------|-----------|-----------|-------------|----------|-------------------|
+| D-01 | **5W1H+Which Fact Index Spec** | 企业数据的"语义索引卡"——每张卡片记录一个事实是谁、什么、何时、何地、为何、如何、关联谁，方便交叉检索。 | 方向四·松散耦合的数据基盘 | Tier 2 Index & Link 的 5W1H+Which 结构化事实定义：what/who/where/when/why/how/which 七维字段、时序约束、evidence_ref、supersedes 链 | fact 提取覆盖率 > 90%；时序查询准确率 > 95%；evidence_ref 可回指率 = 100% |
+| D-02 | **Data Theme Spec** | 数据使用的"经验食谱"——上次怎么找到的数据、怎么关联的、输出什么，下次同类需求直接复用。 | 方向四·松散耦合的数据基盘 | Tier 3 Data Theme 的 5W1H 记录结构：theme_name/intent_type/output_spec、检索策略、关联逻辑、回退行为、复用/继承/演化/废弃机制 | Theme 匹配命中率 > 80%（同类 use case 重复 10 次后）；决策熵 ℋ 下降 > 50% |
+| D-03 | **Off-Policy Indexing Cluster (OPIC) Spec** | 企业数据的"夜班编辑团队"——不睡觉的 agent 集群，持续阅读新数据、提取事实、建立关联、更新索引。 | 方向四·松散耦合的数据基盘 | 离线索引 agent 集群：observe → extract → link → write → 触发增量更新的完整 loop、专用 sub-agents（文档提取/schema 探查/关联推断/质量校验） | 索引延迟 < 5min（增量）；fact 质量评分 > 0.85；索引成本可控（每千页 < $0.5） |
+| D-04 | **Lakehouse Integration Spec** | 企业数据湖的"agent 接口"——让 agent 能安全、高效地读取企业已有的 Iceberg/Delta 数据资产。 | 方向四·松散耦合的数据基盘 | Raw Data 层与 Lakehouse 对接：Object Store（S3/OSS/GCS）、Table Format（Iceberg/Delta）、Catalog（Polaris/Hive）、Streaming Ingestion（Kafka/Flink） | 数据入湖延迟 < 1min；ACID 事务完整性 = 100%；Catalog 查询延迟 < 100ms |
+| D-05 | **Semantic Summary Storage Spec** | 事实的"档案室管理规范"——怎么存、怎么查、怎么更新、怎么归档，保证不丢、不乱、不过时。 | 方向四·松散耦合的数据基盘 | D2 结构化摘要存储：SummaryEntry 的 claim/valid_from/valid_to/evidence_ref/supersedes/themes、结构化 DB 索引、MVCC 快照读、分级降冷（热层→冷层→归档） | 时点查询延迟 < 200ms；unverifiable 率 < 1%；降冷后 evidence_ref 保留率 = 100% |
+| D-06 | **Data Usage Skill (D3) Spec** | 数据使用的"最佳实践库"——什么场景用什么数据、怎么关联、权限如何、失败了怎么办。 | 方向四·松散耦合的数据基盘 | 数据使用 Skill：usecase_id/intent_pattern/preferred_sources/semantic_join_plan/access_plan/evidence/governance 的完整定义与沉淀 | 数据源选择准确率 > 90%；join 成功率 > 85%；governance 合规率 = 100% |
+| D-07 | **Data Lifetime & Freshness Spec** | 数据的"保质期管理系统"——什么时候过期、什么时候刷新、什么时候淘汰，保证 agent 不用馊数据。 | 方向四·松散耦合的数据基盘 | D4 数据生命周期：freshness 阈值、业务口径版本、validity 窗口、NFR budget、retention policy、自动失效与刷新触发 | 时效告警延迟 < 1min；口径版本一致性 = 100%；retention 合规率 = 100% |
+| D-08 | **Workspace (Ω) Artifact Spec** | agent 的"工作台抽屉"——当前任务的所有产物、轨迹、反思、中间结果，整齐存放、随时回查。 | 方向四·松散耦合的数据基盘 | Agent 工作区：RunTrace、IntermediateRelation、LLM Wiki、ArtifactManifest、ReflectionRecord 的最小对象定义与持久化 | artifact 完整性 = 100%；trace 可回放率 = 100%；wiki 查询延迟 < 100ms |
 
 ### 五、跨层集成与治理 Spec
 
-| Spec 编号 | Spec 名称 | 对应研究方向 | 核心内容 | 关键指标 / 验证标准 |
-|-----------|-----------|-------------|----------|-------------------|
-| G-01 | **Agentic Runtime Integration Spec** | 方向四·智能体构建的服务框架 | 三层栈 ⟨Scaffold, Harness, Skill⟩ + 数据子系统 ℳ = ⟨Raw, Index, Theme⟩ 的集成接口：ExecutionSpec ↔ CapabilityCapsule ↔ SkillSpec ↔ DataUsageSkill 的调用链 | 端到端任务成功率 > 80%；跨层调用延迟 < 3s；错误传播可追溯 |
-| G-02 | **Audit & Replay Spec** | 方向三·模型幻觉与决策可靠性 | 可审计执行：run trace、tool evidence、branch provenance、decision log、replayable evidence 的完整记录与回放 | trace 覆盖率 = 100%；replay 成功率 > 95%；audit log 不可篡改 |
-| G-03 | **Policy Gate & Data Boundary Spec** | 方向三·安全等级适配体系 | 权限检查、auth isolation、capability attenuation、data boundary 的统一下发与执行：permission check → scope validation → network policy → data boundary enforcement | 越权访问阻断率 = 100%；policy 下发延迟 < 1s；data boundary 泄漏 = 0 |
-| G-04 | **Multi-Tenant Resource Quota Spec** | 方向二·可扩展与可管理的集成 | 多租户资源配额：CPU/GPU/Token/Storage/Network 的租户级隔离、burst 控制、优先级抢占、公平调度 | 配额遵守率 = 100%；burst 响应 < 500ms；优先级抢占无饥饿 |
-| G-05 | **Benchmark Automation Harness Spec** | 方向一·五维度 Benchmark 分类 | 五维度 Benchmark 的自动化执行框架：编程/生成报告/运维操作/专业操作/创新操作的分级评估、阈值达标/效率指标/非功能需求评分的自动采集 | Benchmark 执行自动化率 = 100%；评分一致性（人工 vs 自动）> 90% |
+> **跨层治理 = 体系粘合剂**。面向架构师和合规审计团队，解决"各层之间怎么衔接、出了问题怎么追溯、谁该负责"的全局治理问题。没有治理，agent 网络就是一盘散沙——各自为政、互相推诿、无法审计。
+
+| Spec 编号 | Spec 名称 | 一句话定位 | 对应研究方向 | 核心内容 | 关键指标 / 验证标准 |
+|-----------|-----------|-----------|-------------|----------|-------------------|
+| G-01 | **Agentic Runtime Integration Spec** | 三层架构的"接线图"——Scaffold、Harness、Skill、Data 之间怎么调用、怎么传数据、怎么报错，一图全览。 | 方向四·智能体构建的服务框架 | 三层栈 ⟨Scaffold, Harness, Skill⟩ + 数据子系统 ℳ = ⟨Raw, Index, Theme⟩ 的集成接口：ExecutionSpec ↔ CapabilityCapsule ↔ SkillSpec ↔ DataUsageSkill 的调用链 | 端到端任务成功率 > 80%；跨层调用延迟 < 3s；错误传播可追溯 |
+| G-02 | **Audit & Replay Spec** | agent 的"黑匣子"——干了什么、怎么干的、结果如何，全程记录、随时回放、无法抵赖。 | 方向三·模型幻觉与决策可靠性 | 可审计执行：run trace、tool evidence、branch provenance、decision log、replayable evidence 的完整记录与回放 | trace 覆盖率 = 100%；replay 成功率 > 95%；audit log 不可篡改 |
+| G-03 | **Policy Gate & Data Boundary Spec** | 企业数据的"边防检查站"——谁可以看什么、能走到哪、越界了怎么办，规则明确、执行严格。 | 方向三·安全等级适配体系 | 权限检查、auth isolation、capability attenuation、data boundary 的统一下发与执行：permission check → scope validation → network policy → data boundary enforcement | 越权访问阻断率 = 100%；policy 下发延迟 < 1s；data boundary 泄漏 = 0 |
+| G-04 | **Multi-Tenant Resource Quota Spec** | 云资源的"公摊面积计算器"——多个租户共享一套基础设施，公平分配、互不侵占、突发有缓冲。 | 方向二·可扩展与可管理的集成 | 多租户资源配额：CPU/GPU/Token/Storage/Network 的租户级隔离、burst 控制、优先级抢占、公平调度 | 配额遵守率 = 100%；burst 响应 < 500ms；优先级抢占无饥饿 |
+| G-05 | **Benchmark Automation Harness Spec** | 模型评估的"自动化考场"——编程、报告、运维、专业、创新五大科目，自动出题、自动评分、自动出报告。 | 方向一·五维度 Benchmark 分类 | 五维度 Benchmark 的自动化执行框架：编程/生成报告/运维操作/专业操作/创新操作的分级评估、阈值达标/效率指标/非功能需求评分的自动采集 | Benchmark 执行自动化率 = 100%；评分一致性（人工 vs 自动）> 90% |
 
 ---
 
