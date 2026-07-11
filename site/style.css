@@ -11,6 +11,7 @@
   --phys:#bc5a16; --phys-bg:#fbeee0;
   --contract:#6d3fd4; --contract-bg:#efe9fb;
   --data:#1474a6; --data-bg:#e1eff6;            /* data dimension = deep teal */
+  --para:#9a6a12; --para-bg:#f6efdf;            /* parallelism dimension = amber */
   --warn:#b3361b;
   --sans:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',Arial,sans-serif;
   --serif:var(--sans);
@@ -28,6 +29,7 @@
     --phys:#f0944b; --phys-bg:#2a1809;
     --contract:#b79cf3; --contract-bg:#1d1430;
     --data:#52b6e0; --data-bg:#0c2330;
+    --para:#d6a94a; --para-bg:#2a2109;
     --warn:#ff7b63;
     --shadow:0 2px 4px rgba(0,0,0,.3),0 12px 28px rgba(0,0,0,.45);
     --shadow-lg:0 4px 10px rgba(0,0,0,.4),0 24px 56px rgba(0,0,0,.6);
@@ -120,6 +122,7 @@ p{margin:14px 0}
 .pill.phys{background:var(--phys-bg);color:var(--phys);border-color:color-mix(in srgb,var(--phys) 28%,transparent)}
 .pill.contract{background:var(--contract-bg);color:var(--contract);border-color:color-mix(in srgb,var(--contract) 28%,transparent)}
 .pill.data{background:var(--data-bg);color:var(--data);border-color:color-mix(in srgb,var(--data) 28%,transparent)}
+.pill.para{background:var(--para-bg);color:var(--para);border-color:color-mix(in srgb,var(--para) 30%,transparent)}
 .pill.new{background:var(--logic-bg);color:var(--logic);border-color:color-mix(in srgb,var(--logic) 30%,transparent);font-weight:600}
 
 /* cards — index sheets with corner tick */
@@ -285,6 +288,7 @@ a.linkcard:hover::after{opacity:1;transform:none;color:var(--contract)}
 .cut.c-ext{border-top:3px solid var(--logic)}    .cut.c-ext:hover{border-color:color-mix(in srgb,var(--logic) 40%,var(--hair))}    .cut.c-ext:hover .seehint{color:var(--logic)}
 .cut.c-plane{border-top:3px solid var(--contract)}.cut.c-plane:hover{border-color:color-mix(in srgb,var(--contract) 40%,var(--hair))}.cut.c-plane:hover .seehint{color:var(--contract)}
 .cut.c-data{border-top:3px solid var(--data)}    .cut.c-data:hover{border-color:color-mix(in srgb,var(--data) 40%,var(--hair))}    .cut.c-data:hover .seehint{color:var(--data)}
+.cut.c-para{border-top:3px solid var(--para)}    .cut.c-para:hover{border-color:color-mix(in srgb,var(--para) 40%,var(--hair))}    .cut.c-para:hover .seehint{color:var(--para)}
 
 /* the shared invariant — the convergence node under the triptych */
 .invariant{position:relative;margin:18px auto 0;max-width:760px;text-align:center;
@@ -303,6 +307,7 @@ a.linkcard:hover::after{opacity:1;transform:none;color:var(--contract)}
 .dimno.ext{background:var(--logic-bg);color:var(--logic)}
 .dimno.plane{background:var(--contract-bg);color:var(--contract)}
 .dimno.data{background:var(--data-bg);color:var(--data)}
+.dimno.para{background:var(--para-bg);color:var(--para)}
 
 /* 2x3 design matrix */
 .matrix{width:100%;border-collapse:separate;border-spacing:4px;font-size:13.5px;margin:6px 0}
@@ -366,6 +371,8 @@ a.linkcard:hover::after{opacity:1;transform:none;color:var(--contract)}
   --contract-bg:#eeeafd;
   --data:#08799e;
   --data-bg:#e5f4f8;
+  --para:#8a5f10;
+  --para-bg:#f5eddb;
   --warn:#b42318;
   --sans:"Inter","Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",Arial,sans-serif;
   --serif:var(--sans);
@@ -604,3 +611,13 @@ li{margin:8px 0}
     padding:8px 10px;
   }
 }
+
+/* ---- parallelism / locality co-design (dim 4) ---- */
+.mech-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:6px 0 4px}
+@media(max-width:720px){.mech-grid{grid-template-columns:1fr}}
+.mech{background:var(--card);border:1px solid var(--hair);border-left:3px solid var(--para);
+  border-radius:0 10px 10px 0;padding:15px 18px}
+.mech .mtag{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--para);letter-spacing:.04em}
+.mech h4{margin:5px 0 6px;font-size:15px}
+.mech p{margin:0;font-size:13.5px;color:var(--ink2);line-height:1.55}
+.plane-tag.para{background:var(--para-bg);color:var(--para)}

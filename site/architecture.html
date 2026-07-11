@@ -12,6 +12,7 @@
   <a href="index.html">概览</a>
   <a href="research-brief.html">研究简报</a>
   <a href="architecture.html" class="active">架构 & 主线</a>
+  <a href="dry-run.html">Dry Run</a>
   <a href="references.html">文献</a>
   <a href="timeline.html">时间线</a>
   <a href="input.html">原始构想</a>
@@ -31,16 +32,17 @@
     <a href="#planes"><span>04</span>控制/数据面</a>
     <a href="#data"><span>05</span>数据子系统</a>
     <a href="#formalization"><span>06</span>形式化</a>
-    <a href="#propositions"><span>07</span>命题总表</a>
-    <a href="#newpoints"><span>08</span>创新点</a>
-    <a href="#path"><span>09</span>演进路径</a>
+    <a href="#parallel"><span>07</span>并行/局部性</a>
+    <a href="#propositions"><span>08</span>命题总表</a>
+    <a href="#newpoints"><span>09</span>创新点</a>
+    <a href="#path"><span>10</span>演进路径</a>
   </div>
 </nav>
 
 <!-- ============ 三维总览 ============ -->
 <section class="wrap slide" id="dimensions">
-  <h2 class="sec">三条正交切分，一个不变量</h2>
-  <p class="sub">每一维问一个不同的问题，但答案都落在同一个解耦机制上：把高频在线路径与低频/离线决策路径分离，从而让 agentic runtime 的扩展过程保持可管理。</p>
+  <h2 class="sec">四条正交切分，一个不变量</h2>
+  <p class="sub">每一维问一个不同的问题，但答案都落在同一个解耦机制上：把高内聚的高频路径与松耦合的低频/离线路径分离，从而让 agentic runtime 的扩展与并行过程保持可管理。</p>
 
   <div class="dimhead"><span class="dimno ext">维度 1</span><h3 style="margin:0">扩展轴 — 往哪个方向加东西</h3></div>
   <div class="card fade" style="margin-bottom:26px">
@@ -60,8 +62,14 @@
     <p style="margin:0"><span class="pill data">𝒟 = ⟨D₁,D₂,D₃,D₄,Ω⟩</span> <span class="pill">栈外独立子系统</span> &nbsp;→&nbsp; <a class="inline" href="#data">四组成 · P7 / P8 / P9</a></p>
   </div>
 
-  <blockquote class="fade" style="margin-top:30px;border-left-color:var(--contract);font-size:17px">
-    <b>统一命题（meta-claim）：</b>三维各自的"加东西"操作，其一阶成本都落在<b>与主请求路径解耦的平面 / 子系统</b>上——逻辑扩展落控制面、物理扩展落数据面、数据扩展落离线 off-policy loop。故三维共享同一个解耦机制。这是把"三层工程架构"提升为"可证明科学主张"的总杠杆。
+  <div class="dimhead"><span class="dimno para">维度 4</span><h3 style="margin:0">并行度 / 局部性 — 如何在预算内最大化并行吞吐</h3></div>
+  <div class="card fade" style="margin-bottom:6px">
+    <p class="mut" style="margin-top:0">三维解耦保证"加东西不劣化"，第四维进一步<b>主动逼近</b>并行上界：给定预算 <i>B</i>，用一根杠杆——<b>按工具集切分子 agent</b>——同时定义 Skills 局部性、并行独立性与 Scaffold seed 边界；同种子 agent 高内聚共置、跨 agent 仅传 summarized context（detail 入 memory）而松耦合。</p>
+    <p style="margin:0"><span class="pill para">并行度上界可设计（P10）</span> <span class="pill logic">工具集局部性（P11）</span> <span class="pill phys">seed 亲和（P12）</span> &nbsp;→&nbsp; <a class="inline" href="#parallel">四机制 · walkthrough · specs</a></p>
+  </div>
+
+  <blockquote class="fade" style="margin-top:30px;border-left-color:var(--para);font-size:17px">
+    <b>统一命题（meta-claim）：</b>四维各自的"加东西 / 并行"操作，其一阶成本都落在<b>与主请求路径解耦的平面 / 子系统 / 松耦合边界</b>上——逻辑扩展落控制面、物理扩展落数据面、数据扩展落离线 off-policy loop、并行度落工具集切分的松耦合接口。故四维共享同一个不变量：<b>把高内聚高频路径与松耦合低频/离线路径分离</b>。这是把"工程架构"提升为"可证明科学主张"的总杠杆。
   </blockquote>
 </section>
 
@@ -404,10 +412,123 @@
   </div>
 </section>
 
+<!-- ============ 维度4：并行 / 局部性 ============ -->
+<section class="wrap slide" id="parallel">
+  <div class="slide-head fade">
+    <div class="kicker">07 · Parallelism &amp; Locality</div>
+    <h2>并行度与局部性协同设计</h2>
+    <p class="sub">在三维解耦之上，给定预算 <i>B</i>，目标是最大化 budget 内并行吞吐：降低串行比 <i>s</i>、提升编排效率 <i>E</i>，逼近阿姆达尔上界 1/<i>s</i>。四条机制共用一根杠杆——<b>按工具集切分</b>。</p>
+  </div>
+
+  <blockquote class="fade" style="border-left-color:var(--para);margin:2px 0 18px"><b>机制根因（第一性原理）：</b>一次推理 = <b>内在知识（权重，固定）⊕ context（可变）</b>，故 agent 唯一能动的就是<b>组织 context</b>。KV-cache 复用要求<b>前缀逐 token 相同</b>——尾部一变、其后全部失效；因此可控之道是<b>前缀冻结 + 尾部变化</b>：把稳定的工具集/记忆放前缀并冻结，任务变化放尾部。这同时买到三重收益——<b>缓存复用（快，源于 N↓）</b>、<b>注意力不被稀释（准）</b>、<b>并行独立（可切分）</b>。P10–P13 即此根因的四个可证伪投影。</blockquote>
+
+  <div class="mech-grid fade">
+    <div class="mech"><div class="mtag">M1</div><h4>按工具集划分逻辑子 agent</h4><p>子 agent 复用同一工具集 / harness，context 跨迭代前缀可复用 → attention 命中 <i>H</i>↑（Skills 局部性）。</p></div>
+    <div class="mech"><div class="mtag">M2</div><h4>子 agent 间工具集不重合</h4><p>切分从"工具集不重合"起步，降低跨 agent 依赖 → 串行比 <i>s</i>↓（并行独立性）。</p></div>
+    <div class="mech"><div class="mtag">M3</div><h4>只传 summarized context</h4><p>子 agent 间只传摘要、detail 入 memory → 松耦合顺序关系、编排效率 <i>E</i>↑。</p></div>
+    <div class="mech"><div class="mtag">M4</div><h4>Scaffold 按 seed 亲和派生</h4><p>同种子共置复用（affinity）、异种分散（anti-affinity）→ 固定资源下并行度 <i>k</i><sub>max</sub>↑。</p></div>
+  </div>
+
+  <div class="figure fade" style="margin-top:22px">
+    <svg viewBox="0 0 1120 560" role="img" aria-label="并行编排 walkthrough：Harness 按工具集切分 → seed 亲和派生 → 并行子 agent（同 seed 高内聚 / 跨 agent summarized-context 松耦合）→ detail 入 memory">
+      <defs>
+        <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#7a7f8c"/></marker>
+        <marker id="ahp" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#9a6a12"/></marker>
+      </defs>
+      <style>
+        .lane{fill:none;stroke:#d8dee8;stroke-width:1;stroke-dasharray:4 4}
+        .lbl{font:600 13px var(--mono,monospace);fill:#5a6478}
+        .box{rx:9;stroke-width:1.4}
+        .bt{font:600 13px system-ui,sans-serif}
+        .bs{font:500 11px var(--mono,monospace)}
+        .flow{stroke:#7a7f8c;stroke-width:1.6;fill:none}
+        .sflow{stroke:#9a6a12;stroke-width:1.6;fill:none;stroke-dasharray:5 4}
+        .note{font:italic 12px system-ui,sans-serif;fill:#7a7f8c}
+      </style>
+
+      <!-- swimlane labels -->
+      <text class="lbl" x="24" y="60">Harness</text>
+      <text class="lbl" x="24" y="60" dy="16" font-weight="400" fill="#9aa2b0">控制面 · 切分</text>
+      <text class="lbl" x="24" y="196">Scaffold</text>
+      <text class="lbl" x="24" y="196" dy="16" font-weight="400" fill="#9aa2b0">seed 派生</text>
+      <text class="lbl" x="24" y="330">Sub-agents</text>
+      <text class="lbl" x="24" y="330" dy="16" font-weight="400" fill="#9aa2b0">并行执行</text>
+      <text class="lbl" x="24" y="500">Memory</text>
+      <line class="lane" x1="150" y1="90"  x2="1096" y2="90"/>
+      <line class="lane" x1="150" y1="230" x2="1096" y2="230"/>
+      <line class="lane" x1="150" y1="430" x2="1096" y2="430"/>
+
+      <!-- Harness partition -->
+      <rect class="box" x="170" y="30" width="270" height="46" fill="#efe9fb" stroke="#6d3fd4"/>
+      <text class="bt" x="182" y="52" fill="#4a2f9e">partition(task, D₃, D₄, B)</text>
+      <text class="bs" x="182" y="69" fill="#6d3fd4">minimize ρ(𝒫) · 工具集不重合 (M2)</text>
+
+      <!-- seeds -->
+      <rect class="box" x="200" y="145" width="150" height="60" fill="#f6efdf" stroke="#9a6a12"/>
+      <text class="bt" x="214" y="170" fill="#7a530d">seed A</text>
+      <text class="bs" x="214" y="188" fill="#9a6a12">τ_A · prewarm</text>
+      <rect class="box" x="470" y="145" width="150" height="60" fill="#f6efdf" stroke="#9a6a12"/>
+      <text class="bt" x="484" y="170" fill="#7a530d">seed A</text>
+      <text class="bs" x="484" y="188" fill="#9a6a12">affinity 共置</text>
+      <rect class="box" x="770" y="145" width="150" height="60" fill="#f6efdf" stroke="#9a6a12"/>
+      <text class="bt" x="784" y="170" fill="#7a530d">seed B</text>
+      <text class="bs" x="784" y="188" fill="#9a6a12">anti-affinity</text>
+
+      <!-- sub-agents (parallel) -->
+      <rect class="box" x="180" y="255" width="190" height="60" fill="#e4f1e8" stroke="#1a7d52"/>
+      <text class="bt" x="194" y="280" fill="#136040">a₁ · τ_A</text>
+      <text class="bs" x="194" y="298" fill="#1a7d52">H↑ 前缀命中 (M1)</text>
+      <rect class="box" x="450" y="255" width="190" height="60" fill="#e4f1e8" stroke="#1a7d52"/>
+      <text class="bt" x="464" y="280" fill="#136040">a₂ · τ_A</text>
+      <text class="bs" x="464" y="298" fill="#1a7d52">同 seed 复用</text>
+      <rect class="box" x="750" y="255" width="190" height="60" fill="#fbeee0" stroke="#bc5a16"/>
+      <text class="bt" x="764" y="280" fill="#8f4410">a₃ · τ_B</text>
+      <text class="bs" x="764" y="298" fill="#bc5a16">异 seed 分散 (M4)</text>
+
+      <!-- memory -->
+      <rect class="box" x="180" y="455" width="760" height="44" fill="#e1eff6" stroke="#1474a6"/>
+      <text class="bt" x="194" y="482" fill="#0f5a80">detail → memory（不入下游 context）· summarized context 跨 agent 传递 (M3)</text>
+
+      <!-- flows: partition -> seeds -->
+      <path class="flow" d="M275,76 L275,145" marker-end="url(#ah)"/>
+      <path class="flow" d="M340,53 C560,53 545,130 545,145" marker-end="url(#ah)"/>
+      <path class="flow" d="M440,53 C845,53 845,130 845,145" marker-end="url(#ah)"/>
+      <!-- seeds -> agents -->
+      <path class="flow" d="M270,205 L270,255" marker-end="url(#ah)"/>
+      <path class="flow" d="M545,205 L545,255" marker-end="url(#ah)"/>
+      <path class="flow" d="M845,205 L845,255" marker-end="url(#ah)"/>
+      <!-- summarized-context between agents (loose, amber dashed) -->
+      <path class="sflow" d="M370,278 L450,278" marker-end="url(#ahp)"/>
+      <path class="sflow" d="M640,285 C695,300 700,285 750,278" marker-end="url(#ahp)"/>
+      <text class="note" x="378" y="248">summarized context（松耦合）</text>
+      <!-- agents -> memory -->
+      <path class="flow" d="M275,315 L275,455" marker-end="url(#ah)"/>
+      <path class="flow" d="M545,315 L545,455" marker-end="url(#ah)"/>
+      <path class="flow" d="M845,315 L845,455" marker-end="url(#ah)"/>
+
+      <!-- speedup annotation -->
+      <text class="note" x="980" y="290" fill="#9a6a12">Speedup → 1/s</text>
+      <text class="note" x="980" y="308" fill="#9a6a12">s=s₀+λρ, E=E₀−μc̄</text>
+    </svg>
+    <p class="figcap"><b>Walkthrough：</b>Harness 在控制面按工具集把任务切成不重合的子 agent（<span class="figcap-hint">M2</span>，minimize ρ）；Scaffold 依 seed 亲和派生（同种 <span class="figcap-hint">A</span> 共置、异种 <span class="figcap-hint">B</span> 分散，<span class="figcap-hint">M4</span>）；子 agent 并行执行且各自复用稳定工具集 → 前缀命中 <i>H</i>↑（<span class="figcap-hint">M1</span>）；agent 之间只沿<b>摘要</b>接口松耦合传递（<span class="figcap-hint">M3</span>），detail 沉入 memory 不污染下游 context。</p>
+  </div>
+
+  <div class="grid g3 fade" style="margin-top:22px">
+    <div class="card"><h3 style="color:var(--para)">P10 · 并行度可设计</h3><p class="mut">s = s₀ + λ·ρ(𝒫)，E = E₀ − μ·c̄<sub>ctx</sub>；吞吐随重合度 ρ↓、跨 agent 传递量 c̄<sub>ctx</sub>↓ 逼近 1/s。并行上界是切分设计的函数，而非外生常数。</p></div>
+    <div class="card"><h3 style="color:var(--logic)">P11 · 工具集局部性</h3><p class="mut">子 agent 工具集越稳定，context 跨迭代前缀命中率 <i>H</i> 越高、单位有效 token 成本越低。</p></div>
+    <div class="card"><h3 style="color:var(--phys)">P12 · seed 亲和</h3><p class="mut">同 seed 共置 + 异 seed 分散，在固定 Scaffold 资源下可容纳的并行子 agent 数 <i>k</i><sub>max</sub> 高于随机放置。</p></div>
+    <div class="card"><h3 style="color:var(--contract)">P13 · 规划期 dry-run</h3><p class="mut">主 agent 规划时先 dry-run 每个候选子任务的工具集闭包与 Scaffold 环境范围，据此切分 → ρ↓、H↑，更逼近 P10 上界（类比 cost-based query planning）。</p></div>
+  </div>
+
+  <p class="mut fade" style="margin-top:18px;font-size:14px">→ 完整机制、Specs（S-1 partition / S-2 seed / S-3 SummarizedContextSchema / S-4 metrics）与风险见研究笔记 <b>09-并行度与局部性协同设计</b>。</p>
+</section>
+
+<hr class="divider">
+
 <!-- ============ P 全表 ============ -->
 <section class="wrap slide" id="propositions">
   <h2 class="sec">可证伪命题总表</h2>
-  <p class="sub">P1–P9 横跨三维，是把架构提升为科学主张的可检验承诺。</p>
+  <p class="sub">P1–P13 横跨四维，是把架构提升为科学主张的可检验承诺。</p>
   <div class="card fade">
   <table>
     <tr><th>命题</th><th>维度</th><th>一句话</th><th>证伪条件</th></tr>
@@ -420,6 +541,10 @@
     <tr><td><span class="ok">P7</span></td><td>数据</td><td>固定 use case，∂ℓ/∂|src|≈0</td><td>加数据源抬高单请求 token 成本</td></tr>
     <tr><td><span class="ok">P8</span></td><td>数据</td><td>off-policy Σ 兼顾覆盖与精度</td><td>(c) 摘要不优于 (a)在线/(b)人工</td></tr>
     <tr><td><span class="ok">P9</span></td><td>数据</td><td>data-usage skill 使取数决策熵单调不增</td><td>重复 use case 决策发散 / 震荡</td></tr>
+    <tr><td><span class="ok">P10</span></td><td>并行</td><td>切分设计（ρ↓ + 摘要传递）使吞吐逼近 1/s</td><td>高/低 ρ × 全量/摘要 无差异</td></tr>
+    <tr><td><span class="ok">P11</span></td><td>并行</td><td>工具集越稳定 → context 前缀命中 H↑</td><td>工具集稳定性与缓存命中无关</td></tr>
+    <tr><td><span class="ok">P12</span></td><td>并行</td><td>同 seed 共置 + 异 seed 分散 → k_max↑</td><td>seed 亲和放置无物理局部性收益</td></tr>
+    <tr><td><span class="ok">P13</span></td><td>并行</td><td>规划期 dry-run 探测工具集闭包/环境范围再切分 → ρ↓、H↑</td><td>dry-run 切分不优于纯语义切分</td></tr>
   </table>
   </div>
 </section>
@@ -427,7 +552,7 @@
 <!-- ============ novelty ============ -->
 <section class="wrap slide" id="newpoints">
   <h2 class="sec">创新点登记（Novelty Ledger）</h2>
-  <p class="sub">C5 + N0–N5。每条标注主张与对标空白。</p>
+  <p class="sub">C5 + N0–N7。每条标注主张与对标空白。</p>
   <div class="card fade">
   <table>
     <tr><th>编号</th><th>维度</th><th>创新主张</th><th>对标空白</th></tr>
@@ -438,6 +563,8 @@
     <tr><td>N3</td><td>跨维</td><td>数据子系统沿 CP/DP 自然分裂，复用同一平面不变量</td><td>同一切分解释三层结构 → 架构内在一致性</td></tr>
     <tr><td>N4</td><td>数据结构</td><td>off-policy loop 是栈外独立异步子系统</td><td>现有工作把语义建模当在线步骤或接口</td></tr>
     <tr><td>N5</td><td>skill 理论</td><td>skill 三分：task / system / data-usage</td><td>现有 skill 综述未区分"数据使用"为独立类</td></tr>
+    <tr><td><span class="ok">N6</span></td><td>并行/局部性</td><td>并行度上界可设计 + 三层局部性协同（工具集切分为单一杠杆）</td><td>ICA 启发式 III 只给被动阿姆达尔上界，未给"如何主动逼近"</td></tr>
+    <tr><td><span class="ok">N7</span></td><td>并行/局部性</td><td>规划期局部性预探测（dry-run 切分）：切分输入从"语义"扩展到"工具集闭包 + 环境可行性"</td><td>现有编排按语义/角色切分，未把规划期资源局部性 dry-run 作切分依据（类比 cost-based query planning）</td></tr>
   </table>
   </div>
 </section>
