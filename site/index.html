@@ -12,6 +12,7 @@
   <a href="index.html" class="active">概览</a>
   <a href="research-brief.html">研究简报</a>
   <a href="architecture.html">架构 & 主线</a>
+  <a href="dry-run.html">Dry Run</a>
   <a href="references.html">文献</a>
   <a href="timeline.html">时间线</a>
   <a href="input.html">原始构想</a>
@@ -140,6 +141,44 @@
     <a class="card linkcard fade" href="architecture.html#newpoints"><span class="pill"> N3 · N5</span><h3 style="margin-top:12px">架构一致性 + skill 三分</h3><p class="mut">N3：数据子系统沿 CP/DP 自然分裂，复用同一平面不变量。N5：skill 三分 task / system / data-usage，同遵 skill 形式。</p></a>
   </div>
   <div class="btnrow"><a class="btn ghost" href="architecture.html#newpoints">查看创新点登记表 →</a></div>
+</section>
+
+<hr class="divider">
+
+<!-- Dry Run · 实例化 walkthrough：把抽象四维落到一次真实运行 -->
+<section class="wrap" id="dryrun">
+  <div class="kicker center">Dry Run · 实例化 walkthrough <span class="pill new">四维对齐</span></div>
+  <h2 class="sec">抽象命题，落到一次真实运行。</h2>
+  <p class="sub">用具体任务走查 <code>A=⟨S,H,X⟩ + 𝒟</code> 全栈的 <b>spec 调用顺序</b>与<b>数据流</b>。v0.2 起显式对齐第四维：规划期先 <b>dry-run 探测工具集闭包 + Scaffold 环境（P13）</b>，按 <b>工具集不重合切并行子 agent（M1/M2）</b>，各自<b>冻结稳定前缀（P11）</b>、按 <b>seed 亲和派生（M4）</b>、仅沿 <b>summarized context（M3）</b>松耦合传递。</p>
+
+  <div class="grid g2">
+    <a class="card linkcard fade" href="dry-run.html#ai4s" style="border-top:3px solid var(--para)">
+      <span class="pill data">用例 U · AI4Science</span>
+      <h3 style="margin-top:12px">钙钛矿带隙筛选（~1.3 eV）</h3>
+      <p class="mut">压满三层 + 数据子系统：文献(→D₂ 时序摘要)、物性库(→D₁ 取数)、仿真(→code-gen + Scaffold cloud/HPC)、多信号验证、报告与回写(→D₂/Ω/D₃)。sub-goals {文献→候选→取物性→筛选→分析→报告} 经 dry-run 切成并行子 agent。</p>
+      <p class="props">P7 取数解耦 · P2 契约翻译 · <b style="color:var(--para)">P10–P13 并行/局部性</b> · §4.4.1 防幻觉</p>
+    </a>
+    <a class="card linkcard fade" href="dry-run.html#fintech" style="border-top:3px solid var(--para)">
+      <span class="pill phys">用例 K · FinTech</span>
+      <h3 style="margin-top:12px">Kronos 基础模型股票预测</h3>
+      <p class="mut">端到端时序 skill：取数(D₁)、GPU 托管预训练模型(Scaffold serving)、概率采样(T/top_p/sample_count)入循环、多信号验证(回测 + 泄漏检查 + 校准)、预测作为<b>带有效期记录</b>回写。多标的/多周期按工具集切分并行。</p>
+      <p class="props">P1 物理扩展 · P3 能力围栏(只读) · <b style="color:var(--para)">P10–P13 多标的并行</b> · N0 采样可审计</p>
+    </a>
+  </div>
+
+  <div class="card fade" style="margin-top:18px;background:var(--bg2);box-shadow:none">
+    <div class="kicker">四维如何在一次运行里同时出现</div>
+    <p class="mut" style="margin-bottom:10px">同一条 spec 调用顺序，四条正交切分各自留下一阶足迹——这正是"共享同一解耦不变量"的运行时证据：</p>
+    <div class="grid g2" style="gap:12px">
+      <p style="margin:0"><span class="pill logic">扩展轴</span> Skill 只声明 <code>required_capabilities</code>，H 翻译 𝓘→𝓔，从不直接绑 Scaffold（<b>P2</b>）。</p>
+      <p style="margin:0"><span class="pill contract">控制/数据面</span> plan / 路由 / 验证在 CP，取数 / 计算 / serving 在 DP（<b>P4–P6</b>）。</p>
+      <p style="margin:0"><span class="pill data">数据子系统</span> 先查 D₃/D₄/D₂ 共享摘要再取原文，源增加不抬单请求成本（<b>P7</b>）；写回逻辑追加、可回指原文防幻觉。</p>
+      <p style="margin:0"><span class="pill para">并行/局部性</span> dry-run 探工具集闭包再按不重合切分（<b>P13/M1/M2</b>），同 seed 共置（<b>M4</b>）、前缀冻结（<b>P11</b>）、只传摘要（<b>M3</b>）→ 吞吐逼近 1/s（<b>P10</b>）。</p>
+    </div>
+    <p class="mut" style="margin-top:12px;font-size:14px">机制根因（<a class="inline" href="architecture.html#parallel">§0.5 第一性原理</a>）：一次推理 = 内在知识（权重，固定）⊕ context（可变），agent 唯一能动的是<b>组织 context</b>；<b>前缀冻结 + 尾部变化</b>同时买到缓存复用（快）、注意力不稀释（准）、并行独立（可切分）——P10–P13 即此根因的四个可证伪投影。</p>
+  </div>
+
+  <div class="btnrow"><a class="btn" href="dry-run.html">进入 Dry Run walkthrough →</a><a class="btn ghost" href="architecture.html#parallel">并行/局部性机制 P10–P13 →</a></div>
 </section>
 
 <footer>
