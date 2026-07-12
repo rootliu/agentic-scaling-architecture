@@ -12,6 +12,8 @@
   --contract:#6d3fd4; --contract-bg:#efe9fb;
   --data:#1474a6; --data-bg:#e1eff6;            /* data dimension = deep teal */
   --para:#9a6a12; --para-bg:#f6efdf;            /* parallelism dimension = amber */
+  --det:#0f7a6b; --det-bg:#e3f4f0;              /* deterministic reasoning = cool teal-green */
+  --prob:#c2683a; --prob-bg:#fbeee2;            /* probabilistic reasoning = warm terracotta */
   --warn:#b3361b;
   --sans:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',Arial,sans-serif;
   --serif:var(--sans);
@@ -30,6 +32,8 @@
     --contract:#b79cf3; --contract-bg:#1d1430;
     --data:#52b6e0; --data-bg:#0c2330;
     --para:#d6a94a; --para-bg:#2a2109;
+    --det:#4fd0bb; --det-bg:#12332e;
+    --prob:#f0966a; --prob-bg:#33231a;
     --warn:#ff7b63;
     --shadow:0 2px 4px rgba(0,0,0,.3),0 12px 28px rgba(0,0,0,.45);
     --shadow-lg:0 4px 10px rgba(0,0,0,.4),0 24px 56px rgba(0,0,0,.6);
@@ -125,6 +129,8 @@ p{margin:14px 0}
 .pill.contract{background:var(--contract-bg);color:var(--contract);border-color:color-mix(in srgb,var(--contract) 28%,transparent)}
 .pill.data{background:var(--data-bg);color:var(--data);border-color:color-mix(in srgb,var(--data) 28%,transparent)}
 .pill.para{background:var(--para-bg);color:var(--para);border-color:color-mix(in srgb,var(--para) 30%,transparent)}
+.pill.det{background:var(--det-bg);color:var(--det);border-color:color-mix(in srgb,var(--det) 30%,transparent)}
+.pill.prob{background:var(--prob-bg);color:var(--prob);border-color:color-mix(in srgb,var(--prob) 30%,transparent)}
 .pill.new{background:var(--logic-bg);color:var(--logic);border-color:color-mix(in srgb,var(--logic) 30%,transparent);font-weight:600}
 
 /* cards — index sheets with corner tick */
@@ -219,16 +225,198 @@ svg{max-width:100%;height:auto}
 
 /* === interactive plate hero (added) === */
 /* hero where the architecture figure IS the hero */
-.plate-hero{padding:84px 0 64px;text-align:center;position:relative}
-.plate-hero h1{font-family:var(--serif);font-size:62px;line-height:1.02;font-weight:600;
-  margin:0 0 18px;letter-spacing:0;font-optical-sizing:auto}
-.plate-hero .lead{font-size:20px;color:var(--ink2);max-width:660px;margin:0 auto 8px;line-height:1.55}
+.plate-hero{min-height:calc(100vh - 56px);padding:18px 0 56px;text-align:center;position:relative}
+.plate-hero h1{font-family:var(--serif);font-size:clamp(27px,2.35vw,34px);line-height:1.08;font-weight:720;
+  margin:0 0 8px;letter-spacing:0;font-optical-sizing:auto}
+.plate-hero .lead{font-size:15.5px;color:var(--ink2);max-width:1040px;margin:40px auto 0;line-height:1.5}
 .plate-hero .lead b{color:var(--ink);font-weight:600}
-.plate-meta{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+.plate-meta{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:10px;flex-wrap:wrap}
 .plate-hint{font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;color:var(--ink2);
   background:var(--contract-bg);border:1px solid color-mix(in srgb,var(--contract) 22%,transparent);
   padding:4px 11px;border-radius:6px}
-.plate-hero .figure{margin-top:34px}
+.plate-hero .figure{margin-top:10px}
+
+/* Homepage runtime map: one slide-like figure instead of three explanatory cards. */
+.runtime-blueprint{
+  max-width:1180px;
+  margin-left:auto;
+  margin-right:auto;
+  overflow-x:auto;
+  overscroll-behavior-x:contain;
+  padding-bottom:0;
+}
+.runtime-blueprint svg{
+  display:block;
+  width:100%;
+  min-width:900px;
+  height:auto;
+  background:#fff;
+  border-radius:18px;
+  border:1px solid #d2dae7;
+  box-shadow:0 18px 54px rgba(20,32,51,.14);
+}
+.runtime-blueprint text{
+  font-family:var(--sans);
+  letter-spacing:0;
+}
+.runtime-blueprint .bp-eyebrow{
+  fill:#6b7483;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.runtime-blueprint .bp-title{
+  fill:#172033;
+  font-size:30px;
+  font-weight:780;
+}
+.runtime-blueprint .bp-note{
+  fill:#4f5e73;
+  font-size:15px;
+  font-weight:600;
+}
+.runtime-blueprint .bp-plane{
+  font-size:14px;
+  font-weight:800;
+  letter-spacing:.04em;
+}
+.runtime-blueprint .bp-plane.cp{fill:#6d3fd4}
+.runtime-blueprint .bp-plane.dp{fill:#bc5a16}
+.runtime-blueprint .bp-small{
+  fill:#6b7483;
+  font-size:13px;
+  font-weight:500;
+}
+.runtime-blueprint .bp-layer{
+  font-size:19px;
+  font-weight:780;
+}
+.runtime-blueprint .bp-section-label{
+  fill:#718096;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.runtime-blueprint .bp-mech-label{
+  fill:#667085;
+  font-size:11.5px;
+  font-weight:820;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.runtime-blueprint .bp-step{
+  font-size:12px;
+  font-weight:850;
+}
+.runtime-blueprint .bp-step.logic{fill:#1a7d52}
+.runtime-blueprint .bp-step.contract{fill:#6d3fd4}
+.runtime-blueprint .bp-step.phys{fill:#bc5a16}
+.runtime-blueprint .bp-layer.logic,
+.runtime-blueprint .bp-caption.logic{fill:#1a7d52}
+.runtime-blueprint .bp-layer.phys,
+.runtime-blueprint .bp-caption.phys{fill:#bc5a16}
+.runtime-blueprint .bp-layer.contract{fill:#6d3fd4}
+.runtime-blueprint .bp-layer.data{fill:#1474a6}
+.runtime-blueprint .bp-layer.para{fill:#9a6a12}
+.runtime-blueprint .bp-line{
+  fill:#536173;
+  font-size:13.5px;
+  font-weight:540;
+}
+.runtime-blueprint .bp-chip{
+  fill:#405064;
+  font-size:13px;
+  font-weight:650;
+}
+.runtime-blueprint .bp-link{
+  fill:#6d3fd4;
+  font-size:13px;
+  font-weight:800;
+}
+.runtime-blueprint .bp-caption{
+  font-size:13px;
+  font-weight:760;
+}
+.runtime-blueprint .bp-divider{
+  stroke:#d8dee8;
+  stroke-width:1;
+  stroke-dasharray:5 8;
+}
+.runtime-blueprint .bp-arrow{
+  fill:none;
+  stroke:#6d3fd4;
+  stroke-width:2;
+  marker-end:url(#arrowContract);
+}
+.runtime-blueprint .bp-data-arrow{
+  fill:none;
+  stroke:#1474a6;
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-dasharray:6 6;
+  marker-end:url(#arrowData);
+}
+.runtime-blueprint .bp-hot{
+  cursor:pointer;
+  text-decoration:none;
+}
+.runtime-blueprint .bp-hot rect{
+  transition:stroke-width .22s ease,filter .22s ease,transform .22s ease;
+}
+.runtime-blueprint .bp-hot:hover rect:first-child,
+.runtime-blueprint .bp-hot:focus-visible rect:first-child{
+  stroke-width:2.4px;
+  filter:drop-shadow(0 10px 18px rgba(31,41,51,.12));
+}
+.runtime-blueprint .figcap{
+  display:block;
+  max-width:1040px;
+  margin:14px auto 0;
+  padding:12px 16px;
+  color:#435066;
+  background:rgba(255,255,255,.76);
+  border:1px solid var(--hair);
+  border-radius:8px;
+  box-shadow:0 8px 22px rgba(20,32,51,.06);
+}
+
+.glossary-strip{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:8px;
+  max-width:1040px;
+  margin:18px auto 0;
+}
+.term{
+  display:inline-flex;
+  align-items:baseline;
+  gap:6px;
+  padding:7px 10px;
+  border:1px solid var(--hair);
+  border-radius:8px;
+  background:rgba(255,255,255,.78);
+  box-shadow:0 4px 14px rgba(20,32,51,.045);
+  color:var(--ink2);
+  font-family:var(--sans);
+  font-size:12.5px;
+  line-height:1.2;
+}
+.term b{
+  color:var(--ink);
+  font-family:var(--mono);
+  font-size:12px;
+  font-weight:800;
+  white-space:nowrap;
+}
+.term.logic{border-color:color-mix(in srgb,var(--logic) 24%,var(--hair))}
+.term.contract{border-color:color-mix(in srgb,var(--contract) 24%,var(--hair))}
+.term.phys{border-color:color-mix(in srgb,var(--phys) 24%,var(--hair))}
+.term.data{border-color:color-mix(in srgb,var(--data) 24%,var(--hair))}
+.term.para{border-color:color-mix(in srgb,var(--para) 26%,var(--hair))}
+.term.det{border-color:color-mix(in srgb,var(--det) 26%,var(--hair))}
 
 /* figure plate emphasis when interactive */
 .figure.interactive svg{border:1px solid color-mix(in srgb,var(--contract) 18%,var(--hair));
@@ -259,9 +447,10 @@ a.linkcard::after{content:"→";position:absolute;bottom:24px;right:26px;
 a.linkcard:hover::after{opacity:1;transform:none;color:var(--contract)}
 
 @media(max-width:820px){
-  .plate-hero h1{font-size:40px}
-  .plate-hero .lead{font-size:17px}
-  .plate-hero{padding:60px 0 44px}
+  .plate-hero h1{font-size:28px}
+  .plate-hero .lead{font-size:15.5px}
+  .plate-hero{padding:30px 0 42px}
+  .runtime-blueprint svg{min-width:840px}
 }
 @media (prefers-reduced-motion: reduce){
   .hot rect,.hot text.go,a.linkcard::after{transition:none}
@@ -375,6 +564,10 @@ a.linkcard:hover::after{opacity:1;transform:none;color:var(--contract)}
   --data-bg:#e5f4f8;
   --para:#8a5f10;
   --para-bg:#f5eddb;
+  --det:#0f7a6b;
+  --det-bg:#e3f4f0;
+  --prob:#c2683a;
+  --prob-bg:#fbeee2;
   --warn:#b42318;
   --sans:"Inter","Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",Arial,sans-serif;
   --serif:var(--sans);
@@ -633,3 +826,103 @@ li{margin:8px 0}
 .mech h4{margin:5px 0 6px;font-size:15px}
 .mech p{margin:0;font-size:13.5px;color:var(--ink2);line-height:1.55}
 .plane-tag.para{background:var(--para-bg);color:var(--para)}
+
+/* === homepage bilingual deck refinements === */
+.home-deck .home-deck-nav{
+  top:56px;
+}
+.home-deck .home-deck-nav .deck-nav-inner{
+  justify-content:center;
+  gap:10px;
+}
+.home-deck .home-deck-nav a{
+  min-width:98px;
+  text-align:center;
+}
+.home-deck #overview,
+.home-deck .home-slide{
+  scroll-margin-top:118px;
+  scroll-snap-align:start;
+}
+.home-deck .home-slide{
+  min-height:calc(100vh - 112px);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding-top:92px;
+  padding-bottom:92px;
+}
+.home-deck .home-slide.compact{
+  min-height:auto;
+  padding-top:76px;
+  padding-bottom:76px;
+}
+.home-deck .home-slide .grid{
+  align-items:stretch;
+}
+.home-deck .glossary-strip{
+  max-width:1120px;
+  gap:7px;
+}
+.home-deck .term{
+  background:rgba(255,255,255,.84);
+}
+.home-deck .runtime-blueprint .bp-line{
+  font-size:13px;
+}
+.home-deck .runtime-blueprint .bp-caption{
+  font-size:12.4px;
+}
+.home-deck .runtime-blueprint .figcap{
+  line-height:1.62;
+}
+@media(max-width:820px){
+  .home-deck .home-deck-nav .deck-nav-inner{
+    justify-content:flex-start;
+    flex-wrap:nowrap;
+    overflow-x:auto;
+  }
+  .home-deck .home-deck-nav a{
+    min-width:auto;
+  }
+  .home-deck .home-slide{
+    min-height:auto;
+    padding-top:68px;
+    padding-bottom:68px;
+  }
+}
+/* Keep the homepage opening slide immediately readable for presentation use. */
+.home-deck .plate-hero{
+  min-height:auto;
+  padding-top:22px;
+  padding-bottom:58px;
+}
+.home-deck .plate-hero .fade{
+  opacity:1;
+  transform:none;
+}
+.home-deck .plate-hero h1{
+  font-family:var(--sans);
+  font-size:clamp(30px,2.55vw,38px);
+  font-weight:820;
+  line-height:1.08;
+  margin-bottom:12px;
+}
+.home-deck .plate-hero .lead{
+  margin-top:24px;
+}
+.home-deck .runtime-blueprint{
+  margin-top:8px;
+}
+.home-deck .runtime-blueprint .figcap{
+  margin-top:12px;
+}
+@media(max-width:820px){
+  .home-deck .plate-hero{
+    padding-top:18px;
+    padding-bottom:46px;
+  }
+  .home-deck .plate-hero h1{
+    font-size:clamp(28px,8vw,34px);
+  }
+}

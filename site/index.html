@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agentic Runtime 参考架构</title>
-<link rel="stylesheet" href="style.css?v=20260621">
+<link rel="stylesheet" href="style.css?v=20260712h">
 </head>
-<body>
+<body class="home-deck">
 <nav class="bar"><div class="inner">
   <span class="brand">Agentic Runtime</span>
   <a href="index.html" class="active">概览</a>
@@ -16,59 +16,155 @@
   <a href="references.html">文献</a>
   <a href="timeline.html">时间线</a>
   <a href="input.html">原始构想</a>
-  <a href="arch-zh.html" style="margin-left:auto">导览 ↗</a>
+  <a href="index-en.html" style="margin-left:auto">EN</a>
 </div></nav>
-
-<!-- HERO = 三正交切分 → 收敛于一个不变量。三联屏每块可点击进入对应章节。 -->
-<header class="plate-hero wrap">
+<nav class="deck-nav home-deck-nav" aria-label="页面跳转">
+  <div class="deck-nav-inner">
+    <a href="#overview"><span>01</span>架构总图</a>
+    <a href="#stack"><span>02</span>三层栈</a>
+    <a href="#argument"><span>03</span>核心论证</a>
+    <a href="#innovation"><span>04</span>创新点</a>
+    <a href="#dryrun"><span>05</span>Dry Run</a>
+  </div>
+</nav>
+<!-- HERO = four orthogonal cuts + deterministic anchor, converging on manageability. -->
+<header id="overview" class="plate-hero wrap">
   <div class="plate-meta fade">
-    <span class="kicker" style="margin:0">参考架构 · 三维</span>
+    <span class="kicker" style="margin:0">参考架构 · 四条切分 + 确定性锚</span>
     <span class="plate-hint">点击任一切分，进入对应章节 ↗</span>
   </div>
-  <h1 class="fade">可扩展的 Agentic Runtime，<br>以及它的可管理性。</h1>
-  <p class="lead fade">论文的核心目标不是"三层栈"本身，而是研究 agentic runtime 在持续增加 skills、执行资源和外部数据源时，如何仍然保持可审计、可治理、可运维、可演进。扩展轴、控制/数据面、栈外数据子系统——<b>三条互相正交的切分</b>，共同服务于这个可管理的扩展目标。</p>
+  <h1 class="fade">可扩展的 Agentic Runtime，以及它的可管理性。</h1>
+  <!-- 架构总图：把三层、CP/DP、栈外数据、并行局部性与确定性锚放在同一张讲解路径图里。 -->
+  <div class="figure runtime-blueprint fade" role="img" aria-label="可扩展 agentic runtime 架构总图">
+    <svg viewBox="0 0 1180 540" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <linearGradient id="bpSurface" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0" stop-color="#ffffff"/>
+          <stop offset="1" stop-color="#f4f7fb"/>
+        </linearGradient>
+        <linearGradient id="bpCP" x1="0" x2="1">
+          <stop offset="0" stop-color="#f4efff"/>
+          <stop offset="1" stop-color="#fbf9ff"/>
+        </linearGradient>
+        <linearGradient id="bpDP" x1="0" x2="1">
+          <stop offset="0" stop-color="#fff6ed"/>
+          <stop offset="1" stop-color="#fffaf5"/>
+        </linearGradient>
+        <filter id="bpShadow" x="-8%" y="-10%" width="116%" height="124%">
+          <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#203047" flood-opacity=".14"/>
+        </filter>
+        <marker id="arrowContract" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0 0L10 5L0 10Z" fill="#6d3fd4"/>
+        </marker>
+        <marker id="arrowData" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0 0L10 5L0 10Z" fill="#1474a6"/>
+        </marker>
+      </defs>
 
-  <!-- 三联屏 -->
-  <div class="triptych fade">
-    <a class="cut c-ext" href="architecture.html#formalization" aria-label="扩展轴 — 形式化与 P1–P3">
-      <span class="seehint">查看 P1–P3 ↗</span>
-      <span class="dim">维度 1 · 扩展轴</span>
-      <h3>往哪个方向加东西</h3>
-      <p class="ortho"><span style="color:var(--logic)">逻辑 +Skill</span> ⟂ <span style="color:var(--phys)">物理 +Scaffold</span></p>
-      <p>逻辑扩展扩大能力覆盖 𝒯，物理扩展扩大吞吐 Θ。二者在效果空间正交，解耦点是 Harness 契约 H。</p>
-      <p class="props">命题 P1 · P2 · P3 ｜ 核心 novelty C5</p>
-    </a>
-    <a class="cut c-plane" href="architecture.html#planes" aria-label="控制/数据面 — P4–P6 与 N0">
-      <span class="seehint">查看 P4–P6 ↗</span>
-      <span class="dim">维度 2 · 控制 / 数据面</span>
-      <h3>按什么职责分流</h3>
-      <p class="ortho"><span style="color:var(--phys)">数据面 DP</span> ⟂ <span style="color:var(--contract)">控制面 CP</span></p>
-      <p>DP 承载 token 处理（∝ 流量），CP 承载决策/翻译/不变量（∝ 状态事件）。本架构 CP 由 LLM 驱动 → 概率性控制面。</p>
-      <p class="props">命题 P4 · P5 · P6 ｜ novelty N0</p>
-    </a>
-    <a class="cut c-data" href="architecture.html#data" aria-label="数据子系统 — P7–P9 与 N1–N5">
-      <span class="seehint">查看 P7–P9 ↗</span>
-      <span class="dim">维度 3 · 数据子系统（栈外）</span>
-      <h3>怎么与外部数据协同</h3>
-      <p class="ortho"><span style="color:var(--data)">𝒟 = ⟨D₁,D₂,D₃,D₄,Ω⟩</span></p>
-      <p>三层栈之外新增的子系统。取数在数据面，语义总结是栈外独立 off-policy loop，治理与 lifetime 在控制面。</p>
-      <p class="props">命题 P7 · P8 · P9 ｜ novelty N1–N5</p>
-    </a>
-  </div>
+      <rect x="18" y="16" width="1144" height="508" rx="24" fill="url(#bpSurface)" stroke="#d8dee8"/>
+      <text x="54" y="58" class="bp-eyebrow">MANAGEABLE SCALING MAP</text>
+      <text x="54" y="88" class="bp-title">A = &lt;S, H, X&gt; + 𝒟</text>
+      <text x="916" y="58" class="bp-eyebrow">orthogonal cuts</text>
+      <text x="916" y="88" class="bp-note">扩展轴 · CP/DP · 𝒟 · 并行局部性</text>
 
-  <!-- 收敛连接线 -->
-  <div class="converge fade" aria-hidden="true">
-    <svg viewBox="0 0 760 30" preserveAspectRatio="none">
-      <path d="M126,0 C126,18 380,12 380,30" fill="none" stroke="#1a9c63" stroke-width="1.5" stroke-opacity=".55"/>
-      <path d="M380,0 L380,30" fill="none" stroke="#6d3fd4" stroke-width="1.5" stroke-opacity=".55"/>
-      <path d="M634,0 C634,18 380,12 380,30" fill="none" stroke="#1474a6" stroke-width="1.5" stroke-opacity=".55"/>
+      <rect x="64" y="108" width="774" height="298" rx="22" fill="#ffffff" stroke="#d7deea" filter="url(#bpShadow)"/>
+      <text x="96" y="144" class="bp-section-label">RUNTIME CORE</text>
+      <rect x="288" y="122" width="252" height="50" rx="15" fill="url(#bpCP)" stroke="#ded1f7"/>
+      <rect x="558" y="122" width="252" height="50" rx="15" fill="url(#bpDP)" stroke="#f0d8be"/>
+      <text x="314" y="146" class="bp-plane cp">CONTROL PLANE</text>
+      <text x="314" y="164" class="bp-small">plan · route · govern</text>
+      <text x="584" y="146" class="bp-plane dp">DATA PLANE</text>
+      <text x="584" y="164" class="bp-small">serve · retrieve · execute</text>
+      <line x1="549" y1="122" x2="549" y2="384" class="bp-divider"/>
+
+      <a href="architecture.html#claims" class="bp-hot">
+        <rect x="118" y="188" width="666" height="52" rx="14" fill="#f2fbf5" stroke="#9acbad"/>
+        <circle cx="98" cy="214" r="13" fill="#e4f1e8" stroke="#9acbad"/>
+        <text x="98" y="219" text-anchor="middle" class="bp-step logic">1</text>
+        <text x="146" y="210" class="bp-layer logic">S · Skills</text>
+        <text x="146" y="230" class="bp-line">skill specs · I/O schema · task / system / data usage</text>
+        <text x="718" y="220" class="bp-link">P1 ↗</text>
+      </a>
+      <a href="architecture.html#formalization" class="bp-hot">
+        <rect x="118" y="256" width="666" height="52" rx="14" fill="#f8f5ff" stroke="#c7b7ec"/>
+        <circle cx="98" cy="282" r="13" fill="#efe9fb" stroke="#c7b7ec"/>
+        <text x="98" y="287" text-anchor="middle" class="bp-step contract">2</text>
+        <text x="146" y="278" class="bp-layer contract">H · Harness</text>
+        <text x="146" y="298" class="bp-line">translate contracts · supply capabilities · maintain M</text>
+        <text x="718" y="288" class="bp-link">C5 ↗</text>
+      </a>
+      <a href="architecture.html#claims" class="bp-hot">
+        <rect x="118" y="324" width="666" height="52" rx="14" fill="#fff8f1" stroke="#e7b77e"/>
+        <circle cx="98" cy="350" r="13" fill="#fbeee0" stroke="#e7b77e"/>
+        <text x="98" y="355" text-anchor="middle" class="bp-step phys">3</text>
+        <text x="146" y="346" class="bp-layer phys">X · Scaffold</text>
+        <text x="146" y="366" class="bp-line">sandbox · microVM · serving capacity · execution isolation</text>
+        <text x="718" y="356" class="bp-link">P3 ↗</text>
+      </a>
+
+      <path d="M238 240V256" class="bp-arrow"/>
+      <path d="M238 308V324" class="bp-arrow"/>
+      <text x="142" y="394" class="bp-caption logic">逻辑扩展：加 skill，扩大任务域</text>
+      <text x="496" y="394" class="bp-caption phys">物理扩展：加 scaffold，扩大执行容量</text>
+
+      <a href="architecture.html#data" class="bp-hot">
+        <rect x="870" y="108" width="246" height="298" rx="22" fill="#f3fafe" stroke="#b8d9e9" filter="url(#bpShadow)"/>
+        <text x="898" y="144" class="bp-layer data">𝒟 · Data Subsystem</text>
+        <text x="898" y="166" class="bp-line">栈外协同，不是第四层</text>
+        <rect x="898" y="188" width="190" height="36" rx="10" fill="#ffffff" stroke="#cce2ed"/>
+        <text x="916" y="211" class="bp-chip">D1 retrieval · DP</text>
+        <rect x="898" y="234" width="190" height="36" rx="10" fill="#ffffff" stroke="#cce2ed"/>
+        <text x="916" y="257" class="bp-chip">D2 off-policy memory</text>
+        <rect x="898" y="280" width="190" height="36" rx="10" fill="#ffffff" stroke="#cce2ed"/>
+        <text x="916" y="303" class="bp-chip">D3/D4 governance · CP</text>
+        <rect x="898" y="326" width="190" height="36" rx="10" fill="#ffffff" stroke="#cce2ed"/>
+        <text x="916" y="349" class="bp-chip">Omega source registry</text>
+        <text x="1034" y="389" class="bp-link">N1-N5 ↗</text>
+      </a>
+
+      <path d="M784 214 C824 214 828 206 870 206" class="bp-data-arrow"/>
+      <path d="M784 282 C830 282 824 300 870 300" class="bp-data-arrow"/>
+      <path d="M784 350 C832 350 822 344 870 344" class="bp-data-arrow"/>
+
+      <text x="64" y="426" class="bp-mech-label">MANAGEABILITY MECHANISMS</text>
+      <a href="architecture.html#parallel" class="bp-hot">
+        <rect x="64" y="436" width="498" height="56" rx="16" fill="#fffaf0" stroke="#dec78e"/>
+        <text x="94" y="464" class="bp-layer para">P10-P13 · Parallelism / Locality</text>
+        <text x="94" y="484" class="bp-line">tool closure · frozen prefix · seed affinity · summarized context</text>
+      </a>
+      <a href="architecture.html#newpoints" class="bp-hot">
+        <rect x="590" y="436" width="522" height="56" rx="16" fill="#f7f3ff" stroke="#cab9f0"/>
+        <text x="620" y="464" class="bp-layer contract">N8 / P14 · Skill-as-Code</text>
+        <text x="620" y="484" class="bp-line">deterministic anchor for probabilistic CP · stable contracts</text>
+      </a>
     </svg>
+    <p class="figcap"><b>读图顺序：</b>先看中间三层 S/H/X 与 Harness 契约闸门，再看横向 CP/DP 职责分流；右侧 𝒟 是栈外数据协同系统，底部 P10–P13 解释并行/局部性，N8/P14 则把可验证 skill 固化为 code，作为概率控制面的确定性锚。</p>
+  </div>
+  <p class="lead fade">研究 agentic runtime 在持续增加 skills、执行资源、外部数据源和并行子 agent 时，如何仍保持可审计、可治理、可运维、可演进。扩展轴、控制/数据面、栈外数据子系统、并行/局部性是<b>四条互相正交的切分</b>；Skill-as-Code 提供确定性锚。</p>
+
+  <div class="glossary-strip fade" aria-label="缩写解释">
+    <span class="term logic"><b>S/H/X</b>Skills / Harness / Scaffold</span>
+    <span class="term contract"><b>CP</b>Control Plane · 控制面</span>
+    <span class="term phys"><b>DP</b>Data Plane · 数据面</span>
+    <span class="term data"><b>𝒟</b>Data Subsystem · 栈外数据子系统</span>
+    <span class="term"><b>LLM</b>Large Language Model · 大语言模型</span>
+    <span class="term"><b>I/O</b>Input / Output · 输入/输出</span>
+    <span class="term"><b>API</b>Application Programming Interface</span>
+    <span class="term"><b>microVM</b>micro virtual machine · 微虚拟机</span>
+    <span class="term phys"><b>GPU</b>Graphics Processing Unit · 加速卡</span>
+    <span class="term phys"><b>HPC</b>High Performance Computing · 高性能计算</span>
+    <span class="term"><b>SSO</b>Single Sign-On · 单点登录</span>
+    <span class="term data"><b>DFT</b>Density Functional Theory · 密度泛函理论</span>
+    <span class="term data"><b>OHLCV</b>Open / High / Low / Close / Volume</span>
+    <span class="term para"><b>KV-cache</b>attention key-value cache</span>
+    <span class="term para"><b>M1-M4</b>locality mechanisms · 局部性机制</span>
+    <span class="term det"><b>N/P/C</b>Novelty / Proposition / Contribution</span>
   </div>
 
   <!-- 共享不变量收敛节点 -->
   <a class="invariant fade" href="architecture.html#dimensions" style="display:block;text-decoration:none;color:inherit">
     <span class="tag">统一命题 · meta-claim</span>
-    <p class="claim">三维各自的"加东西"，其一阶成本都落在<b>与主请求路径解耦的平面/子系统</b>上——逻辑扩展落控制面、物理扩展落数据面、数据扩展落离线 off-policy loop。目标是让 agentic runtime <b>可扩展，也可管理。</b></p>
+    <p class="claim">四条切分各自的"加东西"，其一阶成本都落在<b>与主请求路径解耦的平面/子系统</b>上——逻辑扩展落控制面、物理扩展落数据面、数据扩展落离线 off-policy loop，并行扩展落工具集闭包与局部性规划。目标是让 agentic runtime <b>可扩展，也可管理。</b></p>
   </a>
 
   <div class="pills fade" style="margin-top:26px">
@@ -76,6 +172,8 @@
     <span class="pill logic">逻辑扩展 = Skills</span>
     <span class="pill phys">物理扩展 = Scaffold</span>
     <span class="pill data">数据子系统 = 𝒟（栈外）</span>
+    <span class="pill para">并行/局部性 = P10–P13</span>
+    <span class="pill det">确定性锚 = Skill-as-Code</span>
   </div>
   <div class="btnrow fade">
     <a class="btn" href="research-brief.html">阅读研究简报 →</a>
@@ -87,7 +185,7 @@
 <hr class="divider">
 
 <!-- 三层栈 + 栈外数据子系统 -->
-<section class="wrap">
+<section class="wrap home-slide" id="stack">
   <div class="kicker center">三层栈 ⟨S · H · X⟩ + 栈外数据子系统 𝒟</div>
   <h2 class="sec">三个平面，一条契约；<br>外挂一个数据子系统。</h2>
   <p class="sub">自底向上三层各司其职，对应"虚机 / 框架运行时 / 前端运行时"。三层之外，再挂一个<b>略独立的数据子系统</b>——它不是第四层。</p>
@@ -115,24 +213,24 @@
   </a>
 </section>
 
-<section class="wrap" style="padding-top:0">
+<section class="wrap home-slide compact" id="argument" style="padding-top:0">
   <div class="card fade" style="background:var(--bg2);box-shadow:none">
     <div class="kicker">核心论证</div>
     <blockquote style="background:var(--card);font-size:18px;border-left-color:var(--blue)">
       现代云应用早已"前端按流量横扩 / 业务按功能纵展 / 后端按算力扩"——多轴解耦是<b>已知工程范式</b>。
-      本研究的 delta：在每层内嵌<b>概率性 LLM 调用</b>的条件下，给出该解耦成立的<b>充要条件（契约层 H）</b>、<b>可证伪判据（P1–P9）</b>，并证明<b>三条正交切分复用同一不变量</b>。
+      本研究的 delta：在每层内嵌<b>概率性 LLM 调用</b>的条件下，给出该解耦成立的<b>充要条件（契约层 H）</b>、<b>可证伪判据（P1–P14）</b>，并证明<b>四条正交切分复用同一不变量</b>：高频在线路径与低频/离线/可预规划路径分离。
     </blockquote>
-    <p class="mut">这把论文主张从"我们提出三层架构"提升为"我们证明在 LLM 不确定性下，逻辑 / 物理 / 数据三种可扩展性可以解耦，且共享同一解耦机制"——回应"工程而非科学"的核心质疑。</p>
+    <p class="mut">这把论文主张从"我们提出三层架构"提升为"我们证明在 LLM 不确定性下，逻辑 / 物理 / 数据 / 并行四类可扩展性可以解耦，且共享同一解耦机制；稳定技能还能固化为 code 以降低模型版本漂移"——回应"工程而非科学"的核心质疑。</p>
   </div>
 </section>
 
 <hr class="divider">
 
 <!-- 创新点速览 -->
-<section class="wrap">
-  <div class="kicker center">创新点速览 <span class="pill new">三维</span></div>
-  <h2 class="sec">六条 novelty，一张总表。</h2>
-  <p class="sub">C5 为核心；N0–N5 沿三维分布，每条都绑定一个可证伪命题。</p>
+<section class="wrap home-slide" id="innovation">
+  <div class="kicker center">创新点速览 <span class="pill new">四条切分</span></div>
+  <h2 class="sec">C5 + N0–N8，一张总表。</h2>
+  <p class="sub">C5 为核心；N0–N8 沿控制面、数据子系统、并行局部性和 Skill-as-Code 展开，每条都绑定一个可证伪命题或实验设计。</p>
   <div class="grid g3">
     <a class="card linkcard fade" href="architecture.html#formalization"><span class="pill logic">C5 · 扩展轴</span><h3 style="margin-top:12px">双扩展正交解耦</h3><p class="mut">逻辑 / 物理扩展正交，解耦点=契约层 Harness。7 篇 2026 文献无一拆正交两维并绑不同层。→ P1–P3</p></a>
     <a class="card linkcard fade" href="architecture.html#planes"><span class="pill contract">N0 · 平面</span><h3 style="margin-top:12px">概率性控制面</h3><p class="mut">LLM 驱动的控制决策（契约翻译 / 反思 / tool synthesis），需可审计日志 + 不变量约束。区别于确定性 SDN / K8s。→ P4–P6</p></a>
@@ -140,6 +238,9 @@
     <a class="card linkcard fade" href="architecture.html#data"><span class="pill data">N2 · 数据</span><h3 style="margin-top:12px">数据治理即 skill</h3><p class="mut">治理从"管边界"升级为"沉淀经验"：per-use-case data-usage skill。首次缝合数据治理与 agent skill / 记忆理论。→ P9</p></a>
     <a class="card linkcard fade" href="architecture.html#data"><span class="pill data">N4 · 数据结构</span><h3 style="margin-top:12px">off-policy loop 栈外独立</h3><p class="mut">语义总结不是在线步骤或接口，而是正交于在线运行时的离线子系统（own loop / sub-agents / model）。≈ DB vacuum / 离线索引。</p></a>
     <a class="card linkcard fade" href="architecture.html#newpoints"><span class="pill"> N3 · N5</span><h3 style="margin-top:12px">架构一致性 + skill 三分</h3><p class="mut">N3：数据子系统沿 CP/DP 自然分裂，复用同一平面不变量。N5：skill 三分 task / system / data-usage，同遵 skill 形式。</p></a>
+    <a class="card linkcard fade" href="architecture.html#parallel"><span class="pill para">N6 · 并行局部性</span><h3 style="margin-top:12px">工具集切分子 agent</h3><p class="mut">用工具集闭包定义并行独立性、Skills 局部性和 Scaffold seed 边界，让并行度不再只是调度参数。→ P10–P12</p></a>
+    <a class="card linkcard fade" href="dry-run.html#why"><span class="pill para">N7 · Dry Run</span><h3 style="margin-top:12px">规划期探测可并行性</h3><p class="mut">正式执行前先 dry-run 探工具集闭包与环境范围，再切分 sub-agent，降低跨 agent 重合度 ρ。→ P13</p></a>
+    <a class="card linkcard fade" href="architecture.html#newpoints"><span class="pill det">N8 · Skill-as-Code</span><h3 style="margin-top:12px">概率控制面的确定性锚</h3><p class="mut">验证过且操作空间闭合的 skill 固化为 code，使输出与模型版本 θ 解耦，增强可审计、可复现和契约稳定性。→ P14</p></a>
   </div>
   <div class="btnrow"><a class="btn ghost" href="architecture.html#newpoints">查看创新点登记表 →</a></div>
 </section>
@@ -147,7 +248,7 @@
 <hr class="divider">
 
 <!-- Dry Run · 实例化 walkthrough：把抽象四维落到一次真实运行 -->
-<section class="wrap" id="dryrun">
+<section class="wrap home-slide" id="dryrun">
   <div class="kicker center">Dry Run · 实例化 walkthrough <span class="pill new">四维对齐</span></div>
   <h2 class="sec">抽象命题，落到一次真实运行。</h2>
   <p class="sub">用具体任务走查 <code>A=⟨S,H,X⟩ + 𝒟</code> 全栈的 <b>spec 调用顺序</b>与<b>数据流</b>。v0.2 起显式对齐第四维：规划期先 <b>dry-run 探测工具集闭包 + Scaffold 环境（P13）</b>，按 <b>工具集不重合切并行子 agent（M1/M2）</b>，各自<b>冻结稳定前缀（P11）</b>、按 <b>seed 亲和派生（M4）</b>、仅沿 <b>summarized context（M3）</b>松耦合传递。</p>

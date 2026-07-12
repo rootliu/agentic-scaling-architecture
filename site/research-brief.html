@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>可扩展 Runtime 与可管理性 · Agentic Runtime</title>
-<link rel="stylesheet" href="style.css?v=20260621">
+<link rel="stylesheet" href="style.css?v=20260712h">
 </head>
 <body class="deck-page">
 <nav class="bar"><div class="inner">
@@ -16,7 +16,7 @@
   <a href="references.html">文献</a>
   <a href="timeline.html">时间线</a>
   <a href="input.html">原始构想</a>
-  <a href="arch-zh.html" style="margin-left:auto">导览 ↗</a>
+  <a href="research-brief-en.html" style="margin-left:auto">EN</a>
 </div></nav>
 
 <header class="hero wrap slide title-slide" id="top">
@@ -28,6 +28,17 @@
     <span class="pill contract">Harness</span>
     <span class="pill phys">Scaffold</span>
     <span class="pill data">Data Subsystem</span>
+    <span class="pill para">Parallelism / Locality</span>
+    <span class="pill det">Skill-as-Code</span>
+  </div>
+  <div class="glossary-strip fade" aria-label="缩写解释">
+    <span class="term contract"><b>CP</b>Control Plane · 控制面</span>
+    <span class="term phys"><b>DP</b>Data Plane · 数据面</span>
+    <span class="term data"><b>𝒟</b>Data Subsystem</span>
+    <span class="term"><b>LLM</b>Large Language Model</span>
+    <span class="term"><b>NFR</b>Non-functional Requirements</span>
+    <span class="term para"><b>QPS</b>Queries per second</span>
+    <span class="term det"><b>Skill-as-Code</b>validated skill frozen as code</span>
   </div>
 </header>
 
@@ -51,7 +62,7 @@
   </div>
   <div class="card fade">
     <blockquote style="border-left-color:var(--contract);font-size:20px">
-      面向 agentic runtime，定义三层栈 <code>A = &lt;S,H,X&gt;</code>：Skills 负责逻辑能力表达，Harness 负责契约翻译与能力供给，Scaffold 负责执行、隔离和吞吐。核心主张是：在 LLM 调用具有概率性的条件下，逻辑可扩展性、物理可扩展性和数据可扩展性仍可通过显式契约与异步子系统实现正交解耦，并形成可管理的 runtime 控制面。
+      面向 agentic runtime，定义 <code>A = &lt;S,H,X&gt; + 𝒟</code>：Skills 负责逻辑能力表达，Harness 负责契约翻译与能力供给，Scaffold 负责执行、隔离和吞吐，𝒟 负责栈外数据理解与治理。核心主张是：在 LLM 调用具有概率性的条件下，逻辑、物理、数据、并行四类可扩展性仍可通过显式契约、平面分离、异步子系统和局部性规划实现正交解耦；稳定 skill 可进一步固化为 code，成为可管理 runtime 的确定性锚。
     </blockquote>
     <p class="mut">完整演示可以从 <a class="inline" href="architecture.html#stack">架构总图</a> 进入；这份简报负责给第一次接触项目的人快速建立上下文。</p>
   </div>
@@ -81,7 +92,7 @@
     </div>
   </div>
   <blockquote class="fade" style="border-left-color:var(--warn)">
-    研究问题：在 LLM 参与决策、工具生成和维护的情况下，agent runtime 是否仍然可以像云系统一样实现功能扩展与算力扩展的解耦，并进一步把外部数据扩展纳入同一套解释框架？换句话说，agentic runtime 如何在持续扩展时仍然可被管理？
+    研究问题：在 LLM 参与决策、工具生成和维护的情况下，agent runtime 是否仍然可以像云系统一样实现功能扩展与算力扩展的解耦，并进一步把外部数据扩展、并行子 agent 和模型版本漂移纳入同一套解释框架？换句话说，agentic runtime 如何在持续扩展时仍然可被管理？
   </blockquote>
 </section>
 
@@ -89,20 +100,25 @@
   <div class="slide-head fade">
     <div class="kicker">03 · Design</div>
     <h2>核心架构</h2>
-    <p class="sub">三层栈 <code>A = &lt;S,H,X&gt;</code> 中，Harness 是显式契约层，也是逻辑与物理解耦的关键。</p>
+    <p class="sub">三层栈 <code>A = &lt;S,H,X&gt;</code> 中，Harness 是显式契约层，也是逻辑与物理解耦的关键；𝒟、并行局部性和 Skill-as-Code 则把可管理性扩展到数据、运行时规划和模型演进。</p>
   </div>
   <div class="card fade">
     <table>
       <tr><th>层</th><th>名称</th><th>主要职责</th><th>扩展含义</th></tr>
       <tr><td>L3</td><td><b>Skills</b></td><td>task specs、I/O schema、调用/终止/循环条件，组装进 context</td><td>逻辑扩展，提升能力覆盖 T</td></tr>
       <tr><td>L2</td><td><b>Harness</b></td><td>契约翻译、能力供给、工具路由、维护子系统</td><td>解耦点，把意图 I 转为可执行单元 E</td></tr>
-      <tr><td>L1</td><td><b>Scaffold</b></td><td>microVM、sandbox、serving、隔离与算力</td><td>物理扩展，提升吞吐 Theta</td></tr>
+      <tr><td>L1</td><td><b>Scaffold</b></td><td>microVM、sandbox、serving、隔离与算力</td><td>物理扩展，提升吞吐 Θ</td></tr>
     </table>
   </div>
-  <div class="grid g3" style="margin-top:24px">
+  <div class="grid g2" style="margin-top:24px">
     <div class="card fade"><span class="pill logic">切分 1</span><h3 style="margin-top:10px">扩展轴</h3><p class="mut">逻辑扩展通过增加 Skills，物理扩展通过增加 Scaffold。二者通过 Harness 契约交互。</p></div>
     <div class="card fade"><span class="pill contract">切分 2</span><h3 style="margin-top:10px">控制/数据面</h3><p class="mut">控制面负责决策和不变量，数据面负责 token path、工具执行、sandbox 计算和 serving。</p></div>
     <div class="card fade"><span class="pill data">切分 3</span><h3 style="margin-top:10px">数据子系统</h3><p class="mut">三层栈之外挂接数据系统，处理取数、语义总结、治理记忆和数据 lifetime。</p></div>
+    <div class="card fade"><span class="pill para">切分 4</span><h3 style="margin-top:10px">并行 / 局部性</h3><p class="mut">规划期 dry-run 探测工具集闭包，再按工具集不重合切分子 agent；同 seed 共置、前缀冻结、跨 agent 只传摘要。</p></div>
+  </div>
+  <div class="card fade" style="margin-top:24px;border-left:3px solid var(--det)">
+    <span class="pill det">确定性锚</span>
+    <p class="mut" style="margin-bottom:0">当某个 skill 经实验或回测验证，且工具集闭合、输出格式固定、分支可枚举，就把它固化为 code。此后执行不再依赖模型采样，输出与模型版本 θ 近似解耦，承担概率控制面的稳定契约。</p>
   </div>
 </section>
 
@@ -127,7 +143,7 @@
   <div class="slide-head fade">
     <div class="kicker">05 · Novelty</div>
     <h2>主要创新点</h2>
-    <p class="sub">C5 是核心贡献；N0-N5 沿控制面、数据子系统和 skill 理论继续展开。</p>
+    <p class="sub">C5 是核心贡献；N0-N8 沿控制面、数据子系统、并行局部性和 skill 形态继续展开。</p>
   </div>
   <div class="card fade">
     <table>
@@ -136,9 +152,12 @@
       <tr><td>N0</td><td>概率性控制面</td><td>控制面部分由 LLM 驱动，必须引入审计日志和不变量约束</td></tr>
       <tr><td>N1</td><td>off-policy schema-on-read 语义总结</td><td>后台异步预总结数据源，兼顾在线发现覆盖率和人工元数据精度</td></tr>
       <tr><td>N2</td><td>数据治理即 skill</td><td>将数据使用策略沉淀为可复用、可演化的 data-usage skill</td></tr>
-      <tr><td>N3</td><td>三维复用同一平面不变量</td><td>扩展轴、控制/数据面、数据子系统共享同一个解耦机制</td></tr>
+      <tr><td>N3</td><td>四条切分复用同一平面不变量</td><td>扩展轴、控制/数据面、数据子系统、并行局部性共享同一个解耦机制</td></tr>
       <tr><td>N4</td><td>栈外独立数据 loop</td><td>把语义总结识别为独立异步子系统，而非在线步骤或普通接口</td></tr>
       <tr><td>N5</td><td>skill 理论三分</td><td>将 skill 从 task/system 二分扩展为 task/system/data-usage 三分</td></tr>
+      <tr><td>N6</td><td>工具集局部性定义并行边界</td><td>用工具集闭包同时定义并行独立性、前缀局部性和 Scaffold seed 边界</td></tr>
+      <tr><td>N7</td><td>规划期 dry-run</td><td>正式执行前探测工具集闭包与环境范围，以降低跨子 agent 重合度</td></tr>
+      <tr><td>N8</td><td>Skill-as-Code 确定性锚</td><td>把验证过且操作空间闭合的 skill 固化为 code，稳定概率控制面下的执行契约</td></tr>
     </table>
   </div>
 </section>
@@ -153,9 +172,11 @@
     <div class="card fade"><span class="pill logic">P1-P3</span><h3 style="margin-top:10px">扩展轴</h3><p class="mut">验证逻辑扩展与物理扩展是否解耦，以及 Harness 契约是否是充分条件。</p></div>
     <div class="card fade"><span class="pill contract">P4-P6</span><h3 style="margin-top:10px">控制/数据面</h3><p class="mut">验证控制面与数据面是否分离，维护子系统是否能跨面拆解。</p></div>
     <div class="card fade"><span class="pill data">P7-P9</span><h3 style="margin-top:10px">数据子系统</h3><p class="mut">验证新增数据源是否不提升单请求 token 成本，治理 memory 是否随重复用例收敛。</p></div>
+    <div class="card fade"><span class="pill para">P10-P13</span><h3 style="margin-top:10px">并行 / 局部性</h3><p class="mut">验证工具集切分、前缀冻结、seed 亲和和 dry-run 是否提升并行吞吐并降低上下文重合。</p></div>
+    <div class="card fade"><span class="pill det">P14</span><h3 style="margin-top:10px">跨模型稳定性</h3><p class="mut">验证 code skill 跨模型版本重跑的输出方差是否显著低于纯 LLM skill。</p></div>
   </div>
   <div class="card fade" style="margin-top:24px">
-    <p class="mut" style="margin-top:0">可行实验路径：固定 Scaffold 增加 Skills 观察 throughput；固定 Skills 增加 Scaffold 观察吞吐曲线；移除 Harness 做消融；对比在线数据发现、人工元数据和 off-policy 语义总结三种取数策略。</p>
+    <p class="mut" style="margin-top:0">可行实验路径：固定 Scaffold 增加 Skills 观察 throughput；固定 Skills 增加 Scaffold 观察吞吐曲线；移除 Harness 做消融；对比在线数据发现、人工元数据和 off-policy 语义总结三种取数策略；对多子 agent 执行比较 dry-run 分区与朴素并行；跨模型版本重放 code skill 与纯 LLM skill。</p>
   </div>
 </section>
 
@@ -168,7 +189,7 @@
   <div class="grid g3">
     <div class="card fade"><h3>收紧形式化</h3><p class="mut">明确 S/H/X/D 的接口、成本函数、约束条件和证伪边界。</p></div>
     <div class="card fade"><h3>实现最小原型</h3><p class="mut">实现 Harness 契约层、Scaffold 隔离执行、Skills 注册和数据子系统简化版。</p></div>
-    <div class="card fade"><h3>设计实验矩阵</h3><p class="mut">围绕 P1-P9 做吞吐、覆盖、token 成本、审计性和治理收敛验证。</p></div>
+    <div class="card fade"><h3>设计实验矩阵</h3><p class="mut">围绕 P1-P14 做吞吐、覆盖、token 成本、审计性、治理收敛、并行效率和跨模型稳定性验证。</p></div>
   </div>
   <div class="btnrow fade">
     <a class="btn" href="architecture.html#stack">查看架构总图</a>
