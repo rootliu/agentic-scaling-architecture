@@ -177,9 +177,9 @@
   <text class="bs" x="424" y="476" fill="#1a7d52">on Scaffold (cloud HPC microVM)</text>
   <!-- sub-agent a3 -->
   <rect class="box" x="680" y="422" width="250" height="66" rx="9" fill="#e4f1e8" stroke="#1a7d52"/>
-  <text class="bt" x="694" y="444" fill="#136040">a₃ report · τ_C</text>
-  <text class="bs" x="694" y="461" fill="#1a7d52">[18–19] verifier: 数值合理性 + 引用接地</text>
-  <text class="bs" x="694" y="476" fill="#1a7d52">失败 → O6 reflect → 回 [14/16]</text>
+  <text class="bt" x="694" y="440" fill="#136040">a₃ report · τ_C</text>
+  <text class="bs" x="694" y="456" fill="#1a7d52">[18–19] r_out 带隙子域 · r_proc 引用接地</text>
+  <text class="bs" x="694" y="470" fill="#1a7d52">失败 → O6 reflect → [14/16]（P15）</text>
   <!-- summarized context between sub-agents (amber dashed, loose) -->
   <path class="pflow" d="M390,455 L410,455" marker-end="url(#uap)"/>
   <path class="pflow" d="M660,455 L680,455" marker-end="url(#uap)"/>
@@ -210,10 +210,11 @@
   </div>
 
   <div class="card fade" style="margin-top:22px">
-    <h3 style="margin-top:0">四条结构性约束（对应命题）</h3>
+    <h3 style="margin-top:0">五条结构性约束（对应命题）</h3>
     <p class="constraint">· <b style="color:var(--data)">[06–08] 先于 [14]</b>：先查 D3/D4/D2，命中共享摘要就不重拉原文 → 减少多 agent 争用、降单请求成本（<b>P7</b>）。</p>
     <p class="constraint">· <b style="color:var(--logic)">[10–13] 经 Harness 契约</b>：Skill 只声明 <code>required_capabilities</code>，由 H 翻译 𝓘→𝓔（<b>P2</b>）。</p>
     <p class="constraint">· <b>[02b–02c/13b] 规划期 dry-run 切分 + seed 亲和</b>：先探测工具集闭包/环境范围（<b>P13/N7</b>）再按工具集不重合切并行子 agent（<b>M1/M2</b>），同工具集同 seed 共置（<b>M4</b>）→ 重合度 ρ↓、前缀命中 H↑、并行度 k_max↑，吞吐逼近 1/s（<b>P10</b>）。稳定工具集/记忆入前缀并冻结（<b>P11</b>），跨子 agent 仅传摘要（<b>M3</b>）。</p>
+    <p class="constraint">· <b style="color:var(--det)">[18–19] 双子目标 verifier</b>：r_out 沿输出格式子域（带隙数值）比对独立标注 benchmark，r_proc 校验工具/数据源调用与逻辑分析是否正确（引用接地）→ 归因清晰、收敛更快（<b>P15</b>），比单一 scalar verifier 更早定位失败方向（<b>N9</b>）。</p>
     <p class="constraint">· <b style="color:var(--data)">[21] 逻辑追加 + evidence_ref</b>：溢出降冷不硬删，旧结论可回指原文，防幻觉（<b>§4.4.1 S3/S4</b>）。</p>
   </div>
 
@@ -440,8 +441,8 @@
   <text class="bs" x="650" y="417" fill="#1474a6">[18] doc_generation → report(预测图+回测+脚本)</text>
 
   <rect class="box" x="120" y="312" width="420" height="60" rx="9" fill="#efe9fb" stroke="#6d3fd4"/>
-  <text class="bt" x="134" y="334" fill="#4a2f9e">[16–17] verifier + O6 reflect</text>
-  <text class="bs" x="134" y="350" fill="#6d3fd4">①无未来泄漏(y晚于x) ②回测(Sharpe/回撤) ③校准度</text>
+  <text class="bt" x="134" y="334" fill="#4a2f9e">[16–17] verifier + O6 reflect（P15 双维）</text>
+  <text class="bs" x="134" y="350" fill="#6d3fd4">r_out：回测收益子域(Sharpe/回撤) · r_proc：①无未来泄漏 ②校准度</text>
   <text class="bs" x="134" y="365" fill="#6d3fd4">失败 → 调 lookback/pred_len/权重 → 回 [12/13]</text>
 
   <rect class="box" x="120" y="452" width="920" height="44" rx="9" fill="#efe9fb" stroke="#6d3fd4"/>
@@ -470,6 +471,7 @@
     <p class="constraint">· <b>概率采样在循环内且可审计</b>：<code>T/top_p/sample_count</code> 记入 RunTrace；同输入+种子可复现（N0）。</p>
     <p class="constraint">· <b>策略上只读</b>：不授予下单能力；policy gate 对任何交易通道工具 fail-closed（P3 能力围栏）。</p>
     <p class="constraint">· <b class="para-tag">多标的并行按工具集切分</b>：规划期 dry-run 探得各标的子任务共享同一 <code>kronos_predict</code> 工具集闭包，可同 seed 共置并行（M1/M2/M4），跨子 agent 仅传预测摘要（M3）→ 吞吐逼近 1/s（P10/P13）。</p>
+    <p class="constraint">· <b style="color:var(--det)">verifier 双子目标分解</b>：r_out=回测收益子域（Sharpe/回撤，需独立标注 benchmark），r_proc=无未来泄漏 + 校准度（过程判据）→ 二者同 mini-batch 计算，reflect 时能定位"结果偶然对但过程违规"（P15/N9）。</p>
   </div>
 
   <div class="card fade" style="margin-top:22px">

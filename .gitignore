@@ -3,3 +3,4 @@ Thumbs.db
 .obsidian/
 *.tmp
 NUL
+node_modules/
