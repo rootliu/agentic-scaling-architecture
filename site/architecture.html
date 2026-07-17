@@ -43,13 +43,14 @@
     <a href="#claims"><span>04</span>扩展命题</a>
     <a href="#planes"><span>05</span>控制/数据面</a>
     <a href="#data"><span>06</span>数据子系统</a>
-    <a href="#orchestration"><span>07</span>Agent loop</a>
-    <a href="#formalization"><span>08</span>形式化</a>
-    <a href="#parallel"><span>09</span>并行/局部性</a>
-    <a href="#skilltrain"><span>10</span>Skill 训练与生命周期</a>
-    <a href="#propositions"><span>11</span>命题总表</a>
-    <a href="#newpoints"><span>12</span>创新点</a>
-    <a href="#path"><span>13</span>演进路径</a>
+    <a href="#datawiki"><span>07</span>Data/Theme Wiki + IR</a>
+    <a href="#orchestration"><span>08</span>Agent loop</a>
+    <a href="#formalization"><span>09</span>形式化</a>
+    <a href="#parallel"><span>10</span>并行/局部性</a>
+    <a href="#skilltrain"><span>11</span>Skill 训练与生命周期</a>
+    <a href="#propositions"><span>12</span>命题总表</a>
+    <a href="#newpoints"><span>13</span>创新点</a>
+    <a href="#path"><span>14</span>演进路径</a>
   </div>
 </nav>
 
@@ -502,10 +503,39 @@
 
 <hr class="divider">
 
+<!-- ============ Data Wiki / Theme Wiki / IR 中间关系层（2026-07-17 新增） ============ -->
+<section class="wrap slide" id="datawiki">
+  <div class="slide-head fade">
+    <div class="kicker">07 · Data Wiki / Theme Wiki / IR</div>
+    <h2>数据落地：Data Wiki × Theme Wiki × IR 中间关系层</h2>
+    <p class="sub">D₂（语义总结）落地为 <b>Data Wiki</b>：常规数据源由 off-policy loop 自动读取总结；复杂报表则与人协同定规范，并以人常备报表为参照物、经<b>还原式 reflection</b> 校验（P16）。D₃ 产出侧落地为 <b>Theme Wiki</b>：σ_out 各结果子域（报表/图表/PPT/分析报告/数据模型程序……）经双子目标 Reward 验证收敛后登记复用（承 §11 P15）。两个 wiki 之间只有一层显式耦合——<b>IR（Intermediate Relation）</b>：给定 theme，查 semantic join 命中集 + <b>5W+1H</b>（时效性/使用范围/数据拥有者/数据语义/集成逻辑/物理访问方式），其余部分保持正交独立、松散耦合（P17）。</p>
+  </div>
+
+  <figure class="figure fade">
+    <picture>
+      <source srcset="figures/f9-zh.svg" type="image/svg+xml">
+      <img src="figures/f9-zh.png" alt="Data Wiki 构建：常规数据源经 D2 off-policy loop 自动总结为 Σ 四段，复杂报表经人机协同构建规范并以人常用报表为参照物、通过还原式 reflection 校验，两条通路汇入 Data Wiki" loading="lazy">
+    </picture>
+    <figcaption class="figcap"><b>图 9 · Data Wiki 构建。</b>①常规数据源（数据库/API/日志）由 D₂ 的 off-policy loop 自动 search 结构/内容/latent-fields，产出 Σ(src) 四段——自然语言总结、格式、关键词、关联关系/外键——写入 Data Wiki；②复杂报表（多 sheet、口径随时间漂移）不适合 agent 单方面产出格式说明，而是与人协同构建规范（来源/频率/维护/时效性），并记录人常用报表作 ground-truth 参照物，经<b>还原式 reflection</b>（尝试从总结+规范还原参照报表的部分表格结构/数值）校验通过才写入（<span class="figcap-hint">P16</span>：还原式 reflection 是摘要充分性 <span class="figcap-hint">P8</span> 的可操作判据）。</figcaption>
+  </figure>
+
+  <figure class="figure fade" style="margin-top:34px">
+    <picture>
+      <source srcset="figures/f10-zh.svg" type="image/svg+xml">
+      <img src="figures/f10-zh.png" alt="Data Wiki 与 Theme Wiki 是两个散落子域容器，中间由 IR 中间关系层桥接：给定 theme 查 semantic join 命中集加 5W+1H 元信息" loading="lazy">
+    </picture>
+    <figcaption class="figcap"><b>图 10 · Data Wiki × Theme Wiki × IR 组成图。</b>两个 wiki 都是散落、不对齐、非表格的子域容器（同图 7 σ_out 视觉语言）——Data Wiki 回答"数据是什么"，Theme Wiki 回答"产出该长什么样"，二者各自可独立扩充、互不干扰。<b>IR 是唯一显式耦合点</b>：给定 theme，除 semantic join 命中的 {Σ} 集合外，必须显式携带 <b>5W+1H</b>——When 时效性、Where 使用范围（内网/外网/互联网）、Who 数据拥有者及授权、What 数据语义（=Σ）、Why 数据集成逻辑（即 join 背后的理由）、How 物理访问方式（数据库/lakehouse/JSON/Harness 工具）。这把 §06 契约映射的"plan"步骤实体化：<code>H: 𝓘 → IR(theme) → ⟨{Σ}, 5W1H⟩ → D₁ 取数 → 𝓔</code>（<span class="figcap-hint">P17</span>：数据源变更与产出格式变更互不传播，只需更新 IR 记录）。</figcaption>
+  </figure>
+
+  <p class="mut fade" style="margin-top:18px;font-size:14px">→ 完整推导、Σ 四段展开对照、5W1H schema 与拟命题 P16/P17 的可证伪形式见研究笔记 <b>13-DataWiki-ThemeWiki-IR中间关系层</b>（承 06-数据平面四组成架构、12-Skill作为可训练激活层-双子目标Reward）。</p>
+</section>
+
+<hr class="divider">
+
 <!-- ============ Orchestration Agent Loop ============ -->
 <section class="wrap slide" id="orchestration">
   <div class="slide-head fade">
-    <div class="kicker">07 · Orchestration</div>
+    <div class="kicker">08 · Orchestration</div>
     <h2>Orchestration：Harness 中的 Agent Loop</h2>
     <p class="sub">LLM 不是自由循环，而是在 Harness 的 typed contract、policy gate、verifier、reward 和 replayable trace 内做概率性控制决策。Scaffold 与 Data 子系统只通过稳定接口进入 loop。<b>reward 本身是双子目标</b>——结果子目标 r_out 沿输出格式 σ_out 的各子域比对独立标注 benchmark，过程子目标 r_proc 校验是否调用正确工具/数据、完成正确逻辑分析、达到进阶标准；每个 mini-batch 同时计算两维再驱动 skill 迭代（<b>P15</b>），比单一 scalar reward 归因更清晰、收敛更快。</p>
   </div>
@@ -623,7 +653,7 @@
 <!-- ============ 维度4：并行 / 局部性 ============ -->
 <section class="wrap slide" id="parallel">
   <div class="slide-head fade">
-    <div class="kicker">07 · Parallelism &amp; Locality</div>
+    <div class="kicker">10 · Parallelism &amp; Locality</div>
     <h2>并行度与局部性协同设计</h2>
     <p class="sub">在前三条解耦切分之上，给定预算 <i>B</i>，目标是最大化 budget 内并行吞吐：降低串行比 <i>s</i>、提升编排效率 <i>E</i>，逼近阿姆达尔上界 1/<i>s</i>。四条机制共用一根杠杆——<b>按工具集切分</b>。</p>
   </div>
@@ -736,7 +766,7 @@
 <!-- ============ Skill 训练与生命周期（P15 / N9，2026-07-14~16 新增） ============ -->
 <section class="wrap slide" id="skilltrain">
   <div class="slide-head fade">
-    <div class="kicker">10 · Skill Training &amp; Lifecycle</div>
+    <div class="kicker">11 · Skill Training &amp; Lifecycle</div>
     <h2>Skill 训练与生命周期 — 双子目标 Reward + Skill-as-Code 固化</h2>
     <p class="sub">Skill 不是写好就用，而是<b>先训练、后固化</b>的两阶段生命周期：训练阶段用双子目标 Reward 迭代收敛（本节图 7），固化阶段把收敛部分编译为 code tool 融入 Harness（本节图 8，衔接 <a class="inline" href="#formalization">P14 Skill-as-Code</a>）。</p>
   </div>
