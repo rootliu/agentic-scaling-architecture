@@ -23,6 +23,19 @@ Read the architecture map in the presentation page in this order:
 4. The `𝒟` subsystem on the right sits outside the stack. It is not a fourth layer, and only controlled interfaces such as semantic join enter the main path.
 5. P10-P13 at the bottom describe parallelism/locality mechanisms; N8/P14 hardens validated, operation-closed skills into code as the deterministic anchor of a probabilistic control plane.
 
+## 3.1 Figure Guide
+
+Every figure in the presentation and dry-run pages keeps a standalone caption; Figure 0 serves as the overview navigation map before the audience enters the detailed architecture.
+
+- **Figure 0 · Overview map**: the first global map for presentation. It places the three-layer runtime, CP/DP split, out-of-stack data subsystem, parallelism/locality and the Skill-as-Code deterministic anchor on one reading path.
+- **Figure 1 · Architecture overview**: expands the three-layer stack and the external data subsystem, emphasizing Harness as the contract gate between logical and physical scaling.
+- **Figure 2 · Spec architecture**: explains how Skills use I/O schemas, call/termination/loop conditions and task material to organize LLM context.
+- **Figure 3 · Agent loop**: shows the control/execution loop among Skills, Harness, Scaffold and the data subsystem during one run.
+- **Figure 4 · Parallelism/locality walkthrough**: shows how dry-run partitions sub-agents by tool-set closure and controls parallel cost through seed affinity, frozen prefixes and summarized context.
+- **Figures DR-1/DR-2 plus six detailed dry-run diagrams**: use the AI4Science and Kronos cases to show spec call order, probability-to-determinism hardening, and data-flow/write-back paths as runtime evidence for Figures 1-4.
+- **Figures 7/8 · Skill training and lifecycle**: explain reward training, lifecycle management and how Skill-as-Code hardens validated capability into a deterministic asset.
+- **Figures 9/10 · Data Wiki**: explain how automated sources and complex reports enter Data Wiki, and how Data Wiki × Theme Wiki × IR supports governable data use.
+
 ## 4. Four Orthogonal Cuts
 
 | Cut | Problem | Decoupling Mechanism | Main Note |
@@ -74,19 +87,48 @@ Related notes: [[附录-AI4Science实例化walkthrough]], [[09-并行度与局�
 | `S/H/X` | Skills / Harness / Scaffold |
 | `CP` | Control Plane |
 | `DP` | Data Plane |
-| `D` / `𝒟` | Data Subsystem |
+| `D` / `𝒟` | Data Subsystem, the out-of-stack data subsystem |
+| `D1-D4` | Four data-subsystem parts: retrieval API, semantic summary, governance memory and lifetime budget |
+| `M1-M4` | Locality mechanisms: stable prefix, context shard, seed affinity and summarized context |
+| `T1-T8` | Tool capsule categories that describe routable Harness capabilities |
+| `O1-O8` | Runtime choices in Harness, such as tool, shot, schema, plan, code generation, reflection, model and token |
 | `LLM` | Large Language Model |
 | `I/O` | Input / Output |
 | `API` | Application Programming Interface |
+| `IR` | Intermediate Relation |
+| `5W1H` | When / Where / Who / What / Why / How, used for fact extraction and report organization |
+| `NFR` | Non-Functional Requirement |
+| `SLA/SLO` | Service-Level Agreement / Objective |
+| `QPS` | Queries Per Second |
+| `SDN` | Software-Defined Networking |
+| `K8s` | Kubernetes |
+| `MCP` | Model Context Protocol |
+| `BI` | Business Intelligence |
+| `JSON` | JavaScript Object Notation |
+| `PPT/PDF/HTML` | Presentation, document and web output formats |
 | `microVM` | micro virtual machine |
 | `GPU` | Graphics Processing Unit |
 | `HPC` | High Performance Computing |
 | `SSO` | Single Sign-On |
+| `OIDC` | OpenID Connect |
+| `SAML` | Security Assertion Markup Language |
+| `SCIM` | System for Cross-domain Identity Management |
+| `RBAC` | Role-Based Access Control |
+| `KMS` | Key Management Service |
+| `S3` | Simple Storage Service |
+| `PrivateLink` | Private cloud connectivity service |
 | `DFT` | Density Functional Theory |
 | `OHLCV` | Open / High / Low / Close / Volume |
 | `KV-cache` | attention key-value cache |
-| `M1-M4` | locality mechanisms |
-| `N/P/C` | Novelty / Proposition / Contribution |
+| `vLLM` | high-throughput LLM serving engine |
+| `SOTA` | State of the Art |
+| `DB` | Database |
+| `MP` / `OQMD` | Materials Project / Open Quantum Materials Database |
+| `HF` | Hugging Face |
+| `EOD` | End of Day |
+| `maxDD` | Maximum Drawdown |
+| `RQ` | Research Question |
+| `P/N/C` or `N/P/C` | Proposition / Novelty / Contribution |
 
 ## 9. Presentation Entry Points
 

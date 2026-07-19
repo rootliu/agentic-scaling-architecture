@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>架构 & 主线 · Agentic Runtime</title>
-<link rel="stylesheet" href="style.css?v=20260712h">
+<link rel="stylesheet" href="style.css?v=20260718a">
 </head>
 <body class="deck-page">
 <nav class="bar"><div class="inner">
@@ -16,7 +16,7 @@
   <a href="references.html">文献</a>
   <a href="timeline.html">时间线</a>
   <a href="input.html">原始构想</a>
-  <a href="architecture-en.html" style="margin-left:auto">EN</a>
+  <a href="arch-en.html" style="margin-left:auto">EN</a>
 </div></nav>
 
 <header class="hero wrap slide title-slide" id="top">
@@ -29,30 +29,159 @@
     <span class="term phys"><b>DP</b>Data Plane · 数据面</span>
     <span class="term data"><b>𝒟</b>Data Subsystem · 栈外数据子系统</span>
     <span class="term para"><b>KV-cache</b>attention key-value cache</span>
+    <span class="term data"><b>IR</b>Intermediate Relation · 中间关系层</span>
+    <span class="term"><b>NFR</b>Non-Functional Requirement · 非功能需求</span>
+    <span class="term"><b>QPS</b>Queries Per Second · 每秒请求数</span>
+    <span class="term"><b>MCP</b>Model Context Protocol</span>
     <span class="term det"><b>Skill-as-Code</b>验证后的 skill 固化为 code</span>
     <span class="term para"><b>双子目标 Reward</b>结果子域 benchmark × 过程一致性</span>
     <span class="term"><b>P/N</b>Proposition / Novelty</span>
   </div>
+  <details class="term-panel fade">
+    <summary>术语速查 · presentation glossary</summary>
+    <div class="term-grid">
+      <span><b>LLM/API/I/O</b>大语言模型、应用程序接口、输入/输出。</span>
+      <span><b>D1-D4</b>取数 API、语义总结、治理记忆、lifetime 预算。</span>
+      <span><b>5W1H</b>When / Where / Who / What / Why / How，用于 IR 元信息。</span>
+      <span><b>SLA/SLO</b>服务协议 / 服务目标，用于可管理性目标。</span>
+      <span><b>SDN/K8s</b>软件定义网络 / Kubernetes，对照确定性控制面。</span>
+      <span><b>vLLM</b>高吞吐 LLM serving 引擎，用作物理轴 baseline。</span>
+      <span><b>SSO/OIDC/SAML/SCIM/RBAC</b>单点登录、身份认证、目录同步和权限控制。</span>
+      <span><b>KMS/S3/PrivateLink</b>云密钥、对象存储和私有网络接入服务。</span>
+      <span><b>JSON/PPT/PDF/HTML</b>结构化数据、演示、文档和网页输出格式。</span>
+      <span><b>BI/OHLCV/DFT</b>企业分析、金融行情字段、密度泛函理论。</span>
+      <span><b>M1-M4/T1-T8</b>局部性机制 / 工具 capsule 类型。</span>
+      <span><b>P/N/C</b>Proposition / Novelty / Contribution，命题、创新点、贡献。</span>
+    </div>
+  </details>
 </header>
 
 <nav class="deck-nav" aria-label="页面跳转">
   <div class="deck-nav-inner">
-    <a href="#stack"><span>01</span>架构总图</a>
-    <a href="#specs"><span>02</span>Spec 分层</a>
-    <a href="#dimensions"><span>03</span>四条切分</a>
-    <a href="#claims"><span>04</span>扩展命题</a>
-    <a href="#planes"><span>05</span>控制/数据面</a>
-    <a href="#data"><span>06</span>数据子系统</a>
-    <a href="#datawiki"><span>07</span>Data/Theme Wiki + IR</a>
-    <a href="#orchestration"><span>08</span>Agent loop</a>
-    <a href="#formalization"><span>09</span>形式化</a>
-    <a href="#parallel"><span>10</span>并行/局部性</a>
-    <a href="#skilltrain"><span>11</span>Skill 训练与生命周期</a>
-    <a href="#propositions"><span>12</span>命题总表</a>
-    <a href="#newpoints"><span>13</span>创新点</a>
-    <a href="#path"><span>14</span>演进路径</a>
+    <a href="#overview"><span>01</span>Overview</a>
+    <a href="#stack"><span>02</span>架构总图</a>
+    <a href="#specs"><span>03</span>Spec 分层</a>
+    <a href="#dimensions"><span>04</span>四条切分</a>
+    <a href="#claims"><span>05</span>扩展命题</a>
+    <a href="#planes"><span>06</span>控制/数据面</a>
+    <a href="#data"><span>07</span>数据子系统</a>
+    <a href="#datawiki"><span>08</span>Data/Theme Wiki + IR</a>
+    <a href="#orchestration"><span>09</span>Agent loop</a>
+    <a href="#formalization"><span>10</span>形式化</a>
+    <a href="#parallel"><span>11</span>并行/局部性</a>
+    <a href="#skilltrain"><span>12</span>Skill 训练与生命周期</a>
+    <a href="#propositions"><span>13</span>命题总表</a>
+    <a href="#newpoints"><span>14</span>创新点</a>
+    <a href="#path"><span>15</span>演进路径</a>
   </div>
 </nav>
+
+<!-- ============ Overview 总览图 ============ -->
+<section class="wrap slide" id="overview">
+  <div class="slide-head fade">
+    <div class="kicker">01 · Overview</div>
+    <h2>Overview：从研究目标到运行时可管理性</h2>
+    <p class="sub">先用一张图交代整套设计的阅读路径：目标不是再造一个 agent 框架，而是研究一个可扩展、可管理、可审计的 agentic runtime，以及它在逻辑扩展、物理扩展、数据增长和并行协作下如何保持不变量。</p>
+  </div>
+  <figure class="figure fade architecture-plate overview-plate">
+  <svg viewBox="0 0 1120 620" width="100%" role="img" aria-label="从研究目标到 agentic runtime 可管理性的 overview 总览图" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',Arial,sans-serif">
+    <defs>
+      <linearGradient id="ovBg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#fbfcff"/>
+        <stop offset="1" stop-color="#eef4f9"/>
+      </linearGradient>
+      <linearGradient id="ovCore" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#f7f2ff"/>
+        <stop offset="1" stop-color="#e9f5ff"/>
+      </linearGradient>
+      <filter id="ovShadow" x="-12%" y="-12%" width="124%" height="124%">
+        <feDropShadow dx="0" dy="7" stdDeviation="8" flood-color="#243247" flood-opacity=".13"/>
+      </filter>
+      <marker id="ovArrow" markerWidth="10" markerHeight="10" refX="7.5" refY="3.5" orient="auto">
+        <path d="M0,0 L7.5,3.5 L0,7 Z" fill="#536174"/>
+      </marker>
+      <marker id="ovArrowV" markerWidth="10" markerHeight="10" refX="7.5" refY="3.5" orient="auto">
+        <path d="M0,0 L7.5,3.5 L0,7 Z" fill="#6d3fd4"/>
+      </marker>
+      <marker id="ovArrowT" markerWidth="10" markerHeight="10" refX="7.5" refY="3.5" orient="auto">
+        <path d="M0,0 L7.5,3.5 L0,7 Z" fill="#1474a6"/>
+      </marker>
+    </defs>
+
+    <rect width="1120" height="620" rx="18" fill="url(#ovBg)"/>
+    <path d="M44 92H1076M44 184H1076M44 276H1076M44 368H1076M44 460H1076M44 552H1076M152 44V576M304 44V576M456 44V576M608 44V576M760 44V576M912 44V576" stroke="#dfe6f0" stroke-width="1" opacity=".52"/>
+
+    <text x="50" y="50" fill="#172033" font-size="22" font-weight="800">Scalable & Manageable Agentic Runtime</text>
+    <text x="50" y="76" fill="#627086" font-size="13">把 agent 能力增长转化为可分层、可治理、可验证、可演进的运行时问题</text>
+
+    <rect x="56" y="126" width="226" height="350" rx="16" fill="#ffffff" stroke="#d9e1ec" filter="url(#ovShadow)"/>
+    <text x="84" y="162" fill="#536174" font-size="12" font-family="ui-monospace,Menlo,monospace" letter-spacing="1">RESEARCH TARGET</text>
+    <text x="84" y="201" fill="#172033" font-size="21" font-weight="800">目标</text>
+    <text x="84" y="233" fill="#405066" font-size="13">扩展 agentic runtime</text>
+    <text x="84" y="257" fill="#405066" font-size="13">同时保持可管理性</text>
+    <rect x="84" y="292" width="166" height="42" rx="9" fill="#eef7f2" stroke="#1a7d52" stroke-opacity=".25"/>
+    <text x="167" y="318" fill="#1a7d52" font-size="12.5" font-weight="700" text-anchor="middle">能力覆盖 𝒯 可增长</text>
+    <rect x="84" y="346" width="166" height="42" rx="9" fill="#fff3e8" stroke="#bc5a16" stroke-opacity=".25"/>
+    <text x="167" y="372" fill="#bc5a16" font-size="12.5" font-weight="700" text-anchor="middle">吞吐 Θ 可增长</text>
+    <rect x="84" y="400" width="166" height="42" rx="9" fill="#eef2fb" stroke="#6d3fd4" stroke-opacity=".25"/>
+    <text x="167" y="426" fill="#6d3fd4" font-size="12.5" font-weight="700" text-anchor="middle">治理成本可解释</text>
+
+    <rect x="360" y="96" width="402" height="410" rx="22" fill="url(#ovCore)" stroke="#cfd9e8" filter="url(#ovShadow)"/>
+    <text x="390" y="132" fill="#6d3fd4" font-size="12" font-family="ui-monospace,Menlo,monospace" letter-spacing="1">REFERENCE ARCHITECTURE</text>
+    <text x="390" y="171" fill="#172033" font-size="26" font-weight="800">核心运行时：A = ⟨S, H, X⟩ + 𝒟</text>
+    <text x="390" y="197" fill="#627086" font-size="13">用 Harness contract 把概率性 agent 行为约束在可审计边界内</text>
+
+    <rect x="398" y="230" width="326" height="58" rx="13" fill="#e5f3eb" stroke="#1a7d52" stroke-opacity=".38"/>
+    <text x="424" y="254" fill="#1a7d52" font-size="15" font-weight="800">S · Skills</text>
+    <text x="424" y="274" fill="#456859" font-size="12">任务规约、输出 schema、调用/停止条件</text>
+    <rect x="398" y="302" width="326" height="72" rx="13" fill="#efe9fb" stroke="#6d3fd4" stroke-opacity=".45"/>
+    <text x="424" y="328" fill="#6d3fd4" font-size="15" font-weight="800">H · Harness</text>
+    <text x="424" y="349" fill="#655586" font-size="12">契约翻译、policy gate、verifier/reward、audit/replay</text>
+    <text x="424" y="365" fill="#655586" font-size="11.5">管理性锚点：把意图 𝓘 变成可执行单元 𝓔</text>
+    <rect x="398" y="388" width="326" height="58" rx="13" fill="#fff2e6" stroke="#bc5a16" stroke-opacity=".38"/>
+    <text x="424" y="412" fill="#bc5a16" font-size="15" font-weight="800">X · Scaffold</text>
+    <text x="424" y="432" fill="#805431" font-size="12">sandbox、serving、tool execution、isolation</text>
+    <rect x="462" y="464" width="198" height="35" rx="17" fill="#e6f3f8" stroke="#1474a6" stroke-opacity=".35"/>
+    <text x="561" y="487" fill="#1474a6" font-size="12.5" font-weight="800" text-anchor="middle">𝒟 · 栈外数据子系统</text>
+
+    <path d="M282 302 C314 302 326 302 360 302" fill="none" stroke="#536174" stroke-width="2.4" marker-end="url(#ovArrow)"/>
+
+    <rect x="838" y="112" width="232" height="330" rx="16" fill="#ffffff" stroke="#d9e1ec" filter="url(#ovShadow)"/>
+    <text x="866" y="148" fill="#536174" font-size="12" font-family="ui-monospace,Menlo,monospace" letter-spacing="1">MANAGEABILITY CLAIMS</text>
+    <text x="866" y="184" fill="#172033" font-size="21" font-weight="800">可管理性输出</text>
+    <text x="866" y="218" fill="#405066" font-size="13">每一次“加东西”都有</text>
+    <text x="866" y="241" fill="#405066" font-size="13">明确落点和可验证边界</text>
+    <rect x="866" y="274" width="174" height="32" rx="8" fill="#f6f8fb" stroke="#d9e1ec"/>
+    <text x="953" y="296" fill="#405066" font-size="12" font-weight="700" text-anchor="middle">contract isolation</text>
+    <rect x="866" y="318" width="174" height="32" rx="8" fill="#f6f8fb" stroke="#d9e1ec"/>
+    <text x="953" y="340" fill="#405066" font-size="12" font-weight="700" text-anchor="middle">audit / replay</text>
+    <rect x="866" y="362" width="174" height="32" rx="8" fill="#f6f8fb" stroke="#d9e1ec"/>
+    <text x="953" y="384" fill="#405066" font-size="12" font-weight="700" text-anchor="middle">reward validation</text>
+    <path d="M762 302 C798 302 806 302 838 302" fill="none" stroke="#536174" stroke-width="2.4" marker-end="url(#ovArrow)"/>
+
+    <rect x="350" y="530" width="420" height="50" rx="13" fill="#ffffff" stroke="#cfd9e8"/>
+    <text x="560" y="552" fill="#172033" font-size="13.5" font-weight="800" text-anchor="middle">统一不变量</text>
+    <text x="560" y="570" fill="#536174" font-size="11.5" text-anchor="middle">把高内聚高频路径与松耦合低频 / 离线路径分离</text>
+    <path d="M560 506 L560 530" fill="none" stroke="#6d3fd4" stroke-width="2.2" marker-end="url(#ovArrowV)"/>
+
+    <rect x="300" y="116" width="34" height="112" rx="17" fill="#e5f3eb" stroke="#1a7d52" stroke-opacity=".32"/>
+    <text x="317" y="155" fill="#1a7d52" font-size="11.5" font-weight="800" writing-mode="tb">逻辑扩展</text>
+    <path d="M334 172 C350 172 354 172 372 172" fill="none" stroke="#1a7d52" stroke-width="2" marker-end="url(#ovArrow)"/>
+    <rect x="300" y="246" width="34" height="112" rx="17" fill="#fff2e6" stroke="#bc5a16" stroke-opacity=".32"/>
+    <text x="317" y="285" fill="#bc5a16" font-size="11.5" font-weight="800" writing-mode="tb">物理扩展</text>
+    <path d="M334 302 C350 302 354 302 372 302" fill="none" stroke="#bc5a16" stroke-width="2" marker-end="url(#ovArrow)"/>
+    <rect x="786" y="124" width="34" height="112" rx="17" fill="#e6f3f8" stroke="#1474a6" stroke-opacity=".32"/>
+    <text x="803" y="163" fill="#1474a6" font-size="11.5" font-weight="800" writing-mode="tb">数据增长</text>
+    <path d="M762 180 C774 180 776 180 786 180" fill="none" stroke="#1474a6" stroke-width="2" marker-end="url(#ovArrowT)"/>
+    <rect x="786" y="254" width="34" height="112" rx="17" fill="#f6efdf" stroke="#9a6a12" stroke-opacity=".32"/>
+    <text x="803" y="293" fill="#9a6a12" font-size="11.5" font-weight="800" writing-mode="tb">并行协作</text>
+    <path d="M762 310 C774 310 776 310 786 310" fill="none" stroke="#9a6a12" stroke-width="2" marker-end="url(#ovArrow)"/>
+
+    <text x="56" y="578" fill="#627086" font-size="11.5" font-family="ui-monospace,Menlo,monospace">Reading path: Overview → architecture stack → specs → claims → planes/data/wiki → agent loop → formalization → parallelism → skill lifecycle.</text>
+  </svg>
+  <figcaption class="figcap"><b>图 0 · Overview 总览图。</b>这张图把研究目标、参考架构和可管理性主张放在同一页：中心运行时是 <code>A = ⟨S,H,X⟩ + 𝒟</code>，其中 Harness 是把概率性 agent 决策约束为 typed contract、policy gate、verifier/reward 与 audit/replay 的管理性锚点。四类增长——逻辑扩展、物理扩展、数据增长、并行协作——分别落到 CP、DP、栈外 𝒟/off-policy loop 与工具集局部性边界，统一服务于“高内聚高频路径与松耦合低频/离线路径分离”的不变量。</figcaption>
+  </figure>
+</section>
 
 <!-- ============ 四条切分总览 ============ -->
 <section class="wrap slide" id="dimensions">
@@ -93,7 +222,7 @@
 <!-- ============ 维度1：三层栈图 ============ -->
 <section class="wrap slide" id="stack">
   <div class="slide-head fade">
-    <div class="kicker">01 · Architecture</div>
+    <div class="kicker">02 · Architecture</div>
     <h2>架构总图</h2>
     <p class="sub">三层栈、控制/数据面与栈外数据子系统放在同一张图中，先给出全局地图，再展开每一维。</p>
   </div>
@@ -245,108 +374,6 @@
   </svg>
   <figcaption class="figcap"><b>图 1</b> 三层栈、控制/数据面、数据子系统与并行局部性的合并视图。Harness H 是契约闸门：逻辑扩展先落 CP，物理扩展落 DP，数据扩展落到栈外 off-policy loop 𝓛₂；并行扩展落在工具集切分、seed 亲和与 summarized context 的松耦合边界上。Skill-as-Code 为概率控制面提供确定性锚。</figcaption>
   </figure>
-  <figure class="figure fade" hidden>
-  <svg viewBox="0 0 980 640" width="100%" role="img" aria-label="三层栈 + 栈外数据子系统参考架构图" font-family="-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif">
-    <defs>
-      <linearGradient id="gL3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#effaf3"/><stop offset="1" stop-color="#e2f5ea"/></linearGradient>
-      <linearGradient id="gL2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6f1fe"/><stop offset="1" stop-color="#efe8fc"/></linearGradient>
-      <linearGradient id="gL1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fef4ec"/><stop offset="1" stop-color="#fdeede"/></linearGradient>
-      <linearGradient id="gD" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8f3f9"/><stop offset="1" stop-color="#dceef6"/></linearGradient>
-      <marker id="mC2" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#7a4ddb"/></marker>
-      <marker id="mD" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#1474a6"/></marker>
-      <filter id="ds2" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.06"/></filter>
-    </defs>
-
-    <!-- 三层栈外框标注 -->
-    <text x="60" y="34" fill="#86868b" font-size="11" font-family="monospace" letter-spacing="1">三层栈 ⟨S · H · X⟩</text>
-    <rect x="56" y="42" width="572" height="486" rx="18" fill="none" stroke="#c9c1b2" stroke-dasharray="3 6" stroke-opacity=".8"/>
-
-    <!-- L3 -->
-    <rect x="74" y="60" width="536" height="92" rx="14" fill="url(#gL3)" stroke="#1a9c63" stroke-opacity=".45" filter="url(#ds2)"/>
-    <circle cx="100" cy="88" r="13" fill="#1a9c63"/><text x="100" y="93" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">L3</text>
-    <text x="126" y="86" fill="#127a4c" font-size="16" font-weight="700">Skills · Specification Plane</text>
-    <text x="126" y="107" fill="#2c5e47" font-size="12">task skills · specs · I/O schema · 调用 / 终止 / 循环条件</text>
-    <text x="126" y="126" fill="#5a7a6b" font-size="11">逻辑扩展轴：+Skill → 覆盖 𝒯↑</text>
-
-    <!-- L2 -->
-    <rect x="74" y="166" width="536" height="210" rx="14" fill="url(#gL2)" stroke="#7a4ddb" stroke-opacity=".45" filter="url(#ds2)"/>
-    <circle cx="100" cy="192" r="13" fill="#7a4ddb"/><text x="100" y="197" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">L2</text>
-    <text x="126" y="190" fill="#5b34b0" font-size="16" font-weight="700">Harness · Capability / Contract Plane</text>
-    <text x="126" y="209" fill="#6a5a8f" font-size="11.5">解耦点：契约 H 把意图 𝓘 翻译为可执行单元 𝓔</text>
-    <rect x="92" y="222" width="160" height="142" rx="10" fill="#fff" stroke="#7a4ddb" stroke-opacity=".28"/>
-    <text x="104" y="246" fill="#5b34b0" font-size="12.5" font-weight="700">a · 契约翻译</text>
-    <text x="104" y="267" fill="#6a5a8f" font-size="11">意图 𝓘 → 执行单元 𝓔</text>
-    <text x="104" y="285" fill="#6a5a8f" font-size="11">稳定接口（P2）</text>
-    <text x="104" y="345" fill="#9489a6" font-size="10">⟨ 决定解耦充分性 ⟩</text>
-    <rect x="264" y="222" width="156" height="142" rx="10" fill="#fff" stroke="#7a4ddb" stroke-opacity=".28"/>
-    <text x="276" y="246" fill="#5b34b0" font-size="12.5" font-weight="700">b · 能力供给</text>
-    <text x="276" y="267" fill="#6a5a8f" font-size="11">内 / 外部工具</text>
-    <text x="276" y="285" fill="#6a5a8f" font-size="11">tool synthesis</text>
-    <text x="276" y="345" fill="#9489a6" font-size="10">Tool-Forge</text>
-    <rect x="432" y="222" width="160" height="142" rx="10" fill="#f6f1fe" stroke="#7a4ddb" stroke-opacity=".42"/>
-    <text x="444" y="246" fill="#5b34b0" font-size="12.5" font-weight="700">c · 维护子系统 M</text>
-    <text x="444" y="267" fill="#6a5a8f" font-size="11">压缩 · 写回 · 反思</text>
-    <text x="444" y="285" fill="#6a5a8f" font-size="11">固定指令 · Haiku 级</text>
-    <text x="444" y="328" fill="#7a4ddb" font-size="10.5" font-weight="700">触发∈CP · 开销∈DP</text>
-    <text x="444" y="345" fill="#9489a6" font-size="10">→ 跨面分解（P6）</text>
-
-    <!-- L1 -->
-    <rect x="74" y="390" width="536" height="92" rx="14" fill="url(#gL1)" stroke="#c8651b" stroke-opacity=".45" filter="url(#ds2)"/>
-    <circle cx="100" cy="418" r="13" fill="#c8651b"/><text x="100" y="423" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">L1</text>
-    <text x="126" y="416" fill="#a8500f" font-size="16" font-weight="700">Scaffold · Execution / Isolation Plane</text>
-    <text x="126" y="437" fill="#9a5418" font-size="12">microVM / sandbox · 隔离 · 算力 · 推理 serving 容量</text>
-    <text x="126" y="456" fill="#b08763" font-size="11">物理扩展轴：+Scaffold → 吞吐 Θ↑（刻画系统 throughput）</text>
-
-    <!-- 契约箭头 -->
-    <line x1="342" y1="152" x2="342" y2="164" stroke="#7a4ddb" stroke-width="2" marker-end="url(#mC2)" opacity=".55"/>
-    <line x1="342" y1="378" x2="342" y2="388" stroke="#7a4ddb" stroke-width="2" marker-end="url(#mC2)" opacity=".55"/>
-
-    <!-- ===== 栈外数据子系统 𝒟 ===== -->
-    <text x="668" y="34" fill="#1474a6" font-size="11" font-family="monospace" letter-spacing="1">数据子系统 𝒟（栈外）</text>
-    <rect x="664" y="42" width="252" height="486" rx="18" fill="url(#gD)" stroke="#1474a6" stroke-opacity=".5" filter="url(#ds2)"/>
-
-    <!-- D1 online -->
-    <rect x="682" y="64" width="216" height="80" rx="10" fill="#fff" stroke="#1474a6" stroke-opacity=".3"/>
-    <text x="696" y="88" fill="#0f5e87" font-size="12.5" font-weight="700">D₁ · 取数 API（on-policy）</text>
-    <text x="696" y="108" fill="#3d7a99" font-size="10.5">参数化查询 q → R(q)</text>
-    <text x="696" y="126" fill="#7a98a8" font-size="10">运行时数据面 · Harness 直接调用</text>
-
-    <!-- D2 off-policy loop OUTSIDE stack -->
-    <rect x="682" y="156" width="216" height="118" rx="10" fill="#fff" stroke="#1474a6" stroke-width="1.6" stroke-dasharray="4 4"/>
-    <text x="696" y="180" fill="#0f5e87" font-size="12.5" font-weight="700">D₂ · off-policy loop 𝓛₂</text>
-    <text x="696" y="200" fill="#3d7a99" font-size="10.5">栈外独立异步子系统</text>
-    <text x="696" y="217" fill="#3d7a99" font-size="10.5">自带 loop / sub-agents / 模型</text>
-    <text x="696" y="234" fill="#3d7a99" font-size="10.5">schema-on-read → 不截断 lake</text>
-    <text x="696" y="254" fill="#1474a6" font-size="10" font-weight="700">仅 semantic-join 查询接口进主路径</text>
-    <text x="696" y="269" fill="#7a98a8" font-size="10">≈ DB vacuum / 离线索引（N1·N4）</text>
-
-    <!-- D3 control -->
-    <rect x="682" y="286" width="216" height="68" rx="10" fill="#fff" stroke="#1474a6" stroke-opacity=".3"/>
-    <text x="696" y="310" fill="#0f5e87" font-size="12.5" font-weight="700">D₃ · 治理 memory</text>
-    <text x="696" y="329" fill="#3d7a99" font-size="10.5">data-usage skill（治理→沉淀经验）</text>
-    <text x="696" y="346" fill="#7a98a8" font-size="10">运行时控制面 · 独立 API（N2）</text>
-
-    <!-- D4 control -->
-    <rect x="682" y="366" width="216" height="68" rx="10" fill="#fff" stroke="#1474a6" stroke-opacity=".3"/>
-    <text x="696" y="390" fill="#0f5e87" font-size="12.5" font-weight="700">D₄ · lifetime 体系</text>
-    <text x="696" y="409" fill="#3d7a99" font-size="10.5">时新性 · 业务口径 · 访问 NFR 预算</text>
-    <text x="696" y="426" fill="#7a98a8" font-size="10">运行时控制面 · 独立 API</text>
-
-    <text x="690" y="466" fill="#0f5e87" font-size="10.5">取数解耦：∂ℓ/∂|src| ≈ 0（P7，与物理扩展同构）</text>
-
-    <!-- D 经 Harness 契约接入：consult D3/D4 → plan → D1/D2 -->
-    <line x1="664" y1="293" x2="612" y2="270" stroke="#1474a6" stroke-width="1.6" marker-end="url(#mD)" opacity=".7"/>
-    <text x="618" y="262" fill="#1474a6" font-size="9.5" font-family="monospace">H: consult D₃,D₄</text>
-    <line x1="612" y1="300" x2="664" y2="100" stroke="#1474a6" stroke-width="1.4" marker-end="url(#mD)" opacity=".5"/>
-    <text x="612" y="318" fill="#1474a6" font-size="9.5" font-family="monospace">→ plan → D₁,D₂</text>
-
-    <!-- 横切 + 统一命题 -->
-    <text x="56" y="560" fill="#86868b" font-size="11">横切关注点（按层设计 NFR · C6）：性能 · 可靠性 · 可用性 · 安全 — 组合不变量 Inv(S) ⇒ Inv(S∪{s})（P3）</text>
-    <text x="56" y="588" fill="#5b34b0" font-size="11.5" font-weight="700">统一命题：四条切分的一阶成本都落在与主请求路径解耦的平面/子系统/松耦合边界上。</text>
-    <text x="56" y="612" fill="#9a9aa0" font-size="10.5">类比(C1)：L3≈前端运行时 · L2≈框架运行时 · L1≈虚机/容器 · 𝒟≈数据湖 + 离线索引</text>
-  </svg>
-  <figcaption class="figcap"><b>图 1</b>　三层栈 ⟨S, H, X⟩ 与<b>栈外数据子系统 𝒟</b>。𝒟 经 Harness 契约接入（consult D₃,D₄ → plan → D₁,D₂），但其 off-policy loop 𝓛₂ 在栈外独立异步运行。</figcaption>
-  </figure>
 </section>
 
 <hr class="divider">
@@ -354,7 +381,7 @@
 <!-- ============ Spec 分层图 ============ -->
 <section class="wrap slide" id="specs">
   <div class="slide-head fade">
-    <div class="kicker">02 · Specs</div>
+    <div class="kicker">03 · Specs</div>
     <h2>Spec 架构图：把契约填回每一层</h2>
     <p class="sub">把论文草稿里的 Layer Specs 重新填到三层栈里：L3 只保留用户可感知的 task SkillSpec；system skill 放入 Harness 的维护子系统；数据使用经验沉淀在 D₃，再由 Harness 按需调用。</p>
   </div>
@@ -506,7 +533,7 @@
 <!-- ============ Data Wiki / Theme Wiki / IR 中间关系层（2026-07-17 新增） ============ -->
 <section class="wrap slide" id="datawiki">
   <div class="slide-head fade">
-    <div class="kicker">07 · Data Wiki / Theme Wiki / IR</div>
+    <div class="kicker">08 · Data Wiki / Theme Wiki / IR</div>
     <h2>数据落地：Data Wiki × Theme Wiki × IR 中间关系层</h2>
     <p class="sub">D₂（语义总结）落地为 <b>Data Wiki</b>：常规数据源由 off-policy loop 自动读取总结；复杂报表则与人协同定规范，并以人常备报表为参照物、经<b>还原式 reflection</b> 校验（P16）。D₃ 产出侧落地为 <b>Theme Wiki</b>：σ_out 各结果子域（报表/图表/PPT/分析报告/数据模型程序……）经双子目标 Reward 验证收敛后登记复用（承 §11 P15）。两个 wiki 之间只有一层显式耦合——<b>IR（Intermediate Relation）</b>：给定 theme，查 semantic join 命中集 + <b>5W+1H</b>（时效性/使用范围/数据拥有者/数据语义/集成逻辑/物理访问方式），其余部分保持正交独立、松散耦合（P17）。</p>
   </div>
@@ -535,7 +562,7 @@
 <!-- ============ Orchestration Agent Loop ============ -->
 <section class="wrap slide" id="orchestration">
   <div class="slide-head fade">
-    <div class="kicker">08 · Orchestration</div>
+    <div class="kicker">09 · Orchestration</div>
     <h2>Orchestration：Harness 中的 Agent Loop</h2>
     <p class="sub">LLM 不是自由循环，而是在 Harness 的 typed contract、policy gate、verifier、reward 和 replayable trace 内做概率性控制决策。Scaffold 与 Data 子系统只通过稳定接口进入 loop。<b>reward 本身是双子目标</b>——结果子目标 r_out 沿输出格式 σ_out 的各子域比对独立标注 benchmark，过程子目标 r_proc 校验是否调用正确工具/数据、完成正确逻辑分析、达到进阶标准；每个 mini-batch 同时计算两维再驱动 skill 迭代（<b>P15</b>），比单一 scalar reward 归因更清晰、收敛更快。</p>
   </div>
@@ -653,7 +680,7 @@
 <!-- ============ 维度4：并行 / 局部性 ============ -->
 <section class="wrap slide" id="parallel">
   <div class="slide-head fade">
-    <div class="kicker">10 · Parallelism &amp; Locality</div>
+    <div class="kicker">11 · Parallelism &amp; Locality</div>
     <h2>并行度与局部性协同设计</h2>
     <p class="sub">在前三条解耦切分之上，给定预算 <i>B</i>，目标是最大化 budget 内并行吞吐：降低串行比 <i>s</i>、提升编排效率 <i>E</i>，逼近阿姆达尔上界 1/<i>s</i>。四条机制共用一根杠杆——<b>按工具集切分</b>。</p>
   </div>
@@ -667,7 +694,7 @@
     <div class="mech"><div class="mtag">M4</div><h4>Scaffold 按 seed 亲和派生</h4><p>同种子共置复用（affinity）、异种分散（anti-affinity）→ 固定资源下并行度 <i>k</i><sub>max</sub>↑。</p></div>
   </div>
 
-  <div class="figure fade" style="margin-top:22px">
+  <figure class="figure fade" style="margin-top:22px">
     <svg viewBox="0 0 1120 560" role="img" aria-label="并行编排 walkthrough：Harness 按工具集切分 → seed 亲和派生 → 并行子 agent（同 seed 高内聚 / 跨 agent summarized-context 松耦合）→ detail 入 memory">
       <defs>
         <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#7a7f8c"/></marker>
@@ -748,8 +775,8 @@
       <text class="note" x="980" y="290" fill="#9a6a12">Speedup → 1/s</text>
       <text class="note" x="980" y="308" fill="#9a6a12">s=s₀+λρ, E=E₀−μc̄</text>
     </svg>
-    <p class="figcap"><b>Walkthrough：</b>Harness 在控制面按工具集把任务切成不重合的子 agent（<span class="figcap-hint">M2</span>，minimize ρ）；Scaffold 依 seed 亲和派生（同种 <span class="figcap-hint">A</span> 共置、异种 <span class="figcap-hint">B</span> 分散，<span class="figcap-hint">M4</span>）；子 agent 并行执行且各自复用稳定工具集 → 前缀命中 <i>H</i>↑（<span class="figcap-hint">M1</span>）；agent 之间只沿<b>摘要</b>接口松耦合传递（<span class="figcap-hint">M3</span>），detail 沉入 memory 不污染下游 context。</p>
-  </div>
+    <figcaption class="figcap"><b>图 4 · 并行/局部性 walkthrough。</b>Harness 在控制面按工具集把任务切成不重合的子 agent（<span class="figcap-hint">M2</span>，minimize ρ）；Scaffold 依 seed 亲和派生（同种 <span class="figcap-hint">A</span> 共置、异种 <span class="figcap-hint">B</span> 分散，<span class="figcap-hint">M4</span>）；子 agent 并行执行且各自复用稳定工具集 → 前缀命中 <i>H</i>↑（<span class="figcap-hint">M1</span>）；agent 之间只沿<b>摘要</b>接口松耦合传递（<span class="figcap-hint">M3</span>），detail 沉入 memory 不污染下游 context。</figcaption>
+  </figure>
 
   <div class="grid g3 fade" style="margin-top:22px">
     <div class="card"><h3 style="color:var(--para)">P10 · 并行度可设计</h3><p class="mut">s = s₀ + λ·ρ(𝒫)，E = E₀ − μ·c̄<sub>ctx</sub>；吞吐随重合度 ρ↓、跨 agent 传递量 c̄<sub>ctx</sub>↓ 逼近 1/s。并行上界是切分设计的函数，而非外生常数。</p></div>
@@ -766,7 +793,7 @@
 <!-- ============ Skill 训练与生命周期（P15 / N9，2026-07-14~16 新增） ============ -->
 <section class="wrap slide" id="skilltrain">
   <div class="slide-head fade">
-    <div class="kicker">11 · Skill Training &amp; Lifecycle</div>
+    <div class="kicker">12 · Skill Training &amp; Lifecycle</div>
     <h2>Skill 训练与生命周期 — 双子目标 Reward + Skill-as-Code 固化</h2>
     <p class="sub">Skill 不是写好就用，而是<b>先训练、后固化</b>的两阶段生命周期：训练阶段用双子目标 Reward 迭代收敛（本节图 7），固化阶段把收敛部分编译为 code tool 融入 Harness（本节图 8，衔接 <a class="inline" href="#formalization">P14 Skill-as-Code</a>）。</p>
   </div>
@@ -867,6 +894,44 @@
 <script>
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.1});
 document.querySelectorAll('.fade').forEach(el=>io.observe(el));
+
+const prefersReducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function deckOffset(){
+  const bar=document.querySelector('.bar');
+  const nav=document.querySelector('.deck-nav');
+  const barHeight=bar?bar.offsetHeight:0;
+  const navStyle=nav?getComputedStyle(nav):null;
+  const navTop=navStyle?parseFloat(navStyle.top)||0:0;
+  const navHeight=nav?nav.offsetHeight:0;
+  return Math.max(barHeight,navTop+navHeight)+14;
+}
+function jumpToHash(behavior='auto'){
+  if(!location.hash)return;
+  const id=decodeURIComponent(location.hash.slice(1));
+  const target=document.getElementById(id);
+  if(!target)return;
+  const snap=document.documentElement.style.scrollSnapType;
+  document.documentElement.style.scrollSnapType='none';
+  const y=target.getBoundingClientRect().top+window.scrollY-deckOffset();
+  window.scrollTo({top:Math.max(0,y),behavior:prefersReducedMotion?'auto':behavior});
+  window.setTimeout(()=>{document.documentElement.style.scrollSnapType=snap},behavior==='smooth'?650:120);
+}
+document.querySelectorAll('.deck-nav a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',event=>{
+    event.preventDefault();
+    history.pushState(null,'',a.getAttribute('href'));
+    jumpToHash('smooth');
+  });
+});
+window.addEventListener('hashchange',()=>jumpToHash('smooth'));
+function settleHash(){
+  jumpToHash('auto');
+  [80,240,520,1000,1600].forEach(ms=>setTimeout(()=>jumpToHash('auto'),ms));
+}
+window.addEventListener('DOMContentLoaded',settleHash);
+window.addEventListener('load',settleHash);
+window.addEventListener('pageshow',settleHash);
+requestAnimationFrame(settleHash);
 </script>
 </body>
 </html>

@@ -35,6 +35,7 @@
   .fig{margin:14px 0 6px;padding:14px;background:var(--card);border:1px solid var(--line);
        border-radius:18px;box-shadow:0 6px 22px rgba(60,45,20,.07)}
   .fig svg{display:block;width:100%;height:auto;border-radius:10px}
+  .fig figcaption{margin:10px 2px 0;color:var(--mut);font-size:13px;line-height:1.55}
   footer{padding:36px 0 70px;color:var(--mut);font-size:13px;border-top:1px solid var(--line);margin-top:30px}
   @media(max-width:720px){h1{font-size:28px}table.seq td.sa{width:auto}}
 </style></head>
@@ -106,6 +107,14 @@
 <footer class="wrap">Dry Run · 2026-06-29 · companion to the synthesized paper draft v0.4 (§4.4.1 / §5).</footer>
 <script>
 const tabs=document.querySelectorAll('.tab'),wraps=document.querySelectorAll('.exwrap');
+const figureCaptions={
+  'ex-ai4science':'<figcaption><b>图 DR-1 · AI4Science 数据走查图。</b>离线 𝓛₂ 先把文献和物性库预消化进 D2；在线路径经 Harness 契约读取 D2 摘要并由 D1 获取实时数据，执行结果进入 Ω，再逻辑追加回 D2 并更新 D3。</figcaption>',
+  'ex-kronos':'<figcaption><b>图 DR-2 · Kronos 预测数据走查图。</b>D1 负责行情取数，Scaffold 上的 GPU 托管 capsule 执行 kronos_predict；预测经过泄漏、回测与校准验证后，以带有效窗口的 ForecastEntry 写入 D2，并回写 Ω/D3。</figcaption>'
+};
+Object.entries(figureCaptions).forEach(([id,caption])=>{
+  const fig=document.querySelector(`#${id} .fig`);
+  if(fig && !fig.querySelector('figcaption')) fig.insertAdjacentHTML('beforeend',caption);
+});
 tabs.forEach(t=>t.addEventListener('click',()=>{
   const id=t.dataset.ex;
   tabs.forEach(x=>x.classList.toggle('on',x===t));

@@ -106,7 +106,7 @@
 
   <div class="card fade" style="margin-top:22px">
     <h3 style="margin-top:0">Spec 调用顺序集 <span class="mut" style="font-weight:400;font-size:14px">（编号=顺序；标注编排原语 O1–O8 与所在面 CP/DP）</span></h3>
-    <div class="figure fade">
+    <figure class="figure fade">
       <svg viewBox="0 0 1120 700" width="100%" role="img" aria-label="用例 U spec 调用顺序：Intake→Skill激活→Context组装→路由/资源→并行执行→回写，标注 CP/DP 与 P13/M1-M4/P11/M3">
   <defs>
     <marker id="uah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#7a7f8c"/></marker>
@@ -205,8 +205,8 @@
   <!-- amdahl annotation -->
   <text class="note" x="955" y="700" fill="#9a6a12">Speedup → 1/s · s=s₀+λρ</text>
 </svg>
-      <p class="figcap"><b>Spec 调用顺序（U）：</b>规划期先 <span class="figcap-hint">P13</span> dry-run 探工具集闭包、按不重合切成三束并行子 agent（<span class="figcap-hint">M1/M2</span>）；Scaffold 依 seed 亲和派生（<span class="figcap-hint">M4</span>），各子 agent 冻结稳定前缀 → H↑（<span class="figcap-hint">P11</span>），彼此只沿<b>摘要</b>松耦合传递（<span class="figcap-hint">M3</span>）；回写逻辑追加、带 evidence_ref 防幻觉。</p>
-    </div>
+      <figcaption class="figcap"><b>Spec 调用顺序（U）：</b>规划期先 <span class="figcap-hint">P13</span> dry-run 探工具集闭包、按不重合切成三束并行子 agent（<span class="figcap-hint">M1/M2</span>）；Scaffold 依 seed 亲和派生（<span class="figcap-hint">M4</span>），各子 agent 冻结稳定前缀 → H↑（<span class="figcap-hint">P11</span>），彼此只沿<b>摘要</b>松耦合传递（<span class="figcap-hint">M3</span>）；回写逻辑追加、带 evidence_ref 防幻觉。</figcaption>
+    </figure>
   </div>
 
   <div class="card fade" style="margin-top:22px">
@@ -220,7 +220,7 @@
 
   <div class="card fade" style="margin-top:22px">
     <h3 style="margin-top:0">概率→确定 的固化闭环（U）<span class="mut" style="font-weight:400;font-size:14px">：hypothesis 经实验验证 → 固化为 skill-code</span></h3>
-    <div class="figure fade">
+    <figure class="figure fade">
       <svg viewBox="0 0 1120 460" width="100%" role="img" aria-label="AI4Science 概率推理(hypothesis/reflection) → DFT实验验证门 → 固化为确定推理(定律/数据/skill-code) 的闭环">
   <defs>
     <marker id="ufz" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#0f7a6b"/></marker>
@@ -289,13 +289,13 @@
   <path d="M920,372 C920,410 200,410 200,254" fill="none" stroke="#0f7a6b" stroke-width="1.4" stroke-dasharray="2 4" marker-end="url(#ufz)"/>
   <text class="zt" x="470" y="404" fill="#0b5f53">固化 skill 回流作下一轮 hypothesis 的确定先验（闭环 · 确定性梯度）</text>
 </svg>
-      <p class="figcap"><b>固化闭环（U）：</b><span style="color:#c2683a">概率推理</span>提出候选材料 hypothesis（用 θ 内在知识泛化）→ 经 <span class="figcap-hint">DFT 筛选 / 物性库比对 / 引用接地</span> 验证门 → 通过则<b>固化为</b> <code>perovskite-screening.skill-code</code>，进入<span style="color:#0f7a6b">确定推理</span>区（已知定律+固定数据+固化方法，跨模型版本不漂移 <span class="figcap-hint">P14</span>）；未固化部分留 NL 概率生成保泛化。固化 skill 回流作下一轮 hypothesis 的确定先验，构成相变闭环。</p>
-    </div>
+      <figcaption class="figcap"><b>固化闭环（U）：</b><span style="color:#c2683a">概率推理</span>提出候选材料 hypothesis（用 θ 内在知识泛化）→ 经 <span class="figcap-hint">DFT 筛选 / 物性库比对 / 引用接地</span> 验证门 → 通过则<b>固化为</b> <code>perovskite-screening.skill-code</code>，进入<span style="color:#0f7a6b">确定推理</span>区（已知定律+固定数据+固化方法，跨模型版本不漂移 <span class="figcap-hint">P14</span>）；未固化部分留 NL 概率生成保泛化。固化 skill 回流作下一轮 hypothesis 的确定先验，构成相变闭环。</figcaption>
+    </figure>
   </div>
 
   <div class="card fade" style="margin-top:22px">
     <h3 style="margin-top:0">Data Diagram（数据流，在线/离线双路）</h3>
-    <div class="figure fade">
+    <figure class="figure fade">
       <svg viewBox="0 0 1120 560" width="100%" role="img" aria-label="用例 U 数据流：离线 off-policy loop 预总结 → 共享摘要 DB ← 在线 semantic_join；Harness 契约翻译；Scaffold 计算 + D1 取数；Ω 回写">
   <defs><marker id="dah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#7a7f8c"/></marker></defs>
   <style>
@@ -362,8 +362,8 @@
   <path class="flow" d="M710,426 L680,470" marker-end="url(#dah)"/>
   <text class="note" x="850" y="500" fill="#9a6a12">P7 · 新增源不抬单请求成本</text>
 </svg>
-      <p class="figcap"><b>数据流（U）：</b>离线 𝓛₂ 把原文预消化成带时序约束的 SummaryEntry 存入<b>共享只读摘要 DB</b>（不在主请求路径 → 新增源不抬单请求成本，<span class="figcap-hint">P7</span>）；在线只做 <span class="figcap-hint">D₂.semantic_join</span> + <span class="figcap-hint">D₁</span> 取数，均经 Harness 契约；执行结果经 Ω 蒸馏回灌 D₂/D₃，逻辑追加、可回指原文防幻觉。<br><span class="mut" style="font-size:12px">缩写：<b>arXiv</b>=学术预印本库 · <b>MP</b>=Materials Project（开放 DFT 材料物性库）· <b>OQMD</b>=Open Quantum Materials Database · <b>DFT</b>=密度泛函理论（第一性原理算物性）· <b>HPC</b>=高性能计算集群 · <b>microVM</b>=微虚拟机沙箱 · <b>SSO</b>=单点登录</span></p>
-    </div>
+      <figcaption class="figcap"><b>数据流（U）：</b>离线 𝓛₂ 把原文预消化成带时序约束的 SummaryEntry 存入<b>共享只读摘要 DB</b>（不在主请求路径 → 新增源不抬单请求成本，<span class="figcap-hint">P7</span>）；在线只做 <span class="figcap-hint">D₂.semantic_join</span> + <span class="figcap-hint">D₁</span> 取数，均经 Harness 契约；执行结果经 Ω 蒸馏回灌 D₂/D₃，逻辑追加、可回指原文防幻觉。<br><span class="mut" style="font-size:12px">缩写：<b>arXiv</b>=学术预印本库 · <b>MP</b>=Materials Project（开放 DFT 材料物性库）· <b>OQMD</b>=Open Quantum Materials Database · <b>DFT</b>=密度泛函理论（第一性原理算物性）· <b>HPC</b>=高性能计算集群 · <b>microVM</b>=微虚拟机沙箱 · <b>SSO</b>=单点登录</span></figcaption>
+    </figure>
     <ol class="mut" style="margin-top:14px;line-height:1.7">
       <li><b>两条数据路径分离</b>：离线 𝓛₂ 把原始文献/库预消化成带时序约束 SummaryEntry，不在主请求路径上 → 新增源不抬单请求 token 成本（P7）。</li>
       <li><b>摘要 DB 是共享只读热点</b>：多 agent 读同一份 SummaryEntry(快照读)，不各自重拉同一篇 PDF → 消除争用、省重复推理。</li>
@@ -397,7 +397,7 @@
 
   <div class="card fade" style="margin-top:22px">
     <h3 style="margin-top:0">Spec 调用顺序集</h3>
-    <div class="figure fade">
+    <figure class="figure fade">
       <svg viewBox="0 0 1120 560" width="100%" role="img" aria-label="用例 K spec 调用顺序：plan/dry-run→Skill→契约/seed→取数/预测/回测→验证→回写，CP/DP 泳道">
   <defs><marker id="kah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#7a7f8c"/></marker>
   <marker id="kap" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#9a6a12"/></marker></defs>
@@ -460,8 +460,8 @@
   <path class="flow" d="M830,430 C830,445 600,442 540,470" marker-end="url(#kah)"/>
   <text class="note" x="900" y="524" fill="#9a6a12">多标的并行 → 吞吐逼近 1/s（P10/P13）</text>
 </svg>
-      <p class="figcap"><b>Spec 调用顺序（K）：</b>多标的/多周期在规划期 <span class="figcap-hint">P13</span> dry-run 探得共享同一 <code>kronos_predict</code> 工具集闭包，可同 seed 共置并行（<span class="figcap-hint">M1/M2/M4</span>），前缀冻结 → H↑、k_max↑；预测作为<b>带有效期</b> ForecastEntry 回写，过期不静默复用；策略上只读、泄漏防护经契约（<span class="figcap-hint">P3</span>）。</p>
-    </div>
+      <figcaption class="figcap"><b>Spec 调用顺序（K）：</b>多标的/多周期在规划期 <span class="figcap-hint">P13</span> dry-run 探得共享同一 <code>kronos_predict</code> 工具集闭包，可同 seed 共置并行（<span class="figcap-hint">M1/M2/M4</span>），前缀冻结 → H↑、k_max↑；预测作为<b>带有效期</b> ForecastEntry 回写，过期不静默复用；策略上只读、泄漏防护经契约（<span class="figcap-hint">P3</span>）。</figcaption>
+    </figure>
   </div>
 
   <div class="card fade" style="margin-top:22px">
@@ -476,7 +476,7 @@
 
   <div class="card fade" style="margin-top:22px">
     <h3 style="margin-top:0">概率→确定 的固化闭环（K）<span class="mut" style="font-weight:400;font-size:14px">：信号 hypothesis 经回测验证 → 固化为 signal-gen.skill-code</span></h3>
-    <div class="figure fade">
+    <figure class="figure fade">
       <svg viewBox="0 0 1120 460" width="100%" role="img" aria-label="FinTech 预测采样/信号 hypothesis → 多信号回测验证门 → 固化为 signal-gen skill-code 的闭环">
   <defs>
     <marker id="kfz" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#0f7a6b"/></marker>
@@ -541,13 +541,13 @@
   <path d="M920,372 C920,410 200,410 200,254" fill="none" stroke="#0f7a6b" stroke-width="1.4" stroke-dasharray="2 4" marker-end="url(#kfz)"/>
   <text class="zt" x="470" y="404" fill="#0b5f53">固化信号规则回流约束下一轮假设（闭环 · 确定性梯度）</text>
 </svg>
-      <p class="figcap"><b>固化闭环（K）：</b><span style="color:#c2683a">概率推理</span>给出预测采样与信号 hypothesis → 经 <span class="figcap-hint">泄漏检查 + 回测(Sharpe/回撤) + 校准度</span> 多信号验证门 → 通过则<b>固化为</b> <code>signal-gen.skill-code</code>（阀值/组合逻辑）。关键：<b>Kronos 模型版本升级时，被 code 固化的信号规则输出不漂移</b>（<span class="figcap-hint">P14</span>），而预测采样部分仍随模型版本变——这正是确定性梯度。</p>
-    </div>
+      <figcaption class="figcap"><b>固化闭环（K）：</b><span style="color:#c2683a">概率推理</span>给出预测采样与信号 hypothesis → 经 <span class="figcap-hint">泄漏检查 + 回测(Sharpe/回撤) + 校准度</span> 多信号验证门 → 通过则<b>固化为</b> <code>signal-gen.skill-code</code>（阀值/组合逻辑）。关键：<b>Kronos 模型版本升级时，被 code 固化的信号规则输出不漂移</b>（<span class="figcap-hint">P14</span>），而预测采样部分仍随模型版本变——这正是确定性梯度。</figcaption>
+    </figure>
   </div>
 
   <div class="card fade" style="margin-top:22px">
     <h3 style="margin-top:0">Data Diagram（数据流，预训练模型托管 + 带有效期预测）</h3>
-    <div class="figure fade">
+    <figure class="figure fade">
       <svg viewBox="0 0 1120 540" width="100%" role="img" aria-label="用例 K 数据流：AKShare 在线取 OHLCV(D1) → Kronos GPU 托管模型预测 → 多信号验证 → ForecastEntry 带有效期回写 D2；Ω 蒸馏 D3">
   <defs><marker id="dkah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#7a7f8c"/></marker></defs>
   <style>
@@ -615,8 +615,8 @@
   <path class="flow" d="M700,425 L680,455" marker-end="url(#dkah)"/>
   <text class="note" x="855" y="490" fill="#9a6a12">预测=带有效期数据</text>
 </svg>
-      <p class="figcap"><b>数据流（K）：</b>预训练 <b>Kronos</b> 模型作为 Scaffold 上 GPU 托管 capsule（加标的=加 serving，不动 Skill，<span class="figcap-hint">P1</span>）；在线经 <b>AKShare</b>(D₁) 取 OHLCV，预测结果作为<b>带有效期</b> ForecastEntry 落入 D₂——仅窗口内有效、过期重算；验证是<b>多信号</b>（泄漏检查 + 回测 + 校准），策略上只读（<span class="figcap-hint">P3</span>）。<br><span class="mut" style="font-size:12px">缩写：<b>AKShare</b>=开源金融数据接口库 · <b>OHLCV</b>=开/高/低/收/量（K 线五字段）· <b>Kronos</b>=时序基础模型 · <b>GPU</b>=推理加速卡 · <b>microVM</b>=微虚拟机沙箱 · <b>SSO</b>=单点登录 · <b>Sharpe</b>=夏普比率</span></p>
-    </div>
+      <figcaption class="figcap"><b>数据流（K）：</b>预训练 <b>Kronos</b> 模型作为 Scaffold 上 GPU 托管 capsule（加标的=加 serving，不动 Skill，<span class="figcap-hint">P1</span>）；在线经 <b>AKShare</b>(D₁) 取 OHLCV，预测结果作为<b>带有效期</b> ForecastEntry 落入 D₂——仅窗口内有效、过期重算；验证是<b>多信号</b>（泄漏检查 + 回测 + 校准），策略上只读（<span class="figcap-hint">P3</span>）。<br><span class="mut" style="font-size:12px">缩写：<b>AKShare</b>=开源金融数据接口库 · <b>OHLCV</b>=开/高/低/收/量（K 线五字段）· <b>Kronos</b>=时序基础模型 · <b>GPU</b>=推理加速卡 · <b>microVM</b>=微虚拟机沙箱 · <b>SSO</b>=单点登录 · <b>Sharpe</b>=夏普比率</span></figcaption>
+    </figure>
     <ol class="mut" style="margin-top:14px;line-height:1.7">
       <li><b>预训练模型作为被托管的能力</b>：<code>kronos_predict</code> 是 Scaffold 上 GPU 托管 capsule；增加标的在物理轴扩(加 serving)，不动预测 Skill（P1）。</li>
       <li><b>预测是带有效期的数据</b>：以 ForecastEntry 落入 D2，仅窗口内有效；后续运行仅在仍有效时复用，否则重算。</li>
