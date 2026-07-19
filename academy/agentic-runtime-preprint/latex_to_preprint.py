@@ -391,16 +391,16 @@ class FigureGraphic(Flowable):
         draw_wrapped(canvas, "External data is a governed contract path", 18, h - 12, w - 36,
                      "Helvetica-Bold", 9.2, "#0f172a")
         stages = [
-            (16, 80, 70, 46, "Sources", "warehouse\ndocuments | APIs", "#f8fafc", "#94a3b8"),
-            (104, 80, 82, 46, "Data adapter", "discover + query\nno task semantics", "#f0fdfa", "#2dd4bf"),
-            (204, 69, 112, 68, "Harness contract", "auth + policy\nschema + snapshot\nresidency + budget", "#eff6ff", "#2563eb"),
-            (334, 80, 72, 46, "Sandbox", "bound credential\nisolated fetch", "#fffbeb", "#f59e0b"),
+            (14, 80, 68, 46, "Sources", "warehouse\ndocuments | APIs", "#f8fafc", "#94a3b8"),
+            (96, 80, 78, 46, "Data adapter", "discover + query\nno task semantics", "#f0fdfa", "#2dd4bf"),
+            (188, 69, 112, 68, "Harness contract", "auth + policy\nschema + snapshot\nresidency + budget", "#eff6ff", "#2563eb"),
+            (314, 80, 62, 46, "Sandbox", "bound credential\nisolated fetch", "#fffbeb", "#f59e0b"),
         ]
         for x, y, bw, bh, title, subtitle, fill, stroke in stages:
             self._pill(canvas, x, y, bw, bh, title, subtitle, fill, stroke, "#0f172a")
-        self._pill(canvas, w - 76, 80, 60, 46, "Evidence", "typed bundle\nprovenance ID",
+        self._pill(canvas, 390, 80, 56, 46, "Evidence", "typed bundle\nprovenance ID",
                    "#ecfdf5", "#10b981", "#047857")
-        for x1, x2 in [(86, 104), (186, 204), (316, 334), (406, w - 76)]:
+        for x1, x2 in [(82, 96), (174, 188), (300, 314), (376, 390)]:
             draw_arrow(canvas, x1, 103, x2, 103, "#475569")
 
         canvas.setStrokeColor(hx("#cbd5e1"))
@@ -410,19 +410,18 @@ class FigureGraphic(Flowable):
         draw_wrapped(canvas, "Recorded obligations", 18, 48, 92,
                      "Helvetica-Bold", 6.2, "#475569", TA_LEFT)
         obligations = [
-            ("principal", "#dbeafe"),
-            ("source + snapshot", "#dcfce7"),
-            ("query hash", "#fef3c7"),
-            ("residency", "#ede9fe"),
-            ("evidence lineage", "#ffe4e6"),
+            ("principal", "#dbeafe", 56),
+            ("source + snapshot", "#dcfce7", 70),
+            ("query hash", "#fef3c7", 56),
+            ("residency", "#ede9fe", 58),
+            ("evidence lineage", "#ffe4e6", 70),
         ]
-        ox = 112
-        for label, fill in obligations:
-            bw = 62 if label not in ("source + snapshot", "evidence lineage") else 76
+        ox = 114
+        for label, fill, bw in obligations:
             canvas.setFillColor(hx(fill))
             canvas.roundRect(ox, 28, bw, 17, 3, stroke=0, fill=1)
-            draw_wrapped(canvas, label, ox + 3, 40, bw - 6, "Helvetica-Bold", 5.5, "#334155")
-            ox += bw + 6
+            draw_wrapped(canvas, label, ox + 3, 40, bw - 6, "Helvetica-Bold", 5.2, "#334155")
+            ox += bw + 5
 
     def _draw_dry_run(self, canvas):
         w, h = self.width, self.height
@@ -495,7 +494,7 @@ class FigureGraphic(Flowable):
         w, h = self.width, self.height
         draw_wrapped(canvas, "Falsification matrix", 18, h - 10, w - 36,
                      "Helvetica-Bold", 9.2, "#0f172a")
-        x0, y0 = 12, 18
+        x0, y0 = 12, 14
         table_w = w - 24
         cols = [84, 122, 116, table_w - 322]
         headers = ["Claim", "Controlled intervention", "Primary observations", "Counts against claim"]
@@ -509,8 +508,8 @@ class FigureGraphic(Flowable):
             ("Dry-run + locality", "Toggle dry-run and placement policy", "overhead, avoided work, bytes moved", "planning costs more than it saves"),
             ("Skill-as-Code", "Change model; freeze Skill source", "contract and path stability", "material drift passes tests"),
         ]
-        row_h = 22
-        header_h = 22
+        row_h = 20
+        header_h = 20
         total_h = header_h + row_h * len(rows)
         top = y0 + total_h
         canvas.setFillColor(hx("#e2e8f0"))
@@ -635,6 +634,8 @@ def citation_order(tex: str) -> list[str]:
 
 
 def clean_math(text: str) -> str:
+    text = re.sub(r"\\xrightarrow\{\\mathcal\{([^}]+)\}\}", r"-[\1]->", text)
+    text = re.sub(r"\\bigwedge_([A-Za-z0-9]+)", r"AND over \1", text)
     repl = {
         r"\Delta": "Delta",
         r"\delta": "delta",
@@ -671,7 +672,7 @@ def clean_math(text: str) -> str:
         r"\uparrow": "increases",
         r"\downarrow": "decreases",
         r"\infty": "infinity",
-        r"\in": "in",
+        r"\in": " in ",
         r"\left": "",
         r"\right": "",
         r"\textwidth": "text width",
@@ -701,6 +702,8 @@ def clean_math(text: str) -> str:
 def clean_latex(text: str, cite_map: dict | None = None) -> str:
     cite_map = cite_map or {}
     text = text.replace("\r", " ").replace("\n", " ")
+    text = re.sub(r"\\xrightarrow\{\\mathcal\{([^}]+)\}\}", r"-[\1]->", text)
+    text = re.sub(r"\\bigwedge_([A-Za-z0-9]+)", r"AND over \1", text)
     text = text.replace("Guti茅rrez", "Gutierrez").replace("guti茅rrez", "gutierrez")
     text = re.sub(r"``|''", '"', text)
     text = text.replace("---", " - ").replace("--", " - ")
@@ -1243,16 +1246,14 @@ def make_styles():
     )
     styles["Formula"] = ParagraphStyle(
         "Formula",
-        parent=base["Code"],
-        fontName="Courier",
-        fontSize=8.5,
-        leading=11,
-        leftIndent=18,
-        rightIndent=18,
-        backColor=colors.HexColor("#f8fafc"),
-        borderColor=colors.HexColor("#e2e8f0"),
-        borderWidth=0.4,
-        borderPadding=5,
+        parent=base["Normal"],
+        fontName="Times-Italic",
+        fontSize=10.5,
+        leading=13,
+        leftIndent=10,
+        rightIndent=10,
+        alignment=TA_CENTER,
+        textColor=colors.HexColor("#111827"),
     )
     styles["Proposition"] = ParagraphStyle(
         "Proposition",
