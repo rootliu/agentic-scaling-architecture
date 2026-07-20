@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 460" width="100%" role="img" aria-label="AI4Science 概率推理(hypothesis/reflection) → DFT实验验证门 → 固化为确定推理(定律/数据/skill-code) 的闭环">
+  <defs>
+    <marker id="ufz" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#0f7a6b"/></marker>
+    <marker id="upr" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#c2683a"/></marker>
+    <marker id="ugt" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#1474a6"/></marker>
+  </defs>
+  <style>
+    .zt{font:600 12px system-ui,sans-serif}
+    .bt2{font:600 12.5px system-ui,sans-serif}
+    .bs2{font:500 10.5px var(--mono,monospace)}
+    .nt2{font:italic 11px system-ui,sans-serif;fill:#7a7f8c}
+    .plab2{font:600 11px var(--mono,monospace)}
+  </style>
+
+  <!-- zone headers -->
+  <text class="plab2" x="200" y="26" fill="#c2683a" text-anchor="middle">概率推理 · 用 θ 内在知识泛化</text>
+  <text class="plab2" x="560" y="26" fill="#1474a6" text-anchor="middle">实验 / 验证门</text>
+  <text class="plab2" x="930" y="26" fill="#0f7a6b" text-anchor="middle">确定推理 · 不调 θ、可复现</text>
+
+  <!-- probabilistic zone (dashed warm) -->
+  <rect x="40" y="42" width="320" height="330" rx="14" fill="#fbeee2" stroke="#c2683a" stroke-width="1.4" stroke-dasharray="6 4"/>
+  <rect class="box" x="66" y="74" width="270" height="70" rx="10" fill="#fff" stroke="#c2683a"/>
+  <text class="bt2" x="82" y="100" fill="#a8522a">hypothesis 生成候选材料</text>
+  <text class="bs2" x="82" y="118" fill="#c2683a">LLM 用 θ 提候选成分 / 结构</text>
+  <text class="bs2" x="82" y="133" fill="#c2683a">（本体概率，N0）</text>
+  <rect class="box" x="66" y="164" width="270" height="70" rx="10" fill="#fff" stroke="#c2683a"/>
+  <text class="bt2" x="82" y="190" fill="#a8522a">reflection / 多样性校验</text>
+  <text class="bs2" x="82" y="208" fill="#c2683a">随机反例 shots → 泛化</text>
+  <text class="bs2" x="82" y="223" fill="#c2683a">检出 code 分支未覆盖情形</text>
+  <text class="nt2" x="66" y="268" fill="#a8522a">这部分故意保留 NL：靠 θ 探未知空间（§4 确定性梯度）</text>
+  <text class="nt2" x="66" y="286" fill="#a8522a">下一轮 hypothesis 受已固化 skill 先验约束</text>
+
+  <!-- verification gate (blue) -->
+  <path d="M470,150 L560,120 L650,150 L560,300 Z" fill="#e1eff6" stroke="#1474a6" stroke-width="1.6"/>
+  <text class="bt2" x="560" y="170" fill="#0f5a80" text-anchor="middle">DFT 筛选</text>
+  <text class="bs2" x="560" y="188" fill="#1474a6" text-anchor="middle">物性库比对</text>
+  <text class="bs2" x="560" y="204" fill="#1474a6" text-anchor="middle">引用接地</text>
+  <text class="nt2" x="560" y="238" fill="#0f5a80" text-anchor="middle">= 已知定律</text>
+  <text class="nt2" x="560" y="254" fill="#0f5a80" text-anchor="middle">+ 固定方法</text>
+
+  <!-- deterministic zone (solid teal-green) -->
+  <rect x="760" y="42" width="320" height="330" rx="14" fill="#e3f4f0" stroke="#0f7a6b" stroke-width="1.6"/>
+  <rect class="box" x="786" y="74" width="270" height="66" rx="10" fill="#fff" stroke="#0f7a6b"/>
+  <text class="bt2" x="802" y="100" fill="#0b5f53">已知定律（DFT）+ 固定数据</text>
+  <text class="bs2" x="802" y="118" fill="#0f7a6b">Materials Project / OQMD 物性</text>
+  <text class="bs2" x="802" y="133" fill="#0f7a6b">固定实验方法（本就确定）</text>
+  <rect class="box" x="786" y="156" width="270" height="86" rx="10" fill="#d6efe8" stroke="#0f7a6b" stroke-width="1.6"/>
+  <text class="bt2" x="802" y="182" fill="#0b5f53">perovskite-screening.skill-code</text>
+  <text class="bs2" x="802" y="200" fill="#0f7a6b">验证通过的 hypothesis 固化</text>
+  <text class="bs2" x="802" y="215" fill="#0f7a6b">获取→判断→核验→决策 → code</text>
+  <text class="bs2" x="802" y="230" fill="#0f7a6b">κ 超阈 → 冻结（N8）</text>
+  <text class="nt2" x="786" y="268" fill="#0b5f53">∂output/∂θ≈0：模型版本升级不漂移（P14）</text>
+  <text class="nt2" x="786" y="286" fill="#0b5f53">可复制进工具集，作其它 agent 输入</text>
+
+  <!-- flows: prob -> gate -->
+  <path d="M336,109 C400,109 420,135 468,146" fill="none" stroke="#c2683a" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#upr)"/>
+  <path d="M336,199 C400,199 430,210 470,208" fill="none" stroke="#c2683a" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#upr)"/>
+  <!-- freeze arrow: gate -> deterministic (thick solid teal) -->
+  <path d="M652,190 C700,190 720,150 784,120" fill="none" stroke="#0f7a6b" stroke-width="2.6" marker-end="url(#ufz)"/>
+  <text class="zt" x="662" y="132" fill="#0b5f53">verified → freeze</text>
+  <text class="bs2" x="662" y="148" fill="#0f7a6b">N8 / P14</text>
+  <!-- reject arrow: gate -> back to reflection (dashed blue) -->
+  <path d="M540,300 C520,340 380,330 200,245" fill="none" stroke="#1474a6" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#ugt)"/>
+  <text class="nt2" x="330" y="352" fill="#0f5a80">未过 → 回 reflection 重提 hypothesis</text>
+  <!-- reuse dotted: deterministic skill -> next-round prior (down + left) -->
+  <path d="M920,372 C920,410 200,410 200,254" fill="none" stroke="#0f7a6b" stroke-width="1.4" stroke-dasharray="2 4" marker-end="url(#ufz)"/>
+  <text class="zt" x="470" y="404" fill="#0b5f53">固化 skill 回流作下一轮 hypothesis 的确定先验（闭环 · 确定性梯度）</text>
+</svg>
