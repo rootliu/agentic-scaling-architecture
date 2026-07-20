@@ -35,7 +35,7 @@
   </div>
   <h1 class="fade">可扩展的 Agentic Runtime，以及它的可管理性。</h1>
   <!-- 架构总图：把三层、CP/DP、栈外数据、并行局部性与确定性锚放在同一张讲解路径图里。 -->
-  <div class="figure runtime-blueprint fade" role="img" aria-label="可扩展 agentic runtime 架构总图">
+  <figure class="figure runtime-blueprint fade" aria-label="可扩展 agentic runtime 架构总图">
     <svg viewBox="0 0 1180 540" preserveAspectRatio="xMidYMid meet">
       <defs>
         <linearGradient id="bpSurface" x1="0" x2="1" y1="0" y2="1">
@@ -138,8 +138,8 @@
         <text x="620" y="484" class="bp-line">deterministic anchor for probabilistic CP · stable contracts</text>
       </a>
     </svg>
-    <p class="figcap"><b>读图顺序：</b>先看中间三层 S/H/X 与 Harness 契约闸门，再看横向 CP/DP 职责分流；右侧 𝒟 是栈外数据协同系统，底部 P10–P13 解释并行/局部性，N8/P14 则把可验证 skill 固化为 code，作为概率控制面的确定性锚。</p>
-  </div>
+    <figcaption class="figcap"><b>图 0 · Overview 总览图。</b>先看中间三层 S/H/X 与 Harness 契约闸门，再看横向 CP/DP 职责分流；右侧 𝒟 是栈外数据协同系统，底部 P10–P13 解释并行/局部性，N8/P14 则把可验证 skill 固化为 code，作为概率控制面的确定性锚。</figcaption>
+  </figure>
   <p class="lead fade">研究 agentic runtime 在持续增加 skills、执行资源、外部数据源和并行子 agent 时，如何仍保持可审计、可治理、可运维、可演进。扩展轴、控制/数据面、栈外数据子系统、并行/局部性是<b>四条互相正交的切分</b>；Skill-as-Code 提供确定性锚。</p>
 
   <div class="glossary-strip fade" aria-label="缩写解释">
@@ -157,9 +157,30 @@
     <span class="term data"><b>DFT</b>Density Functional Theory · 密度泛函理论</span>
     <span class="term data"><b>OHLCV</b>Open / High / Low / Close / Volume</span>
     <span class="term para"><b>KV-cache</b>attention key-value cache</span>
+    <span class="term data"><b>IR</b>Intermediate Relation · 中间关系层</span>
+    <span class="term"><b>NFR</b>Non-Functional Requirement · 非功能需求</span>
+    <span class="term"><b>MCP</b>Model Context Protocol</span>
+    <span class="term"><b>SLA/SLO</b>服务协议 / 服务目标</span>
     <span class="term para"><b>M1-M4</b>locality mechanisms · 局部性机制</span>
     <span class="term det"><b>N/P/C</b>Novelty / Proposition / Contribution</span>
   </div>
+  <details class="term-panel fade">
+    <summary>术语速查 · presentation glossary</summary>
+    <div class="term-grid">
+      <span><b>D1-D4</b>取数 API、语义总结、治理记忆、lifetime 预算。</span>
+      <span><b>5W1H</b>When / Where / Who / What / Why / How，用于 IR 元信息。</span>
+      <span><b>BI</b>Business Intelligence，企业分析与报表场景。</span>
+      <span><b>JSON</b>JavaScript Object Notation，结构化数据交换格式。</span>
+      <span><b>PPT/PDF/HTML</b>演示、文档和网页三类输出载体。</span>
+      <span><b>QPS</b>Queries Per Second，每秒请求数。</span>
+      <span><b>SDN/K8s</b>软件定义网络 / Kubernetes，对照确定性控制面。</span>
+      <span><b>vLLM</b>高吞吐 LLM serving 引擎，用作物理轴 baseline。</span>
+      <span><b>OIDC/SAML/SCIM/RBAC</b>身份认证、目录同步和权限控制标准。</span>
+      <span><b>KMS/S3/PrivateLink</b>云密钥、对象存储和私有网络接入服务。</span>
+      <span><b>T1-T8</b>工具 capsule 类型。</span>
+      <span><b>P/N/C</b>Proposition / Novelty / Contribution，命题、创新点、贡献。</span>
+    </div>
+  </details>
 
   <!-- 共享不变量收敛节点 -->
   <a class="invariant fade" href="architecture.html#dimensions" style="display:block;text-decoration:none;color:inherit">

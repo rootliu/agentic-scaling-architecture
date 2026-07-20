@@ -23,6 +23,19 @@
 4. 右侧的 `𝒟` 是栈外数据子系统，不是第四层，只通过 semantic-join 等受控接口进入主路径。
 5. 底部的 P10–P13 描述并行/局部性机制；N8/P14 则把可验证、操作空间闭合的 skill 固化为 code，作为概率控制面的确定性锚。
 
+## 3.1 图谱索引
+
+展示页与 dry-run 页中的每张图都保留可独立阅读的图注；图 0 用作总览导航图，帮助听众先建立全局地图。
+
+- **图 0 · Overview 总览图**：作为演示的第一张全局地图，把三层运行时、CP/DP、栈外数据子系统、并行/局部性和 Skill-as-Code 确定性锚放在同一条阅读路径上。
+- **图 1 · 架构总图**：展开三层栈与外部数据子系统，强调 Harness 是逻辑扩展与物理扩展之间的契约闸门。
+- **图 2 · Spec 架构图**：解释 Skills 如何用 I/O schema、调用/终止/循环条件把任务材料组织进 LLM context。
+- **图 3 · Agent loop**：展示 Skills、Harness、Scaffold 和数据子系统在一次运行中的控制/执行闭环。
+- **图 4 · 并行/局部性 walkthrough**：说明 dry-run 如何按工具集闭包切分 sub-agents，并通过 seed affinity、稳定前缀和 summarized context 控制并行成本。
+- **图 DR-1/DR-2 与六张详细 Dry Run 图**：用 AI4Science 与 Kronos 两个实例分别说明 spec 调用顺序、概率到确定的固化闭环，以及数据流/回写路径，作为图 1-4 的运行期证据。
+- **图 7/8 · Skill 训练与生命周期**：解释 reward 训练、生命周期管理以及 Skill-as-Code 如何把验证过的能力固化为确定性资产。
+- **图 9/10 · Data Wiki**：说明自动来源与复杂报告如何进入 Data Wiki，并通过 Data Wiki × Theme Wiki × IR 支持可治理的数据使用。
+
 ## 4. 四条正交切分
 
 | 切分 | 解决的问题 | 解耦方式 | 主要笔记 |
@@ -75,18 +88,47 @@
 | `CP` | Control Plane，控制面 |
 | `DP` | Data Plane，数据面 |
 | `D` / `𝒟` | Data Subsystem，栈外数据子系统 |
+| `D1-D4` | 数据子系统四部分：取数 API、语义总结、治理记忆、lifetime 预算 |
+| `M1-M4` | 局部性机制：stable prefix、context shard、seed affinity、summarized context |
+| `T1-T8` | 工具 capsule 类型，用于描述 Harness 可路由的能力集合 |
+| `O1-O8` | Harness 中的运行时选择项，例如 tool、shot、schema、plan、code-gen、reflection、model、token |
 | `LLM` | Large Language Model，大语言模型 |
 | `I/O` | Input / Output，输入/输出 |
 | `API` | Application Programming Interface，应用程序接口 |
+| `IR` | Intermediate Relation，中间关系层 |
+| `5W1H` | When / Where / Who / What / Why / How，事实抽取与报告组织框架 |
+| `NFR` | Non-Functional Requirement，非功能需求 |
+| `SLA/SLO` | Service-Level Agreement / Objective，服务级别协议 / 服务级别目标 |
+| `QPS` | Queries Per Second，每秒请求数 |
+| `SDN` | Software-Defined Networking，软件定义网络 |
+| `K8s` | Kubernetes，容器编排系统 |
+| `MCP` | Model Context Protocol，模型上下文协议 |
+| `BI` | Business Intelligence，企业分析与报表 |
+| `JSON` | JavaScript Object Notation，结构化数据交换格式 |
+| `PPT/PDF/HTML` | 演示、文档、网页输出格式 |
 | `microVM` | micro virtual machine，微虚拟机 |
 | `GPU` | Graphics Processing Unit，图形处理/加速卡 |
 | `HPC` | High Performance Computing，高性能计算 |
 | `SSO` | Single Sign-On，单点登录 |
+| `OIDC` | OpenID Connect，身份认证协议 |
+| `SAML` | Security Assertion Markup Language，企业身份联合协议 |
+| `SCIM` | System for Cross-domain Identity Management，跨域身份管理协议 |
+| `RBAC` | Role-Based Access Control，基于角色的访问控制 |
+| `KMS` | Key Management Service，密钥管理服务 |
+| `S3` | Simple Storage Service，对象存储服务 |
+| `PrivateLink` | 云内私有连接服务 |
 | `DFT` | Density Functional Theory，密度泛函理论 |
 | `OHLCV` | Open / High / Low / Close / Volume，开高低收成交量 |
 | `KV-cache` | attention key-value cache，注意力键值缓存 |
-| `M1-M4` | locality mechanisms，局部性机制 |
-| `N/P/C` | Novelty / Proposition / Contribution，创新点 / 命题 / 贡献 |
+| `vLLM` | 高吞吐 LLM serving 引擎 |
+| `SOTA` | State of the Art，当前最佳或前沿水平 |
+| `DB` | Database，数据库 |
+| `MP` / `OQMD` | Materials Project / Open Quantum Materials Database，材料数据库 |
+| `HF` | Hugging Face，模型与数据托管平台 |
+| `EOD` | End of Day，日终数据 |
+| `maxDD` | Maximum Drawdown，最大回撤 |
+| `RQ` | Research Question，研究问题 |
+| `P/N/C` 或 `N/P/C` | Proposition / Novelty / Contribution，命题 / 创新点 / 贡献 |
 
 ## 9. 展示入口
 

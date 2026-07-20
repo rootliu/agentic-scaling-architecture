@@ -36,7 +36,7 @@
     <span class="plate-hint">Click any cut to jump into the corresponding section ↗</span>
   </div>
   <h1 class="fade">Scalable Agentic Runtime, and the research problem of making it manageable.</h1>
-  <div class="figure runtime-blueprint fade" role="img" aria-label="Scalable agentic runtime architecture map">
+  <figure class="figure runtime-blueprint fade" aria-label="Scalable agentic runtime architecture map">
     <svg viewBox="0 0 1180 540" preserveAspectRatio="xMidYMid meet">
       <defs>
         <linearGradient id="bpSurface" x1="0" x2="1" y1="0" y2="1">
@@ -139,8 +139,8 @@
         <text x="620" y="484" class="bp-line">deterministic anchor for probabilistic CP · stable contracts</text>
       </a>
     </svg>
-    <p class="figcap"><b>Reading order:</b> start from the S/H/X runtime core and the Harness contract gate, then read the CP/DP split horizontally. The 𝒟 subsystem sits outside the stack; P10-P13 explain parallelism/locality; N8/P14 hardens validated skills into code as the deterministic anchor of a probabilistic control plane.</p>
-  </div>
+    <figcaption class="figcap"><b>Figure 0 · Overview map.</b> Start from the S/H/X runtime core and the Harness contract gate, then read the CP/DP split horizontally. The 𝒟 subsystem sits outside the stack; P10-P13 explain parallelism/locality; N8/P14 hardens validated skills into code as the deterministic anchor of a probabilistic control plane.</figcaption>
+  </figure>
   <p class="lead fade">This project studies how an agentic runtime can keep auditability, governance, operability and evolution under control while continuously adding skills, execution resources, external data sources and parallel sub-agents. Extension axis, control/data plane, out-of-stack data subsystem, and parallelism/locality are <b>four orthogonal cuts</b>; Skill-as-Code provides the deterministic anchor.</p>
 
   <div class="glossary-strip fade" aria-label="Abbreviation glossary">
@@ -158,9 +158,30 @@
     <span class="term data"><b>DFT</b>Density Functional Theory</span>
     <span class="term data"><b>OHLCV</b>Open / High / Low / Close / Volume</span>
     <span class="term para"><b>KV-cache</b>attention key-value cache</span>
+    <span class="term data"><b>IR</b>Intermediate Relation</span>
+    <span class="term"><b>NFR</b>Non-Functional Requirement</span>
+    <span class="term"><b>MCP</b>Model Context Protocol</span>
+    <span class="term"><b>SLA/SLO</b>Service-Level Agreement / Objective</span>
     <span class="term para"><b>M1-M4</b>locality mechanisms</span>
     <span class="term det"><b>N/P/C</b>Novelty / Proposition / Contribution</span>
   </div>
+  <details class="term-panel fade">
+    <summary>Presentation glossary</summary>
+    <div class="term-grid">
+      <span><b>D1-D4</b>retrieval API, semantic summary, governance memory, and lifetime budget.</span>
+      <span><b>5W1H</b>When / Where / Who / What / Why / How metadata for IR.</span>
+      <span><b>BI</b>Business Intelligence, enterprise analytics and reporting.</span>
+      <span><b>JSON</b>JavaScript Object Notation, a structured data exchange format.</span>
+      <span><b>PPT/PDF/HTML</b>presentation, document and web output formats.</span>
+      <span><b>QPS</b>Queries Per Second.</span>
+      <span><b>SDN/K8s</b>Software-Defined Networking / Kubernetes, deterministic control-plane baselines.</span>
+      <span><b>vLLM</b>a high-throughput LLM serving engine used as a physical-axis baseline.</span>
+      <span><b>OIDC/SAML/SCIM/RBAC</b>identity, directory synchronization and access-control standards.</span>
+      <span><b>KMS/S3/PrivateLink</b>cloud key management, object storage and private connectivity services.</span>
+      <span><b>T1-T8</b>tool capsule categories.</span>
+      <span><b>P/N/C</b>Proposition / Novelty / Contribution.</span>
+    </div>
+  </details>
 
   <a class="invariant fade" href="architecture.html#dimensions" style="display:block;text-decoration:none;color:inherit">
     <span class="tag">unified proposition · meta-claim</span>
