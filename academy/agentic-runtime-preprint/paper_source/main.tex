@@ -2,7 +2,7 @@
 
 \section{Abstract}
 
-Agentic systems are increasingly asked to absorb new capabilities while also serving more concurrent work. These demands are often treated as one scaling problem, although they stress different parts of a runtime. Adding capabilities changes the set of admissible actions and the semantic surface that must be governed; adding capacity changes placement, isolation, scheduling, and resource contention. This paper develops a contract-centered reference architecture that separates those axes. We model an agentic runtime as $\mathcal{A}=\langle\mathcal{S},\mathcal{H},\mathcal{X}\rangle$: task Skills specify what may be done, a Harness compiles probabilistic intent into governed execution, and Scaffold instances provide isolated physical capacity. The separation is conditional rather than axiomatic. It holds only when Skills and Scaffolds meet through explicit, typed Harness contracts; policy gates are deterministic; activated Skill paths are checked compositionally; and every binding is traceable and replayable. We use this model to derive concrete designs for external-data access, locality-aware parallel execution, planning-time dry-runs, and a Skill-as-Code lifecycle. Because the architecture has not yet been validated through a controlled implementation, we make no performance claims. Instead, we provide falsifiable protocols for capability pollution, physical scaling, Harness bypass, control-plane leakage, path-level safety, locality, and model-version stability. The intended contribution is a research agenda and an implementable vocabulary for scalable agentic runtimes whose growth remains observable, governable, and reversible.
+We model an agentic runtime as $\mathcal{A}=\langle\mathcal{S},\mathcal{H},\mathcal{X}\rangle$: task Skills specify what may be done, a Harness compiles probabilistic intent into governed execution, and Scaffold instances provide isolated physical capacity. The central claim is that logical capability scaling (adding Skills) and physical throughput scaling (adding Scaffolds) are conditionally separable---they can evolve independently when the Harness completely mediates their interaction through explicit, typed contracts. This separation is conditional rather than axiomatic. It holds only when four assumptions are satisfied: Skills and Scaffolds meet through typed Harness contracts with operation closure; policy gates are deterministic; activated Skill paths are checked compositionally; and every binding is traceable and replayable. Violating any assumption breaks the separation on a specific axis, which we make explicit. We ground the extensibility thesis in a well-established engineering analogy---the three-axis decoupling of modern cloud applications---and derive a high-cohesion, loose-coupling context partitioning method from first principles of LLM inference. We use this model to derive concrete designs for external-data access, locality-aware parallel execution, planning-time dry-runs, and a Skill-as-Code lifecycle. Because the architecture has not yet been validated through a controlled implementation, we make no performance claims. Instead, we provide falsifiable protocols for capability pollution, physical scaling, Harness bypass, control-plane leakage, path-level safety, locality, and model-version stability. The intended contribution is a research agenda and an implementable vocabulary for scalable agentic runtimes whose growth remains observable, governable, and reversible.
 
 \section{Introduction}
 \label{sec:introduction}
@@ -23,7 +23,7 @@ where $\mathcal{S}$ is a versioned set of Skills, $\mathcal{H}$ is the Harness t
 
 \begin{figure}[t]
 \centering
-\caption{Dual scaling model. Logical extension adds or revises Skills through the Harness contract, while physical extension adds Scaffold capacity through the same binding boundary. Neither axis directly mutates the other. Claim supported: capability growth and throughput growth can be evaluated as distinct interventions when Harness mediation is complete.}
+\caption{Dual scaling model. Logical extension adds or revises Skills through the Harness contract; physical extension adds Scaffold capacity through the same binding boundary. Neither axis directly mutates the other, enabling capability growth and throughput growth to be evaluated as distinct interventions when Harness mediation is complete.}
 \label{fig:dual-scaling}
 \end{figure}
 
@@ -31,15 +31,42 @@ Figure 1 establishes the paper's organizing distinction. Horizontal growth chang
 
 \subsection{Contributions}
 
-This paper makes three primary contributions.
+This paper makes five primary contributions.
 
 \begin{enumerate}
 \item We introduce the Skill-Harness-Scaffold model and state the conditions under which logical and physical scaling are separable in an agentic runtime.
+\item We ground the extensibility thesis in the established engineering practice of three-axis cloud decoupling, and identify what is genuinely new when each layer contains probabilistic LLM calls.
+\item We derive a high-cohesion, loose-coupling context partitioning method from first principles of LLM inference, showing that context organization---not model size---is the primary lever for agent performance.
 \item We define the Harness as a manageable probabilistic control plane: planning may be model-generated, but activation, policy, budgets, binding, evidence obligations, and replay identities are enforced by typed and deterministic mechanisms.
 \item We provide falsifiable evaluation protocols rather than synthetic results. The protocols isolate capability pollution, physical scaling, Harness bypass, control-plane leakage, composed-path safety, dry-run economics, and Skill stability across model versions.
 \end{enumerate}
 
 The secondary contribution is architectural derivation. External-data access, parallelism and locality, planning-time dry-runs, and Skill-as-Code are not presented as unrelated features. Each follows from treating the Harness contract as the sole semantic-to-physical binding boundary.
+
+\section{Origins of the Extensibility Framework}
+\label{sec:origins}
+
+\subsection{The Cloud Application Analogy}
+
+The three-axis decoupling proposed here is not invented from scratch. Modern cloud applications have long operated with an implicit three-layer separation that maps directly onto our runtime objects. Virtual machines provide isolated execution capacity; software frameworks (application servers, message queues, API gateways) provide the runtime contract layer between business logic and infrastructure; and front-end applications compose user-facing capabilities on top. In this analogy, adding a new web page is a logical extension that does not require provisioning more virtual machines; adding more virtual machines is a physical extension that does not change which pages exist. The two operations are managed independently because the framework layer enforces a stable contract between them.
+
+The Skill-Harness-Scaffold model is the agentic-runtime instance of this pattern. Skills correspond to front-end application code: they declare what the user-facing capability is, not how the machine runs. Scaffolds correspond to virtual machines: they provide isolated execution envelopes whose count scales throughput. The Harness corresponds to the framework runtime: it compiles declarative intent into executable units, enforces cross-cutting policy, and binds logical requests to physical resources. The mapping is not merely metaphorical; it predicts that the same decoupling properties---independent scaling, fault isolation, contract-based composition---should hold when the framework layer is well-defined.
+
+\subsection{What Is Genuinely New: Probabilistic Calls in Every Layer}
+
+The analogy also reveals the precise boundary of novelty. In a traditional cloud application, every layer executes deterministic code. In an agentic runtime, every layer may invoke an LLM: the Skills layer generates natural-language plans, the Harness performs contract translation and tool synthesis using model calls, and even the Scaffold layer's serving engine processes probabilistic inference. This creates a fundamentally new problem: the contract boundary between layers must mediate not just deterministic interfaces but probabilistic ones. A Skill declaration may be ambiguous; a Harness translation may vary across runs; a Scaffold's inference output is inherently stochastic.
+
+This is the gap that existing work does not close. The policy-driven runtime layer of Zhang et al. \cite{zhang2026policy} identifies the ``seam'' between agent frameworks (which understand semantics) and serving engines (which process events), and inserts an intermediate layer for cross-cutting policies. But its primitives---observe, score, predict, act---assume deterministic coordination of serving-level events. Our Harness contract goes further: it must mediate probabilistic intent (from Skills), probabilistic translation (within the Harness itself), and probabilistic execution (on Scaffolds), while producing deterministic gates and replayable traces. The core technical question is: under what conditions can a contract boundary between two probabilistic layers produce deterministic guarantees? The four assumptions of Section~4.3 are our answer.
+
+\subsection{Control-Plane and Data-Plane Orthogonality}
+
+A second source of the extensibility thesis comes from distributed systems theory. The separation of control plane (low-frequency decisions, configuration, routing) from data plane (high-frequency payload processing) is a well-established engineering law in SDN, Kubernetes, database query execution, and service meshes. In each domain, the separation enables independent optimization: the control plane can grow in complexity without proportionally increasing per-request data-plane cost, and data-plane throughput can scale without proportionally increasing control-plane overhead.
+
+In an agentic runtime, this separation provides a second structural argument for decoupling. Logical scaling (adding Skills) primarily enlarges the control-plane decision space---new capability contracts, new selection rules, new composition invariants---without directly loading more tokens into the data plane. Physical scaling (adding Scaffolds) primarily enlarges the data-plane throughput capacity. Because the two forms of growth act on different planes, they are structurally orthogonal under the plane-separation invariant. Crucially, the agentic control plane is not the deterministic configuration distribution of SDN; it is a \textit{probabilistic control plane} whose decisions may be LLM-generated. This introduces a novel correctness requirement: probabilistic control decisions must be bounded by deterministic invariants and recorded in auditable traces, because they cannot be trusted to be reproducible by default.
+
+\subsection{The Data Subsystem as a Third Axis}
+
+A third source emerges from the observation that agents do not only scale in capabilities and capacity; they also scale in the breadth of external data they must understand. An agent that starts with one data source may grow to access dozens: enterprise databases, SaaS platforms, personal files, and public internet sources. If each new source injects its schema, content, and metadata into the request context, data growth becomes a third form of prompt pollution. The data subsystem resolves this by pushing semantic summarization into an independent off-policy loop---an asynchronous background process with its own agents, its own model, and its own loop---that pre-summarizes sources into a queryable index. The main request path only consumes the query interface, not the full source content. This makes data scaling analogous to physical scaling: adding sources expands what is reachable without proportionally increasing per-request cost. Chen et al. \cite{halevy2026metadata} empirically demonstrate the tension between pre-built metadata (high precision, low coverage) and on-line discovery (high coverage, low precision); the off-policy loop is designed to occupy the gap they leave open.
 
 \section{Related Work and Novelty Boundary}
 \label{sec:related}
@@ -48,11 +75,37 @@ The closest work is a policy-driven runtime layer for coordinating agent framewo
 
 Jagarin \cite{kadaboina2026jagarin} and Helium \cite{wadlom2026helium} explore runtime support for efficient agent execution. Dynamic runtime-graph work \cite{xie2026runtimegraphs} similarly moves beyond static workflow templates by constructing graphs at run time. We adopt dynamic graphs inside the Harness, but use \textit{Scaffold} in a narrower sense: execution and isolation infrastructure such as a sandbox, worker, container, accelerator allocation, or regional pool. It should not be confused with a workflow scaffold or prompt scaffold.
 
-Tool Forge \cite{rao2026toolforge} treats tool production and adaptation as a systems problem. Skill-as-Code in this paper shares the emphasis on lifecycle, but its unit is a validated capability contract rather than only an executable tool. A Skill may include a tool adapter, a planner fragment, schemas, policy tags, tests, and postconditions. Five-plane runtime governance \cite{tallam2026fiveplane} provides a broader governance decomposition; our Harness can be understood as the point at which such governance planes become enforceable on a particular activated path.
+Tool Forge \cite{rao2026toolforge} treats tool production and adaptation as a systems problem. Skill-as-Code in this paper shares the emphasis on lifecycle, but its unit is a validated capability contract rather than only an executable tool. A Skill may include a tool adapter, a planner fragment, schemas, policy tags, tests, and postconditions. Five-plane runtime governance \cite{tallam2026fiveplane} provides a broader governance decomposition; our Harness can be understood as the point at which such governance planes become enforceable on a particular activated path. ClawVM \cite{clawvm2026} places compaction and writeback in a harness layer with deterministic and auditable guarantees, but its contract scope is narrower: it governs memory operations rather than the full capability-to-capacity binding.
 
 Composition safety is especially relevant. Xie et al. show that components benign in isolation may become harmful in composition \cite{xie2026composition}. This observation directly challenges per-tool allowlists as a sufficient runtime defense. Our response is path-aware checking: the object of authorization is the activated Skill path plus its data and resource bindings, not a bag of individually approved Skills.
 
-Prior agent-memory and retrieval-augmented generation (RAG) systems address context persistence and evidence retrieval \cite{packer2023memgpt,lewis2020rag}. Those mechanisms can be hosted behind a Skill contract, but they do not by themselves establish the capability-to-capacity boundary studied here. The novelty claim is therefore deliberately limited: this paper does not propose a new model architecture, scheduler algorithm, memory representation, or universal governance taxonomy. It proposes a contract boundary and a set of conditions and tests for scalable, manageable agentic runtime behavior.
+Production agent frameworks and orchestration engines occupy adjacent regions of the design space but do not expose the typed contract boundary studied here. AutoGen \cite{wu2023autogen} coordinates multi-agent conversations but treats tool registration as prompt-level metadata rather than a versioned contract with deterministic gates. LangGraph \cite{langgraph2024} constructs stateful graph workflows but conflates planning and execution in a single runtime without a separate binding boundary to isolated capacity. CrewAI \cite{crewai2024} assigns roles to agents but provides no path-level invariant checking or replay identity. The OpenAI Assistants API \cite{openai2024assistants} bundles tools, context, and execution into one managed service where the contract between capability and capacity is implicit. Temporal \cite{temporal2024} provides durable execution and replay for workflows but operates at the orchestration layer without agent-specific capability contracts or composition safety. AgentScope \cite{gao2024agentscope} and Agent-as-a-Service \cite{agentasaas2025} offer multi-agent platforms and scalable infrastructure, respectively, but neither separates logical capability scaling from physical throughput scaling as distinct axes governed by a typed contract. Autellix \cite{liu2025autellix} is the closest on the physical axis, modeling agents as general programs for serving throughput, but does not address the logical scaling axis.
+
+Table~1 summarizes where existing systems fall relative to five Harness responsibilities.
+
+\begin{table}[t]
+\centering
+\caption{Comparison of Harness responsibilities across production agent and workflow systems. Assessment based on public documentation and cited sources; the row for this paper (marked \textsuperscript{†}) denotes design goals, not validated results.}
+\label{tab:system-comparison}
+\begin{tabular}{lccccc}
+\hline
+System & Skill & Contract & Policy & Binding & Replay \\
+ & registration & compilation & gates & to capacity & / audit \\
+\hline
+AutoGen & partial & no & no & no & no \\
+LangGraph & partial & no & no & implicit & partial \\
+CrewAI & partial & no & no & no & no \\
+Assistants API & yes & no & implicit & implicit & no \\
+Temporal & yes & partial & yes & yes & yes \\
+Helium & no & no & no & partial & no \\
+Tool Forge & yes & partial & partial & no & partial \\
+Five-Plane & yes & no & yes & no & yes \\
+\textbf{This paper}\textsuperscript{†} & \textbf{yes} & \textbf{yes} & \textbf{yes} & \textbf{yes} & \textbf{yes} \\
+\hline
+\end{tabular}
+\end{table}
+
+Prior agent-memory and retrieval-augmented generation (RAG) systems address context persistence and evidence retrieval \cite{packer2023memgpt,lewis2020rag}. Those mechanisms can be hosted behind a Skill contract, but they do not by themselves establish the capability-to-capacity boundary studied here. SkillOpt \cite{wang2026skillopt} demonstrates that skills are the trainable external state of a frozen agent, with optimizer-level discipline applied in text space; our Skill-as-Code lifecycle extends this by adding a freeze-to-code stage that anchors determinism. CodeAct \cite{wang2024codeact} shows that executable code actions improve agent composability; our work positions code not merely as an efficiency gain but as a deterministic anchor in a probabilistic control plane. The novelty claim is therefore deliberately limited: this paper does not propose a new model architecture, scheduler algorithm, memory representation, or universal governance taxonomy. It proposes a contract boundary and a set of conditions and tests for scalable, manageable agentic runtime behavior.
 
 \section{Model and Assumptions}
 \label{sec:model}
@@ -98,7 +151,7 @@ $I$ and $O$ are the run-level typed inputs and outputs. $G$ is the activated Ski
 
 \begin{figure}[t]
 \centering
-\caption{Anatomy of a resolved Harness contract. A probabilistic plan becomes executable only after schemas, graph structure, budgets, effects, evidence obligations, and trace identities have passed deterministic gates. Claim supported: manageability resides in the transition from generated intent to a typed, auditable execution unit.}
+\caption{Anatomy of a resolved Harness contract. A probabilistic plan becomes executable only after schemas, graph structure, budgets, effects, evidence obligations, and trace identities have passed deterministic gates. Manageability resides in the transition from generated intent to a typed, auditable execution unit.}
 \label{fig:harness-contract}
 \end{figure}
 
@@ -117,6 +170,13 @@ Logical and physical scaling are conditionally separable under four assumptions.
 
 Under these assumptions, adding $s_{new}$ to $\mathcal{S}$ need not change Scaffold semantics, and adding $x_{new}$ to $\mathcal{X}$ need not change Skill semantics. The Harness contract is the stable interface. This is a falsifiable engineering claim, not an if-and-only-if theorem: hidden channels, undeclared effects, non-replayable services, or scheduler coupling can break the separation.
 
+\begin{proposition}[Conditional Separability]
+\label{prop:p1}
+Under assumptions (1)--(4), $\Delta\mathcal{S}$ does not change Scaffold semantics and $\Delta\mathcal{X}$ does not change Skill semantics, provided no hidden channel, undeclared effect, non-replayable service, or scheduler coupling is introduced.
+\end{proposition}
+
+The converse is constructive: each assumption violation breaks the separation on a specific axis. Violating typed closure (1) allows a Skill to produce undeclared effects on a Scaffold, coupling logical changes to physical behavior. Violating complete mediation (2) lets a Skill bind directly to a Scaffold, so adding a Scaffold may require changing Skill semantics. Violating deterministic gates (3) makes admission decisions non-replayable, so logical scaling cannot be audited independently of physical state. Violating trace identity (4) removes the evidence needed to distinguish planning from execution failures, collapsing the two scaling axes into one opaque runtime. These inverse mappings are not proof of necessity in all possible systems---they are falsifiable predictions: if a system violates one assumption yet retains separability through some mechanism we have not identified, that system would refine our claim.
+
 \section{Harness Manageability}
 \label{sec:manageability}
 
@@ -126,11 +186,11 @@ The control plane owns Skill registration, contract compilation, policy versions
 
 \begin{figure}[t]
 \centering
-\caption{Control-plane separation versus control-state leakage. In the managed design, the request receives only activated contracts and opaque version references. In the leaking design, every Skill schema and policy is injected into the request path. Claim supported: selective activation prevents logical scaling from becoming linear prompt growth and limits exposure of governance metadata.}
+\caption{Control-plane separation versus control-state leakage. In the managed design, the request receives only activated contracts and opaque version references. In the leaking design, every Skill schema and policy is injected into the request path. Selective activation prevents logical scaling from becoming linear prompt growth and limits exposure of governance metadata.}
 \label{fig:control-data}
 \end{figure}
 
-Figure 3 highlights a failure mode that is easy to mistake for flexibility. Loading every Skill, application programming interface (API) schema, and policy example into each request leaks control-plane state into the data plane. Besides token cost, the leak creates ambiguous authority: a description visible to the planner may look executable even when its release or policy state has changed. The Harness should first select a small candidate set from registry metadata, then materialize only the accepted versions and constraints needed by the run.
+Figure 3 highlights a failure mode that is easy to mistake for flexibility. Loading every Skill, application programming interface (API) schema, and policy example into each request leaks control-plane state into the data plane. Besides token cost, the leak creates ambiguous authority: a description visible to the planner may look executable even when its release or policy state has changed. The Harness should first select a small candidate set from registry metadata, then materialize only the accepted versions and constraints needed by the run. Tool Forge \cite{rao2026toolforge} demonstrates that intent-scoped routing can reduce task-flow tool context by 99.2\%, providing direct engineering evidence that selective activation prevents logical scaling from eroding data-plane throughput.
 
 \subsection{Path-Aware Invariants}
 
@@ -150,6 +210,45 @@ Replay has levels. \textit{Decision replay} recomputes gate outcomes from record
 
 Manageability also requires a stop path. Skill releases can be disabled, policy versions rolled back, bindings revoked, and in-flight graphs cancelled at Harness checkpoints. These mechanisms turn a trace from passive observability into operational control.
 
+\section{High Cohesion, Loose Coupling, and Context Partitioning}
+\label{sec:cohesion}
+
+\subsection{First Principle: The Agent's Job Is Organizing Context}
+
+A single LLM inference produces output determined by two components: the model's internal knowledge (weights, fixed within a task) and the context (variable input). Since the model weights cannot be changed at runtime, the only variable an agent loop can manipulate is the context. Planning, data retrieval, tool invocation, and memory writes are all, at bottom, decisions about what to place in the context for the next inference step.
+
+This observation has a direct consequence for performance. KV-cache reuse in modern serving systems (vLLM, SGLang) depends on prefix stability: if the shared prefix is identical token-by-token, previously computed key-value tensors can be reused. If a single token changes in the middle of the prefix, all subsequent positions must be recomputed. The reusable part is not ``the context that changed slightly'' but ``the context whose prefix is frozen token-by-token with changes only at the tail.'' An agent that jumps between heterogeneous tools or goals across iterations rewrites its context prefix every turn, collapsing cache hit rates and simultaneously diluting attention over irrelevant tokens. This is the mechanism behind the well-known degradation of long-horizon task control.
+
+\subsection{Context Partitioning by Tool-Set and Data Source}
+
+The design law follows: \textit{place the stable parts of the context (system prompt, tool-set schemas, fixed memory) at the front and freeze them token-by-token; place the per-turn task content at the tail.} The longer and more stable the frozen prefix, the higher the cache hit rate. This is not merely about ``keeping the context short''---it is about the structural layout of what goes where.
+
+The primary axis for partitioning context is the tool-set. A sub-agent that repeatedly uses the same set of tools and harness contracts maintains a stable prefix across iterations, because the tool schemas, calling conventions, and policy tags injected into context do not change. Conversely, a sub-agent that switches between heterogeneous tool-sets rewrites its prefix every turn, destroying cache locality and diluting attention. This yields a concrete partitioning rule: \textit{divide sub-agents by non-overlapping tool-sets, so that each sub-agent's context prefix is maximally stable.}
+
+The secondary axis is data. Detail---raw tables, full document text, verbose intermediate results---should not flow between sub-agents as context. Instead, detail is written to the data subsystem (memory or lake), and only summarized context (conclusions, handles, key constraints) is passed forward. Downstream sub-agents retrieve detail on demand via semantic join, not by carrying it in their context. This reduces inter-agent communication from $O(\text{full context})$ to $O(\text{summary})$, raising orchestration efficiency and keeping each sub-agent's context focused.
+
+\subsection{Four Mechanisms for High Cohesion and Loose Coupling}
+
+The partitioning principles above yield four concrete design mechanisms that span all three runtime layers:
+
+\begin{enumerate}
+\item \textbf{Tool-set cohesion (Skills layer).} A sub-agent should use one stable tool-set throughout its lifecycle. This maximizes prefix stability and KV-cache hit rate. The anti-pattern is an agent that jumps between a database tool, a code tool, and a visualization tool in successive turns---each jump rewrites the prefix and invalidates cached computation.
+
+\item \textbf{Non-overlapping partitioning (parallelism).} When a task is decomposed into parallel sub-agents, their tool-sets should be as disjoint as possible. Non-overlapping tool-sets imply non-overlapping resource contention and non-overlapping permission scopes, which reduces the serial fraction $s$ in Amdahl's law and raises the achievable parallel speedup.
+
+\item \textbf{Summarized-context handoff (loose coupling).} Sub-agents pass only summarized conclusions and handles to memory, not full context. The receiving sub-agent retrieves detail on demand from the data subsystem. This creates a loosely-coupled sequential relationship: dependencies flow through thin summary interfaces, while detail is absorbed by the memory layer. The data subsystem sits outside the three-layer stack, so this absorption does not introduce coupling into the runtime core.
+
+\item \textbf{Seed-affinity placement (Scaffold layer).} Each type of sub-agent has a derivation seed---an image with pre-warmed tools, dependencies, and cache. Same-seed sub-agents are co-located to reuse image layers, tool processes, and KV-cache hot regions (affinity); different-seed sub-agents are spread across resource domains to reduce contention (anti-affinity). This maximizes physical locality within a type and minimizes cross-type interference.
+\end{enumerate}
+
+The parallelism argument of mechanism 2 can be stated parametrically. If a fraction $s$ of a workload remains serial, Amdahl's law caps the speedup at $1/(s+(1-s)/N)$ for $N$ parallel sub-agents, and we model the serial fraction as $s=s_0+\lambda\rho$, where $s_0$ is the irreducible serial fraction, $\rho$ measures tool-set overlap across sub-agents, and $\lambda$ is a coupling coefficient. Orchestration efficiency degrades in a parallel form, $E=E_0-\mu\bar{c}$, where $\bar{c}$ is the average inter-sub-agent handoff cost and $\mu$ scales its impact. The core proposition is that the parallelism ceiling is a function of tool-set partitioning design: it can be raised by construction, through non-overlapping partitions (mechanism 2) that reduce $\rho$ and through summarized handoffs (mechanism 3) that reduce $\bar{c}$. We offer these relations as design hypotheses to be calibrated under the protocols of Section~9, not as measured laws.
+
+The four mechanisms work in concert: mechanisms 1 and 4 maximize intra-agent cohesion (stable prefix, warm cache), while mechanisms 2 and 3 minimize inter-agent coupling (non-overlapping tools, thin summary interfaces). The root lever is tool-set partitioning, which simultaneously defines the Skills-layer locality boundary, the parallelism boundary, and the Scaffold-seed boundary.
+
+\subsection{Implications for the Contract Architecture}
+
+These mechanisms are not external optimizations applied after the contract is designed; they follow from it. The Harness contract determines which tools a sub-agent may invoke (mechanism 1), which sub-agents are independent (mechanism 2), what summarized schema flows between them (mechanism 3), and which seed template they derive from (mechanism 4). The contract is the single design surface from which cohesion and coupling properties emerge. A planning-time dry-run---which resolves the contract before execution---can probe tool-set closure, estimate prefix stability, and check resource availability before committing any external effect, making the partitioning decision itself auditable.
+
 \section{Architectural Consequences}
 \label{sec:consequences}
 
@@ -159,7 +258,7 @@ External data should not be a privileged side channel into the agent. It is a Ha
 
 \begin{figure}[t]
 \centering
-\caption{External-data access as a Harness-contract instantiation. Source discovery and query planning remain semantic operations, while credentials, snapshots, provenance, residency, and evidence packaging are resolved and enforced at the contract boundary. Claim supported: data governance can compose with agent execution without embedding infrastructure credentials or source-specific policy in the Skill.}
+\caption{External-data access as a Harness-contract instantiation. Source discovery and query planning remain semantic operations, while credentials, snapshots, provenance, residency, and evidence packaging are resolved and enforced at the contract boundary. Data governance composes with agent execution without embedding infrastructure credentials or source-specific policy in the Skill.}
 \label{fig:external-data}
 \end{figure}
 
@@ -173,7 +272,7 @@ A planning-time dry-run resolves graph structure, candidate bindings, budget env
 
 \begin{figure}[t]
 \centering
-\caption{Planning-time dry-run and locality-aware execution. The Harness first validates and annotates the graph, then groups independent nodes near required data and binds effects to appropriate isolation zones. Claim supported: explicit graphs permit concurrency and locality optimization while preserving a reviewable pre-execution decision point.}
+\caption{Planning-time dry-run and locality-aware execution. The Harness first validates and annotates the graph, then groups independent nodes near required data and binds effects to appropriate isolation zones. Explicit graphs permit concurrency and locality optimization while preserving a reviewable pre-execution decision point.}
 \label{fig:dry-run}
 \end{figure}
 
@@ -185,11 +284,13 @@ Treating a Skill as a prompt file makes capability growth difficult to review. S
 
 \begin{figure}[t]
 \centering
-\caption{Skill-as-Code lifecycle. A Skill becomes activatable only after contract linting, path and effect tests, sandbox execution, and a signed release; production traces feed monitoring and rollback. Claim supported: logical scaling can be governed as a release process rather than as uncontrolled prompt accumulation.}
+\caption{Skill-as-Code lifecycle. A Skill becomes activatable only after contract linting, path and effect tests, sandbox execution, and a signed release; production traces feed monitoring and rollback. Logical scaling can be governed as a release process rather than as uncontrolled prompt accumulation.}
 \label{fig:skill-as-code}
 \end{figure}
 
 Figure 6 makes validation part of the architecture rather than a documentation convention. Operation closure is a release gate: tests must show that externally visible behavior is expressible through declared effects. Model-version stability is also tested at this boundary. A Skill can remain logically unchanged while its planner model changes, but the release should be blocked if contract adherence, path selection, or postcondition satisfaction regresses.
+
+Skill-as-Code also serves as a deterministic anchor in the probabilistic control plane. When a Skill's operation space has closed---its tool-set is stable, its output format is structured, and its decision branches are enumerable---the execution process can be frozen into code rather than regenerated probabilistically each turn. This removes two sources of uncertainty simultaneously: model sampling (code is a deterministic function) and context organization (the code embeds a stable procedure). The frozen prefix of Section~6.1 stabilizes what goes into context; skill-as-code stabilizes how decisions are made within it. Together, they turn the high-cohesion design law into an enforceable property: the stable prefix is frozen for cache locality, and the stable procedure is frozen as code for determinism.
 
 \section{Falsifiable Evaluation Protocols}
 \label{sec:evaluation}
@@ -198,7 +299,7 @@ The present work is architectural and has no controlled implementation results. 
 
 \begin{figure}[t]
 \centering
-\caption{Evaluation matrix for the architecture. Each row pairs one architectural claim with a controlled intervention, observable metrics, and a condition that would count against the claim. Claim supported: the architecture can be studied through separable, falsifiable experiments rather than through an omnibus benchmark score.}
+\caption{Evaluation matrix for the architecture. Each row pairs one architectural claim with a controlled intervention, observable metrics, and a condition that would count against the claim. The architecture can be studied through separable, falsifiable experiments rather than through an omnibus benchmark score.}
 \label{fig:evaluation-matrix}
 \end{figure}
 
@@ -289,6 +390,10 @@ The Harness contract cannot make an unreliable model correct, an external servic
 
 The model also introduces a control-plane concentration risk. If the Harness compiler, registry, or policy evaluator is unavailable, execution may stop. If any is compromised, typed contracts can become a false assurance. Implementations therefore need replicated control services, signed artifacts, independent attestation, and a clearly scoped degraded mode. These are engineering requirements, not consequences guaranteed by the abstract model.
 
+The cost of Harness mediation is not negligible and should be budgeted explicitly. Contract compilation---schema validation, graph construction, and invariant evaluation---adds a planning-time overhead that scales with the number of activated Skill nodes and the complexity of path invariants, not with registry size. In practice, this overhead is bounded by the activated graph, not the full Skill set: if a request activates 5 of 200 registered Skills, the gate evaluates 5 nodes and their composition edges, not 200. As a hypothesis to be tested under the dry-run economics protocol (Section~9.6) rather than a measured result, we conjecture---by analogy with query-planning costs in database systems---that contract compilation latency would fall in the low tens of milliseconds for moderate graphs (5--20 nodes), rising to hundreds of milliseconds for complex multi-step plans with cross-cutting invariants; these figures are estimates to be confirmed or refuted by measurement, not empirical findings. Policy evaluation is cheaper still when rules are compiled to a decision cache indexed by contract hash. The critical design constraint is that this overhead must be amortized: for a request whose LLM inference takes seconds, tens of milliseconds of contract compilation is a small fraction; for a request that returns a single cached lookup, the same overhead dominates and indicates the request should bypass the full pipeline via a fast-path contract.
+
+The degraded mode must be specified, not assumed. When the Harness compiler is unavailable, the runtime should reject new requests rather than fall back to unmediated execution, because unmediated execution breaks the assumptions of Proposition~1. When the policy evaluator is degraded, the runtime can admit only requests whose contracts are covered by a signed, cached policy decision with a valid freshness window. When the registry is unavailable, already-activated Skill versions remain usable for in-flight requests, but no new Skill versions can be activated. In all cases, the degraded mode narrows the set of admissible operations rather than silently widening them. The key invariant is: degradation reduces capability, never governance.
+
 \subsection{Trade-Offs}
 
 Selective activation can miss a relevant Skill. Strict operation closure can reject useful exploratory behavior. Path checking can be computationally expensive for dynamic graphs. Trace retention may conflict with privacy and data minimization. Replay may be impossible when external systems are mutable. Physical decoupling may be limited when a Skill requires specialized hardware or data residency. The architecture makes these couplings visible; it does not wish them away.
@@ -305,6 +410,8 @@ The paper presents a reference architecture, not a production system or empirica
 Terminology is another threat. Skill, Harness, and Scaffold are overloaded across agent frameworks. We define them operationally, but mappings to existing systems will be imperfect. In particular, some frameworks combine Harness and Scaffold responsibilities in one service. The model can still be used analytically, but a clean implementation boundary may require refactoring.
 
 Finally, conditional decoupling may hold only within a bounded operating region. A new Skill can require a new hardware class; a new Scaffold can expose timing or locality behavior that changes task quality. Experiments must record these couplings rather than classifying them away. A useful architecture should tell us where separation breaks.
+
+Two scope cuts deserve explicit mention. The maintenance and self-management subsystem---compaction, persistence, and related system skills governed by the Harness along the physical axis---is treated here only as a boundary requirement and is not designed in this paper. Likewise, the full data subsystem in its four components (on-policy data-access APIs, governance expressed as data-usage skills, lifecycle management, and the off-policy indexing loop sketched in Section~3.4) is specified only at the contract boundary rather than in full. Both subsystems, together with their corresponding evaluation protocols (the data axis, parallel placement, and reward design for Skill training), are left to future work and to the implementation phase.
 
 \section{Conclusion}
 \label{sec:conclusion}

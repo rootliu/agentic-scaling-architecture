@@ -705,6 +705,8 @@ def clean_latex(text: str, cite_map: dict | None = None) -> str:
     text = re.sub(r"\\xrightarrow\{\\mathcal\{([^}]+)\}\}", r"-[\1]->", text)
     text = re.sub(r"\\bigwedge_([A-Za-z0-9]+)", r"AND over \1", text)
     text = text.replace("Guti茅rrez", "Gutierrez").replace("guti茅rrez", "gutierrez")
+    text = re.sub(r'\{\\"([A-Za-z])\}', r"\1", text)
+    text = re.sub(r'\\"([A-Za-z])', r"\1", text)
     text = re.sub(r"``|''", '"', text)
     text = text.replace("---", " - ").replace("--", " - ")
     text = text.replace("~", " ")
@@ -1041,6 +1043,7 @@ def build_story(tex: str, bib: str, styles) -> list:
         "fig:evaluation-matrix": ("evaluation_matrix", 190),
     }
 
+    sec_counter = [0, 0, 0]
     buf = []
 
     def flush():
@@ -1117,7 +1120,21 @@ def build_story(tex: str, bib: str, styles) -> list:
                 flush()
                 title, rest = rb
                 clean_title = clean_latex(title, cite_map)
-                story.append(Paragraph(escape(clean_title), styles[style_name]))
+                if command == "section":
+                    sec_counter[0] += 1
+                    sec_counter[1] = 0
+                    sec_counter[2] = 0
+                    numbered_title = f"{sec_counter[0]}. {clean_title}"
+                elif command == "subsection":
+                    sec_counter[1] += 1
+                    sec_counter[2] = 0
+                    numbered_title = f"{sec_counter[0]}.{sec_counter[1]} {clean_title}"
+                elif command == "subsubsection":
+                    sec_counter[2] += 1
+                    numbered_title = f"{sec_counter[0]}.{sec_counter[1]}.{sec_counter[2]} {clean_title}"
+                else:
+                    numbered_title = clean_title
+                story.append(Paragraph(escape(numbered_title), styles[style_name]))
                 story.append(Spacer(1, 4))
                 if rest:
                     buf.append(rest)
