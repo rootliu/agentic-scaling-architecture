@@ -351,7 +351,7 @@
 
     <path d="M702 326 C728 326 742 306 792 306" fill="none" stroke="#1474a6" stroke-width="2.1" marker-end="url(#archArrowTeal)"/>
     <path d="M702 326 C735 326 742 216 792 216" fill="none" stroke="#1474a6" stroke-width="2.1" marker-end="url(#archArrowTeal)" opacity=".72"/>
-    <text x="720" y="305" fill="#1474a6" font-size="11.5" font-family="ui-monospace,Menlo,monospace">consult / query</text>
+    <text x="707" y="264" fill="#1474a6" font-size="10.5" font-family="ui-monospace,Menlo,monospace">query</text>
 
     <rect x="48" y="560" width="1024" height="146" rx="18" fill="#f1ebe0" stroke="#6d3fd4" stroke-opacity=".38" stroke-dasharray="7 7"/>
     <text x="72" y="593" fill="#6d3fd4" font-size="12" font-family="ui-monospace,Menlo,monospace" letter-spacing="1">UNIFIED INVARIANT</text>
@@ -608,7 +608,7 @@
     <rect x="598" y="428" width="150" height="62" rx="14" fill="#fff" stroke="#6d3fd4" stroke-opacity=".35"/><text x="673" y="454" fill="#542fab" font-size="13.5" font-weight="800" text-anchor="middle">observe(result)</text><text x="673" y="474" fill="#655586" font-size="10.5" text-anchor="middle">state + evidence</text>
     <rect x="386" y="428" width="150" height="62" rx="14" fill="#fff" stroke="#6d3fd4" stroke-opacity=".35"/><text x="461" y="448" fill="#542fab" font-size="13" font-weight="800" text-anchor="middle">verifier/reward</text><text x="461" y="465" fill="#655586" font-size="9.5" text-anchor="middle">r_out：结果子域 benchmark</text><text x="461" y="478" fill="#655586" font-size="9.5" text-anchor="middle">r_proc：工具/逻辑/进阶判据</text>
     <path d="M372 312 L458 270 L544 312 L458 354 Z" fill="#fffdf8" stroke="#c9c1b2" stroke-width="1.2"/><text x="458" y="317" fill="#221f1a" font-size="13" font-weight="800" text-anchor="middle">score ok?</text>
-    <rect x="342" y="350" width="150" height="52" rx="14" fill="#f2ebff" stroke="#6d3fd4" stroke-width="1.4"/><text x="417" y="381" fill="#542fab" font-size="13" font-weight="800" text-anchor="middle">reflect + revise</text>
+    <rect x="342" y="362" width="150" height="52" rx="14" fill="#f2ebff" stroke="#6d3fd4" stroke-width="1.4"/><text x="417" y="393" fill="#542fab" font-size="13" font-weight="800" text-anchor="middle">reflect + revise</text>
 
     <path d="M536 227 L596 227" fill="none" stroke="#6d3fd4" stroke-width="2.1" marker-end="url(#loopArrowPurple)"/>
     <path d="M673 258 L673 304" fill="none" stroke="#6d3fd4" stroke-width="2.1" marker-end="url(#loopArrowPurple)"/>
@@ -649,9 +649,10 @@
     <rect x="848" y="526" width="224" height="86" rx="18" fill="#fffdf8" stroke="#c9c1b2" filter="url(#loopShadow)"/>
     <text x="872" y="556" fill="#221f1a" font-size="16" font-weight="700">Emit artifact</text>
     <text x="872" y="583" fill="#6b6357" font-size="12">final answer · report · code patch</text>
-    <path d="M458 354 C524 562 696 570 846 570" fill="none" stroke="#6d3fd4" stroke-width="2.1" marker-end="url(#loopArrowPurple)"/>
-    <path d="M960 612 L960 640 C960 670 920 676 812 676" fill="none" stroke="#1474a6" stroke-width="2" marker-end="url(#loopArrowTeal)"/>
-    <text x="872" y="662" fill="#1474a6" font-size="11.5" font-family="ui-monospace,Menlo,monospace">write trace + data-usage skill</text>
+    <path d="M458 354 C560 362 570 410 570 470 C570 530 650 555 846 570" fill="none" stroke="#6d3fd4" stroke-width="2.1" marker-end="url(#loopArrowPurple)"/>
+    <path d="M960 612 L960 634 C960 666 920 674 812 676" fill="none" stroke="#1474a6" stroke-width="2" marker-end="url(#loopArrowTeal)"/>
+    <text x="972" y="628" fill="#1474a6" font-size="11" font-family="ui-monospace,Menlo,monospace">write trace</text>
+    <text x="972" y="643" fill="#1474a6" font-size="11" font-family="ui-monospace,Menlo,monospace">+ usage skill</text>
   </svg>
   <figcaption class="figcap"><b>图 3</b> 基于 agent loop 的 orchestration。LLM 做 plan/action/reflection 等概率性控制决策；Harness 把这些决策约束在 typed contract、policy gate、双子目标 verifier/reward（r_out 结果子域 × r_proc 过程一致性，<span class="figcap-hint">P15</span>）和 audit/replay 内，并通过稳定接口调用 Scaffold 与数据子系统。</figcaption>
   </figure>

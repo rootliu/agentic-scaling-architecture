@@ -1,5 +1,25 @@
 # CHANGELOG
 
+## v6 — 2026-07-23
+
+审查方式：本机 v5 PDF 与从 GitHub 拉取的 obsidian/architecture 仓库最新内容逐条比对；聚焦图表引用准确性与行文流畅度。
+
+### 图表 / 引用修正（6 处）
+
+- **§3.2 / §8.4 陈旧交叉引用**：`Section~4.3` → `Section~5.3`（四条假设实际在 §5.3 "Conditional Decoupling"）；`Section~6.1` → `Section~7.1`（frozen prefix 概念实际在 §7.1）。
+- **Figure 7 证伪矩阵缺行**：脚本 `_draw_evaluation_matrix` 的 `rows` 列表只有 8 行，缺 §9.4 "Control-Plane Leakage" 对应行（caption 已声明九行）；补齐后图高从 190pt 调整为 250pt 以消除溢出。
+- **`\S` / `\Sigma` 替换冲突**：`latex_to_preprint.py` 的裸子串替换 `text.replace(r"\S", "Section")` 会误伤 `\Sigma`（渲染为 "Sectionigma"）；改为 `re.sub(r"\\S(?![a-zA-Z])", ...)`。
+- **`\big(` / `\big[` 未处理**：脚本只处理了 `\bigl/\bigr/\Bigl/\Bigr`，论文正文的裸 `\big(`/`\big)`/`\big[`/`\big]`（§8.5 公式）落入通用反斜杠剥离兜底逻辑，融合成 "r_dbig(...)"；补充对应正则。
+- **相邻希腊字母宏融合**：`\lambda\rho`、`\mu\bar{c}` 渲染为 "lambdarho"/"mubarc"；新增相邻反斜杠命令间插入空格的预处理，并为 `\lambda`/`\mu`/`\bar{}` 补充替换规则。
+
+### 行文修订
+
+- 全文 24 处 em-dash（`---`）短语堆砌句改写为通顺连接句（改用冒号、分号、"that is"、"such as"、"comprising" 等），保留全部引用、命题编号与章节交叉引用不变。
+
+### 渲染 bug 修复
+
+- `latex_to_preprint.py` 中 `text.replace("--", " - ")` 把合法的英文连字符范围（`(1)--(4)`、`data--output`、`5--20 nodes`、`human--agent`）渲染成带空格的短横线；改为 `text.replace("--", "-")`（`---` 仍按加空格短横处理，`--` 直接收紧）。
+
 ## v5 — 2026-07-22
 
 将 vault 两篇最新研究笔记（`12-Skill作为可训练激活层-双子目标Reward`、`13-DataWiki-ThemeWiki-IR中间关系层`）的内容吸收进论文。无新增引用（仅用已有 [2] Chen et al. 与 [20] SkillOpt）；未声称任何实验结果。

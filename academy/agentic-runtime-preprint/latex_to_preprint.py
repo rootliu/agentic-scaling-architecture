@@ -504,6 +504,8 @@ class FigureGraphic(Flowable):
             ("Physical scaling", "Add Scaffold instances; freeze Skills and policy",
              "throughput, tail latency, decision consistency", "semantics or gates change"),
             ("Harness mediation", "Introduce narrow bypasses", "effects, evidence, replay", "bypass has no control impact"),
+            ("Control-plane leakage", "Seed canary metadata; vary activation opacity",
+             "canary reproduction, prompt tokens, plan accuracy", "canaries leak despite opaque activation"),
             ("Path safety", "Compose locally allowed Skills", "hazard recall, false positives", "real hazards remain inexpressible"),
             ("Dry-run + locality", "Toggle dry-run and placement policy", "overhead, avoided work, bytes moved", "planning costs more than it saves"),
             ("Skill-as-Code", "Change model; freeze Skill source", "contract and path stability", "material drift passes tests"),
@@ -640,6 +642,9 @@ def citation_order(tex: str) -> list[str]:
 def clean_math(text: str) -> str:
     text = re.sub(r"\\xrightarrow\{\\mathcal\{([^}]+)\}\}", r"-[\1]->", text)
     text = re.sub(r"\\bigwedge_([A-Za-z0-9]+)", r"AND over \1", text)
+    # Two adjacent LaTeX commands (e.g. \lambda\rho) must not fuse into one
+    # word once each resolves to a bare identifier; separate them first.
+    text = re.sub(r"(\\[A-Za-z]+)(?=\\[A-Za-z])", r"\1 ", text)
     repl = {
         r"\Delta": "Delta",
         r"\delta": "delta",
@@ -651,6 +656,8 @@ def clean_math(text: str) -> str:
         r"\sigma": "sigma",
         r"\rho": "rho",
         r"\tau": "tau",
+        r"\lambda": "lambda",
+        r"\mu": "mu",
         r"\geq": ">=",
         r"\leq": "<=",
         r"\approx": "~",
@@ -689,11 +696,12 @@ def clean_math(text: str) -> str:
     text = re.sub(r"\\mathbb\{1\}", "indicator", text)
     text = re.sub(r"\\mathcal\{([^}]+)\}", r"\1", text)
     text = re.sub(r"\\hat\{([^}]+)\}", r"\1_hat", text)
+    text = re.sub(r"\\bar\{([^}]+)\}", r"\1_bar", text)
     text = re.sub(r"\\text\{([^}]+)\}", r"\1", text)
     text = re.sub(r"\\mathrm\{([^}]+)\}", r"\1", text)
     text = re.sub(r"\\mathbf\{([^}]+)\}", r"\1", text)
     text = re.sub(r"\\operatorname\{([^}]+)\}", r"\1", text)
-    text = re.sub(r"\\(?:bigl|bigr|Bigl|Bigr)", "", text)
+    text = re.sub(r"\\(?:bigl|bigr|Bigl|Bigr|big|Big|bigg|Bigg)(?=[({\[\]}|)]|\Z)", "", text)
     text = text.replace("{", "").replace("}", "")
     text = re.sub(
         r"\b([A-Za-z][A-Za-z0-9_]*(?:_hat)?)\s+subset of\s+([A-Za-z][A-Za-z0-9_]*)",
@@ -712,7 +720,7 @@ def clean_latex(text: str, cite_map: dict | None = None) -> str:
     text = re.sub(r'\{\\"([A-Za-z])\}', r"\1", text)
     text = re.sub(r'\\"([A-Za-z])', r"\1", text)
     text = re.sub(r"``|''", '"', text)
-    text = text.replace("---", " - ").replace("--", " - ")
+    text = text.replace("---", " - ").replace("--", "-")
     text = text.replace("~", " ")
     text = text.replace(r"\[", " ").replace(r"\]", " ")
     text = re.sub(r"Figure\s+\\ref\{fig:architecture\}\s*\(not shown\)", "The architecture flow diagram", text)
@@ -731,7 +739,7 @@ def clean_latex(text: str, cite_map: dict | None = None) -> str:
     text = text.replace(r"\arabic*", "")
     text = text.replace(r"\%", "%").replace(r"\&", "&").replace(r"\_", "_")
     text = text.replace(r"\#", "#").replace(r"\$", "$")
-    text = text.replace(r"\S", "Section")
+    text = re.sub(r"\\S(?![a-zA-Z])", "Section", text)
 
     def cite_repl(match):
         keys = [k.strip() for k in match.group(1).split(",") if k.strip()]
@@ -759,6 +767,7 @@ def clean_latex(text: str, cite_map: dict | None = None) -> str:
     text = re.sub(r"\$([^$]+)\$", lambda m: clean_math(m.group(1)), text)
     text = re.sub(r"\\[a-zA-Z]+\*?(?:\[[^\]]*\])?\{([^{}]*)\}", r"\1", text)
     text = re.sub(r"\\(?:quad|qquad|bigl|bigr|Bigl|Bigr|left|right|centering|small)\b", " ", text)
+    text = re.sub(r"\\(?:big|Big|bigg|Bigg)(?=[({\[\]}|)])", "", text)
     text = text.replace(r"\;", " ").replace(r"\,", " ")
     text = re.sub(r"\\([A-Za-z][A-Za-z0-9_-]*)", r"\1", text)
     text = re.sub(r"\\.", " ", text)
@@ -1044,7 +1053,7 @@ def build_story(tex: str, bib: str, styles) -> list:
         "fig:external-data": ("external_data", 176),
         "fig:dry-run": ("dry_run", 176),
         "fig:skill-as-code": ("skill_lifecycle", 176),
-        "fig:evaluation-matrix": ("evaluation_matrix", 190),
+        "fig:evaluation-matrix": ("evaluation_matrix", 250),
     }
 
     sec_counter = [0, 0, 0]
