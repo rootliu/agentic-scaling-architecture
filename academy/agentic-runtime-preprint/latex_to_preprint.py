@@ -507,6 +507,10 @@ class FigureGraphic(Flowable):
             ("Path safety", "Compose locally allowed Skills", "hazard recall, false positives", "real hazards remain inexpressible"),
             ("Dry-run + locality", "Toggle dry-run and placement policy", "overhead, avoided work, bytes moved", "planning costs more than it saves"),
             ("Skill-as-Code", "Change model; freeze Skill source", "contract and path stability", "material drift passes tests"),
+            ("Dual-subgoal reward", "Scalar gate vs dual gate; SkillOpt skeleton frozen",
+             "edits to converge, sub-domain balance, human interventions", "dual gate converges no faster"),
+            ("IR decoupling", "Swap only a source; swap only an output template",
+             "change blast radius, reconstruction accuracy", "edits spread into wiki structures"),
         ]
         row_h = 20
         header_h = 20

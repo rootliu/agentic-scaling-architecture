@@ -2,7 +2,7 @@
 
 \section{Abstract}
 
-We model an agentic runtime as $\mathcal{A}=\langle\mathcal{S},\mathcal{H},\mathcal{X}\rangle$: task Skills specify what may be done, a Harness compiles probabilistic intent into governed execution, and Scaffold instances provide isolated physical capacity. The central claim is that logical capability scaling (adding Skills) and physical throughput scaling (adding Scaffolds) are conditionally separable---they can evolve independently when the Harness completely mediates their interaction through explicit, typed contracts. This separation is conditional rather than axiomatic. It holds only when four assumptions are satisfied: Skills and Scaffolds meet through typed Harness contracts with operation closure; policy gates are deterministic; activated Skill paths are checked compositionally; and every binding is traceable and replayable. Violating any assumption breaks the separation on a specific axis, which we make explicit. We ground the extensibility thesis in a well-established engineering analogy---the three-axis decoupling of modern cloud applications---and derive a high-cohesion, loose-coupling context partitioning method from first principles of LLM inference. We use this model to derive concrete designs for external-data access, locality-aware parallel execution, planning-time dry-runs, and a Skill-as-Code lifecycle. Because the architecture has not yet been validated through a controlled implementation, we make no performance claims. Instead, we provide falsifiable protocols for capability pollution, physical scaling, Harness bypass, control-plane leakage, path-level safety, locality, and model-version stability. The intended contribution is a research agenda and an implementable vocabulary for scalable agentic runtimes whose growth remains observable, governable, and reversible.
+We model an agentic runtime as $\mathcal{A}=\langle\mathcal{S},\mathcal{H},\mathcal{X}\rangle$: task Skills specify what may be done, a Harness compiles probabilistic intent into governed execution, and Scaffold instances provide isolated physical capacity. The central claim is that logical capability scaling (adding Skills) and physical throughput scaling (adding Scaffolds) are conditionally separable---they can evolve independently when the Harness completely mediates their interaction through explicit, typed contracts. This separation is conditional rather than axiomatic. It holds only when four assumptions are satisfied: Skills and Scaffolds meet through typed Harness contracts with operation closure; policy gates are deterministic; activated Skill paths are checked compositionally; and every binding is traceable and replayable. Violating any assumption breaks the separation on a specific axis, which we make explicit. We ground the extensibility thesis in a well-established engineering analogy---the three-axis decoupling of modern cloud applications---and derive a high-cohesion, loose-coupling context partitioning method from first principles of LLM inference. We use this model to derive concrete designs for external-data access, an explicit Intermediate Relation between data and output registries, locality-aware parallel execution, planning-time dry-runs, and a train-then-freeze Skill lifecycle. Because the architecture has not yet been validated through a controlled implementation, we make no performance claims. Instead, we provide falsifiable protocols for capability pollution, physical scaling, Harness bypass, control-plane leakage, path-level safety, locality, model-version stability, Skill-training reward design, and data--output decoupling. The intended contribution is a research agenda and an implementable vocabulary for scalable agentic runtimes whose growth remains observable, governable, and reversible.
 
 \section{Introduction}
 \label{sec:introduction}
@@ -38,10 +38,10 @@ This paper makes five primary contributions.
 \item We ground the extensibility thesis in the established engineering practice of three-axis cloud decoupling, and identify what is genuinely new when each layer contains probabilistic LLM calls.
 \item We derive a high-cohesion, loose-coupling context partitioning method from first principles of LLM inference, showing that context organization---not model size---is the primary lever for agent performance.
 \item We define the Harness as a manageable probabilistic control plane: planning may be model-generated, but activation, policy, budgets, binding, evidence obligations, and replay identities are enforced by typed and deterministic mechanisms.
-\item We provide falsifiable evaluation protocols rather than synthetic results. The protocols isolate capability pollution, physical scaling, Harness bypass, control-plane leakage, composed-path safety, dry-run economics, and Skill stability across model versions.
+\item We provide falsifiable evaluation protocols rather than synthetic results. The protocols isolate capability pollution, physical scaling, Harness bypass, control-plane leakage, composed-path safety, dry-run economics, Skill stability across model versions, dual-subgoal reward design for Skill training, and Intermediate-Relation decoupling between data and output registries.
 \end{enumerate}
 
-The secondary contribution is architectural derivation. External-data access, parallelism and locality, planning-time dry-runs, and Skill-as-Code are not presented as unrelated features. Each follows from treating the Harness contract as the sole semantic-to-physical binding boundary.
+The secondary contribution is architectural derivation. External-data access, parallelism and locality, planning-time dry-runs, and a train-then-freeze Skill lifecycle---training under a dual-subgoal reward followed by freeze-to-code---are not presented as unrelated features. Each follows from treating the Harness contract as the sole semantic-to-physical binding boundary.
 
 \section{Origins of the Extensibility Framework}
 \label{sec:origins}
@@ -264,6 +264,19 @@ External data should not be a privileged side channel into the agent. It is a Ha
 
 Figure 4 shows how this boundary preserves both portability and accountability. The same analytical Skill can run against different warehouses or document stores when their adapters satisfy the contract. Conversely, the same data source can support multiple Skills without learning their task semantics. Evidence returned to the model is a typed bundle carrying source and snapshot identity, not an unqualified text fragment.
 
+\subsection{From Query Plan to Intermediate Relation}
+\label{sec:intermediate-relation}
+
+Section~3.4 described the data subsystem at the contract boundary: an off-policy loop pre-summarizes sources, and the Harness consults these summaries to plan access. Here we make the ``plan'' step of that mapping concrete as an explicit, auditable record we call the \textit{Intermediate Relation} (IR), situated between two orthogonal registries. The \textit{Data Wiki} holds what the data is: per-source semantic summaries produced by the off-policy loop (a natural-language summary, format, retrieval keywords, and cross-source relations). For complex reports whose semantics an agent cannot reliably guess---multi-sheet spreadsheets with hidden formulas and drifting definitions---its entries are built under human--agent collaboration (source, cadence, maintenance, and timeliness agreed with the owner) and validated by \textit{reconstructive reflection}: the agent attempts to partially rebuild tables of reports that people actually use from its summary alone, and the reconstruction success rate measures whether the summary captured sufficient information (P16). The \textit{Theme Wiki} holds what a verified output looks like: reusable templates for output types (reports, charts, decks, analytical write-ups, data-model programs) registered only after the corresponding output sub-domain has been trained and validated under the lifecycle of Section~8.5. The two registries are deliberately orthogonal: a data summary must not drift with output demand, and an output template must not bind to one source.
+
+The IR is the sole explicit coupling point between them. For a given theme it records which source summaries are hit by semantic join, packaged with six contextual dimensions:
+\begin{equation}
+\mathrm{IR}:\ \mathrm{theme} \mapsto \langle \{\Sigma(\mathrm{src}_i)\},\ \mathrm{5W1H} \rangle,
+\end{equation}
+where \textbf{When} states validity and update cadence of the data for this theme; \textbf{Where} states the access-domain boundary (intranet, extranet, public internet); \textbf{Who} states data ownership and whether this agent or theme is authorized; \textbf{What} states the business semantics of the fields; \textbf{Why} states the integration logic---why these sources belong together, i.e., the reason behind the semantic join; and \textbf{How} states the physical access path (database, lakehouse, JSON, or a Harness tool). The 5W1H dimensions do not bypass semantic join; they are metadata that must accompany its hits, because a hit without them may be stale (no When), unauthorized (no Who), or unreachable (no How). With the IR explicit, the contract mapping of Section~3.4 refines to: intent determines a theme, the IR resolves its source set and 5W1H record, the Harness validates timeliness, authorization, and access, and only then issues data fetches.
+
+We state the decoupling claim as a falsifiable proposition (P17): a change of data sources or a change of output format should require updating only the IR record, not the internal structure of either wiki; Protocol~9.9 specifies the test. We also state the contribution boundary plainly: this subsection proposes no new retrieval or data-integration algorithm---consistent with the pre-built versus on-line trade-off measured by Chen et al. \cite{halevy2026metadata}, our contribution is the systems-level reorganization of information the data subsystem already holds into an explicit, auditable, independently updatable relation layer.
+
 \subsection{Parallelism, Locality, and Planning-Time Dry-Run}
 
 Once the Harness has a graph, it can expose parallelism that a monolithic prompt obscures. Independent nodes may execute concurrently; dependent nodes remain ordered by graph edges and effect constraints. The Scaffold pool contributes locality and capacity facts. The binding algorithm can then co-locate data-intensive nodes, isolate high-risk effects, and reserve scarce accelerators only for nodes that declare them.
@@ -292,6 +305,23 @@ Figure 6 makes validation part of the architecture rather than a documentation c
 
 Skill-as-Code also serves as a deterministic anchor in the probabilistic control plane. When a Skill's operation space has closed---its tool-set is stable, its output format is structured, and its decision branches are enumerable---the execution process can be frozen into code rather than regenerated probabilistically each turn. This removes two sources of uncertainty simultaneously: model sampling (code is a deterministic function) and context organization (the code embeds a stable procedure). The frozen prefix of Section~6.1 stabilizes what goes into context; skill-as-code stabilizes how decisions are made within it. Together, they turn the high-cohesion design law into an enforceable property: the stable prefix is frozen for cache locality, and the stable procedure is frozen as code for determinism.
 
+\subsection{Training Before Freezing: A Dual-Subgoal Reward}
+\label{sec:training-before-freezing}
+
+Skill-as-Code explains how a stabilized Skill is governed and frozen, but not how the Skill reached stability in the first place. SkillOpt \cite{wang2026skillopt} establishes the missing premise: a Skill is the trainable external state of a frozen agent, edited under optimizer discipline (bounded edits, validation gates, rejected-edit buffers) in text space. Its publicly acknowledged limitation is the reward: a single scalar $r(s)\in[0,1]$ works best when the task has automatic verifiers, while open-ended goals---whose success is subjective and multi-dimensional---require stronger evaluation. A scalar reward is a lossy projection of a natural-language goal: it cannot tell the optimizer whether a failure lies in the outcome or in the process, nor which output sub-domain regressed, so convergence must be forced by repeated human judgment.
+
+We propose to structure the reward along two subgoal dimensions, both derived from artifacts the contract architecture already maintains. The \textit{outcome subgoal} scores the result separately along each sub-domain of the Skill's declared output schema $\sigma^{out}$, with an independent annotated benchmark per sub-domain and a weighted aggregate:
+\begin{equation}
+r_{\mathrm{out}}(s)=\sum_{d\in\mathrm{dom}(\sigma^{out})} w_d \cdot r_d\big(\mathrm{output}_d,\ \mathrm{benchmark}_d\big).
+\end{equation}
+The \textit{process subgoal} supplies a dense, immediate signal about how the result was reached---whether the correct tools and data sources were invoked, whether intermediate reasoning satisfied the declared checking criteria, and whether each step gate passed:
+\begin{equation}
+r_{\mathrm{proc}}(s)=\frac{1}{|\mathrm{steps}|}\sum_k \mathbb{1}\big[\mathrm{step}_k \text{ satisfies the tool/data/logic/gate criteria}\big].
+\end{equation}
+Each mini-batch computes both dimensions, and the validation gate becomes two-dimensional rather than scalar: an edit is rejected when any output sub-domain regresses or when process consistency drops, so the rejected-edit buffer records dimension-annotated negative feedback instead of an undifferentiated score. The role of the human changes accordingly: instead of judging every iteration, the human confirms the evaluation method once---which benchmark scores each sub-domain and which criteria gate each step---after which reward computation is automatic. Training therefore decomposes naturally: different sub-agents, or per-sub-domain benchmarks, can guide the iteration of a complex Skill separately.
+
+The two stages then compose into one lifecycle. As training converges, subgoals whose evaluation logic and process criteria stop changing have closed operation spaces; they cross the closure threshold of Section~8.4 and enter the freeze-to-code stage. Training and compilation are two phases of the same Skill lifecycle, both governed by the Harness maintenance subsystem. We state the efficiency claim as a falsifiable proposition (P15) rather than a result: the dual-subgoal decomposition should improve attribution clarity, reduce the edits needed to converge, balance per-sub-domain scores, and reduce human interventions relative to a single scalar gate; Protocol~9.8 specifies the controlled comparison.
+
 \section{Falsifiable Evaluation Protocols}
 \label{sec:evaluation}
 
@@ -299,7 +329,7 @@ The present work is architectural and has no controlled implementation results. 
 
 \begin{figure}[t]
 \centering
-\caption{Evaluation matrix for the architecture. Each row pairs one architectural claim with a controlled intervention, observable metrics, and a condition that would count against the claim. The architecture can be studied through separable, falsifiable experiments rather than through an omnibus benchmark score.}
+\caption{Evaluation matrix for the architecture. Each of the nine rows pairs one architectural claim---capability pollution, physical scaling, Harness bypass, control-plane leakage, composed-path safety, dry-run economics, model-version stability, dual-subgoal training, and Intermediate-Relation decoupling---with a controlled intervention, observable metrics, and a condition that would count against the claim. The architecture can be studied through separable, falsifiable experiments rather than through an omnibus benchmark score.}
 \label{fig:evaluation-matrix}
 \end{figure}
 
@@ -381,6 +411,32 @@ Figure 7 summarizes the research program. The detailed protocols follow.
 
 \textbf{Falsification.} The lifecycle is insufficient if production-significant changes pass the suite, or if nondeterminism makes the suite too unstable to gate releases.
 
+\subsection{Dual-Subgoal Reward for Skill Training}
+\label{sec:eval-dual-subgoal}
+
+\textbf{Hypothesis} (P15). Under a natural-language goal, a dual-subgoal reward (outcome sub-domains $\times$ process consistency) yields higher attribution clarity than a single scalar reward, so Skill iteration converges in fewer edits, with more balanced sub-domain scores and fewer human interventions, at equal rollout budget.
+
+\textbf{Control.} Reproduce the SkillOpt \cite{wang2026skillopt} training loop unchanged, varying only the gate: (a) the original single scalar gate; (b) the dual-subgoal gate of Section~8.5, with per-sub-domain benchmarks and process criteria confirmed once by a human. Use a multi-sub-domain task whose outputs combine, for example, numeric answers, textual summaries, and citations. Hold model, budget, workload, and optimizer prompts fixed.
+
+\textbf{Metrics.} Measure edits (or epochs) to convergence, final per-sub-domain scores and their balance, number of human interventions, and rejection quality (whether rejected edits carry dimension-annotated reasons).
+
+\textbf{Expected signature.} Configuration (b) converges faster, converges more evenly across sub-domains, and requires less human judgment than (a).
+
+\textbf{Falsification.} The claim is refuted if (b) converges no faster than (a), if sub-domain balance or human-intervention counts do not improve, or if the dual gate rejects so aggressively that convergence fails entirely---any of these indicates that the scalar projection loss of the goal is negligible and the decomposition adds cost without benefit.
+
+\subsection{Intermediate-Relation Decoupling and Reconstructive Reflection}
+\label{sec:eval-ir}
+
+\textbf{Hypothesis} (P16, P17). (i) Data-source changes and output-format changes propagate only to the IR record, not into the internal structure of the Data Wiki or Theme Wiki. (ii) Reconstructive reflection is an operational criterion for summary sufficiency: reconstruction accuracy from the Data Wiki summary converges toward the accuracy of reading the original reports directly.
+
+\textbf{Control.} Build a small Data Wiki and Theme Wiki over an enterprise-like corpus. Apply two classes of change in isolation: (a) replace a data source (e.g., migrate one system of record) while holding output formats fixed; (b) replace an output template (e.g., a seasonal report format) while holding sources fixed. Separately, over $N$ reports that people actually use, compare reconstruction from the summary plus reflection against direct reading of the original tables.
+
+\textbf{Metrics.} Measure the blast radius of each change class (which artifacts required edits), the reconstruction accuracy gap versus direct reading, and its trend across summary iterations.
+
+\textbf{Expected signature.} Each change class requires edits only to the affected IR records; the reconstruction gap shrinks and stabilizes near zero as summaries iterate.
+
+\textbf{Falsification.} P17 fails if a single-sided change forces edits into the summary schema of the Data Wiki or the template structure of the Theme Wiki, meaning the coupling was not actually severed. P16 fails if the reconstruction gap persists at a fixed level across iterations, indicating a systematic blind spot in the summary schema that reflection cannot close.
+
 \section{Discussion}
 \label{sec:discussion}
 
@@ -411,7 +467,7 @@ Terminology is another threat. Skill, Harness, and Scaffold are overloaded acros
 
 Finally, conditional decoupling may hold only within a bounded operating region. A new Skill can require a new hardware class; a new Scaffold can expose timing or locality behavior that changes task quality. Experiments must record these couplings rather than classifying them away. A useful architecture should tell us where separation breaks.
 
-Two scope cuts deserve explicit mention. The maintenance and self-management subsystem---compaction, persistence, and related system skills governed by the Harness along the physical axis---is treated here only as a boundary requirement and is not designed in this paper. Likewise, the full data subsystem in its four components (on-policy data-access APIs, governance expressed as data-usage skills, lifecycle management, and the off-policy indexing loop sketched in Section~3.4) is specified only at the contract boundary rather than in full. Both subsystems, together with their corresponding evaluation protocols (the data axis, parallel placement, and reward design for Skill training), are left to future work and to the implementation phase.
+Two scope cuts deserve explicit mention. The maintenance and self-management subsystem---compaction, persistence, and related system skills governed by the Harness along the physical axis---is treated here only as a boundary requirement and is not designed in this paper; notably, both the Skill training loop of Section~8.5 and the upkeep of IR records are assigned to this subsystem, whose internals remain future work. For the data subsystem, the full four-component formalization (on-policy data-access APIs, governance expressed as data-usage skills, lifecycle management, and the off-policy indexing loop sketched in Section~3.4), together with higher-order memory structures, is developed in companion notes; this paper incorporates only its contract-relevant part---the Intermediate Relation with its 5W1H record and the Data Wiki / Theme Wiki separation of Section~8.2.
 
 \section{Conclusion}
 \label{sec:conclusion}
