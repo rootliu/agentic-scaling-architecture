@@ -242,6 +242,76 @@ class FigureGraphic(Flowable):
         draw_wrapped(canvas, "linear growth | ambiguous authority", rx + 20, 32, pw - 40,
                      "Helvetica", 5.8, "#be123c")
 
+    def _draw_derivation_closure(self, canvas):
+        w, h = self.width, self.height
+        draw_wrapped(canvas, "Derivation closure: bounded sub-agents, satisfaction-driven loop",
+                     18, h - 12, w - 36, "Helvetica-Bold", 9.2, "#0f172a")
+
+        mx, mw = 16, 132
+        self._pill(canvas, mx, h - 92, mw, 44, "MAIN AGENT",
+                   "summarize returns\nno task tools", "#eff6ff", "#2563eb", "#1d4ed8")
+        self._pill(canvas, mx, h - 148, mw, 46, "semantic join + top-k",
+                   "best-supported evidence\nper output field", "#ffffff", "#60a5fa", "#1d4ed8")
+        self._pill(canvas, mx, h - 206, mw, 48, "satisfaction ratio",
+                   "sat(sigma_out) over\ndeclared sub-domains", "#f5f3ff", "#8b5cf6", "#5b21b6")
+
+        sx = mx + mw + 26
+        sw = w - sx - 16
+        canvas.setFillColor(hx("#f0fdfa"))
+        canvas.setStrokeColor(hx("#0f766e"))
+        canvas.setLineWidth(0.7)
+        canvas.roundRect(sx, h - 178, sw, 132, 5, stroke=1, fill=1)
+        self._section_label(canvas, "BOUNDED SUB-AGENTS", sx + 8, h - 60, sw - 16, "#0f766e")
+
+        cell_w = (sw - 32) / 3
+        subs = [
+            ("A1", "tool-set T1", "data-set D1"),
+            ("A2", "tool-set T2", "data-set D2"),
+            ("A3 (derived)", "tool-set T3", "data-set D3"),
+        ]
+        for i, (name, tset, dset) in enumerate(subs):
+            cx = sx + 12 + i * (cell_w + 4)
+            fill = "#ffffff" if i < 2 else "#fffbeb"
+            stroke = "#2dd4bf" if i < 2 else "#f59e0b"
+            color = "#115e59" if i < 2 else "#92400e"
+            self._pill(canvas, cx, h - 128, cell_w, 46, name, f"{tset}\n{dset}",
+                       fill, stroke, color)
+            draw_wrapped(canvas, "output range bounded", cx, h - 132, cell_w,
+                         "Helvetica", 5.5, "#0f766e")
+
+        draw_wrapped(canvas, "unmet reference to a tool or source outside the fixed sets becomes a derivation condition, not an inline grant",
+                     sx + 12, h - 150, sw - 40, "Helvetica-Bold", 6.0, "#b45309")
+        arrow_x = sx + sw - 14
+        canvas.saveState()
+        canvas.setStrokeColor(hx("#b45309"))
+        canvas.setLineWidth(1.0)
+        canvas.line(sx + sw - 30, h - 162, arrow_x, h - 162)
+        canvas.restoreState()
+        draw_arrow(canvas, arrow_x, h - 162, arrow_x, h - 130, "#b45309", 1.0)
+
+        draw_arrow(canvas, mx + mw, h - 70, sx, h - 104, "#2563eb", 1.0)
+        draw_wrapped(canvas, "invoke / derive", mx + mw - 4, h - 60, 74,
+                     "Helvetica", 5.8, "#1d4ed8", TA_LEFT)
+        draw_arrow(canvas, sx, h - 120, mx + mw, h - 126, "#0f766e", 1.0)
+        draw_wrapped(canvas, "summaries only", mx + mw - 4, h - 112, 74,
+                     "Helvetica", 5.8, "#0f766e", TA_LEFT)
+
+        by = 20
+        canvas.setStrokeColor(hx("#8b5cf6"))
+        canvas.setLineWidth(0.8)
+        canvas.setDash(4, 3)
+        canvas.line(mx + mw / 2, h - 206, mx + mw / 2, by)
+        canvas.line(mx + mw / 2, by, w - 152, by)
+        canvas.setDash()
+        draw_arrow(canvas, w - 152, by, w - 152, h - 178, "#8b5cf6", 1.0)
+        draw_wrapped(canvas, "loop while ratio below target and an unsatisfied sub-domain still admits derivation",
+                     mx + mw + 14, by + 26, w - mx - mw - 176, "Helvetica-Bold", 6.0,
+                     "#5b21b6", TA_LEFT)
+
+        self._pill(canvas, w - 104, by - 8, 88, 36, "terminate",
+                   "target met, budget out,\nor typed failure",
+                   "#ffffff", "#94a3b8", "#334155")
+
     def _draw_external_data(self, canvas):
         w, h = self.width, self.height
         draw_wrapped(canvas, "External data is a governed contract path", 18, h - 12, w - 36,
@@ -558,6 +628,14 @@ def clean_math(text: str) -> str:
     text = re.sub(r"\\mathbf\{([^}]+)\}", r"\1", text)
     text = re.sub(r"\\operatorname\{([^}]+)\}", r"\1", text)
     text = re.sub(r"\\(?:bigl|bigr|Bigl|Bigr|big|Big|bigg|Bigg)(?=[({\[\]}|)]|\Z)", "", text)
+    # \frac must resolve after \mathrm/\text so its arguments are brace-free.
+    for _ in range(3):
+        new = re.sub(r"\\frac\s*\{([^{}]*)\}\s*\{([^{}]*)\}", r"(\1)/(\2)", text)
+        if new == text:
+            break
+        text = new
+    text = re.sub(r"\bsum_\{([^{}]+)\}", r"sum over \1 of", text)
+    text = re.sub(r"\bsum_([A-Za-z0-9]+)", r"sum over \1 of", text)
     text = text.replace("{", "").replace("}", "")
     text = re.sub(
         r"\b([A-Za-z][A-Za-z0-9_]*(?:_hat)?)\s+subset of\s+([A-Za-z][A-Za-z0-9_]*)",
@@ -850,8 +928,26 @@ def code_block(block: str, styles, cite_map: dict) -> list:
     block = re.sub(r"\\begin\{[^}]+\}", "", block)
     block = re.sub(r"\\end\{[^}]+\}", "", block)
     block = block.replace("&", " ").replace(r"\\", "\n")
+    block = re.sub(r"\\label\{[^}]+\}", "", block)
+    # Display equations carry no $ delimiters, so clean_latex never routes them
+    # through clean_math; normalize the math-only constructs here first.
+    block = re.sub(r"\\mathrm\{([^{}]+)\}", r"\1", block)
+    block = re.sub(r"\\text\{([^{}]+)\}", r"\1", block)
+    block = re.sub(r"\\mathbb\{1\}", "indicator", block)
+    brace = r"((?:[^{}]|\{[^{}]*\})*)"
+    for _ in range(3):
+        new = re.sub(rf"\\frac\s*\{{{brace}\}}\s*\{{{brace}\}}", r"(\1)/(\2)", block)
+        if new == block:
+            break
+        block = new
+    block = re.sub(r"\\sum_\{((?:[^{}]|\{[^{}]*\})+)\}", r"\\sum over \1 of", block)
+    block = re.sub(r"\\sum_([A-Za-z0-9]+)", r"\\sum over \1 of", block)
+    block = block.replace(r"\mapsto", "->")
+    block = block.replace(r"\in", " in ")
+    block = block.replace(r"\cdot", "*")
     text = clean_latex(block, cite_map)
-    return [Paragraph(escape(text), styles["Formula"]), Spacer(1, 6)]
+    text = re.sub(r"[ \t]+", " ", text).strip()
+    return [Paragraph(escape(text).replace("\n", "<br/>"), styles["Formula"]), Spacer(1, 6)]
 
 
 def parse_items(block: str, styles, cite_map: dict, ordered: bool = False) -> list:
@@ -908,6 +1004,7 @@ def build_story(tex: str, bib: str, styles) -> list:
         "fig:dual-scaling": ("dual_scaling", 176),
         "fig:harness-contract": ("harness_contract", 176),
         "fig:control-data": ("control_data", 176),
+        "fig:derivation-closure": ("derivation_closure", 236),
         "fig:external-data": ("external_data", 176),
         "fig:dry-run": ("dry_run", 176),
         "fig:skill-as-code": ("skill_lifecycle", 176),

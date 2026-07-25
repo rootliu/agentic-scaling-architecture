@@ -4,3 +4,6 @@ Thumbs.db
 *.tmp
 NUL
 node_modules/
+
+# Third-party reference PDFs (kept locally for reading; re-downloadable from arXiv)
+academy/papers/pdf/

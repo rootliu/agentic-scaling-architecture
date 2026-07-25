@@ -1,5 +1,50 @@
 # CHANGELOG
 
+## v9 — 2026-07-25
+
+审查方式：检索 HuggingFace Daily Papers / arXiv 2026 年 7 月 trending 论文，下载并精读 15 篇直接相关工作（PDF 存于 `academy/papers/pdf/`），据此重划新颖性边界；并把用户口述的 harness 强度设计（子 agent 派生闭包）写入论文。
+
+### 新增内容
+
+1. **新增 §7.4 "Derivation-Closure Orchestration" + Figure 4**：形式化用户的编排设计——子 agent 持有相对固定的 tool-set/data-set 从而界定其输出范围；对集合外工具/数据源的引用不就地授予，而是成为派生下一个子 agent 的准入条件；主 agent 不执行任务工具，只做 summarize + semantic join + top-k，并按声明的 σ_out 子域计算 **satisfaction ratio**（新增公式），据此反复调用/派生子 agent 直至达标、预算耗尽或无候选（后者为 typed failure）。新增 `_draw_derivation_closure` 示意图方法。
+2. **§2.1 contributions 第 3 条**扩写以涵盖该编排规则。
+
+### 新颖性边界重划（应对 7 月撞车工作）
+
+- **§4 新增三段**：(a) `soni2026gates` 落地了本文视为设计要求的证伪式 release gate + standing invariants（capability token / control ring、有界模型检查、跨 6 个 release 不变），并实测治理开销 ~0.021ms/请求；明确其范围是单运行时安全核，不涉及逻辑/物理双轴分离。(b) `fan2026skillware` 提供了本文原本隐含的 Skill 软件本体论（Artifact/Unit/Host 三分、lifecycle continuity 可测量、138k 语料），本文采纳其词汇，§8.4 相应收窄。(c) `hsu2026grace` 的 typed graph + 局部邻域验证是 IR 原理的独立证据，区别在于结构化对象不同。另补 `wang2026handbook`/`huang2026memoharness`（归入 §11 已割舍的维护子系统）与 `zhang2026misalignment`/`wang2026skillcorpus`/`badhe2026skillsecurity`（operation closure 的现实障碍与路径安全背景）。
+- **§8.5 新增"Relation to concurrent work on structured credit assignment"段**：`luo2026gsme`（按 pathology 索引）与 `lin2026wml`（按 workflow node/mechanism 归因）都按*事后推断的失败属性*索引 credit，本文按*契约先验声明的 σ_out 子域*索引，且与 §7.4 运行期 satisfaction ratio 共用同一结构；明确"契约维度是否优于诊断维度"为开放问题而非主张。引 `wang2026compound`（增益仅在 regression control 内置于优化环时复合）作为前提支持。
+- **§8.4 收窄**：把"Skill 值得作为有独立 identity 的软件单元"归给 Skillware，本文只主张 freeze-to-code 阶段与其 release gate。
+- **§8.2 P17 补充**：引 GRACE 支持"结构化使验证局部化"，并把 P17 的独特性明确为两个 registry 在单侧变更下的相互独立性。
+
+### 实证依据修正
+
+- **§10.1 删除错误推测**：原文推测契约编译延迟为"low tens of milliseconds"，与 `soni2026gates` 实测 0.021ms 差三个数量级；改为引用该实测值作为下界（其只覆盖不变量求值，不含 schema 校验/图构造/绑定），并明确本文不再自行给出估计，交由 Protocol 9.6 测量。
+
+### 评估协议加固
+
+- **9.1 Control**：新增两项混淆控制——固定并报告 harness 检索能力，且在单源/语料库两个规模下分别测（`he2026disclosure` 发现渐进披露收益在强 harness 下趋零、仅在语料库规模决定性）；激活深度固定为一层（同文献发现第二层从不帮忙、有时降准确率）。
+- **9.1 Metrics**：聚合 recall 不足——`xue2026longcontext` 观察到 requirement coverage >92% 而结果崩塌；新增"每条声明需求全满足的运行占比"并记录具体被丢弃的需求。
+- **9.7 / 9.8 Control**：采用 executor/grader 分离 + first-attempt grading，self-correction 单独计数而非计入通过（`anand2026aeval` 指出自修复自评会把通过率灌水成虚假 100%）；9.8 另要求过程判据须为运行前登记的固定产物。
+- **9.8 Falsification 新增一条**：按 `wang2026phantom` 的反事实设计（该文 60 次运行中 15 次为从未发生的失败类别捏造 guardrail），用 oracle 校验每条 rejection reason；若维度标注理由含 oracle 可反驳的虚构违规，则"归因更清晰"主张失效（即便收敛更快）。
+- **§8.5 新增告警段**：r_proc 依赖"step 是否满足判据"的判定，故判据须为登记产物而非评分时由模型生成。
+
+### 引用
+
+- 新增 15 条引用（全部经 arXiv API 官方核实标题与完整作者列表，无占位符/截断）；引用总数 24 → 39。
+- 15 篇 PDF 下载至 `academy/papers/pdf/`，沿用既有命名约定 `{arxivID}v{n} {Title}.pdf`。
+- **参考文献 PDF 统一归位**：vault 原有的 9 篇参考 PDF 一并移入 `academy/papers/pdf/`（共 24 篇），vault 内 `Papers/PDFs/` 目录移除，另删除 `Workspaces/deep research/` 下两处 18 份重复镜像副本。此后 **vault 只保留本人论文的 PDF 与 md**；vault 内 Notes 与 00_Index 的 PDF 链接改为指向 repo 路径。
+- 15 篇已导入 **Zotero**（含 PDF 附件），带 `agentic-runtime` / `2026-07` 及分类标签（高危撞车 / P15平行工作 / 协议警告 等）。
+
+### 渲染 bug 修复（3 处）
+
+- **display equation 从不走数学清理路径**：`code_block()` 直接调 `clean_latex`，而 `clean_latex` 只对 `$...$` 内联公式调用 `clean_math`，导致 `\frac`/`\sum_{}`/`\mapsto`/`\cdot` 在行间公式中全部落空。表现为 `r_proc(s)=1|steps|sum_k ...`（分数塌成并列符号）。现于 `code_block` 内先归一化数学构造再交给 `clean_latex`。
+- **`\frac` 完全无处理分支**：新增 `(分子)/(分母)` 转换，正则允许一层嵌套花括号（`\frac{1}{|\mathrm{dom}(\sigma^{out})|}` 需要）。
+- **`\sum_{...}` 下标丢失**：新增 `sum over ... of` 转换，同样支持一层嵌套。
+
+### 重建 PDF
+
+- 生成 `output/pdf/..._v9.pdf`（24 页）；全文扫描确认无残留反斜杠/花括号、无词融合、无带空格短横线、无 `Section\d` 断字、无 `sum_`/`frac` 残留、无未解析引用键；Figure 1–8 的 caption 编号与正文引用一致；参考文献 1–39 完整无缺号。
+
 ## v8 — 2026-07-25
 
 审查方式：核实用户在其他电脑上完成的 v7 改动（压缩 Abstract、拆分 §8.2/§8.5 段落、新增命题总表、引入 Zep/SoKG/XPEventCore 三条引用、halevy→chen bib key 改名、清理 7 个无用 `_draw_*` 方法），逐条核实新增内容的准确性并修复渲染 bug。
