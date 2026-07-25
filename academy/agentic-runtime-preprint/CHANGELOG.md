@@ -1,5 +1,25 @@
 # CHANGELOG
 
+## v8 — 2026-07-25
+
+审查方式：核实用户在其他电脑上完成的 v7 改动（压缩 Abstract、拆分 §8.2/§8.5 段落、新增命题总表、引入 Zep/SoKG/XPEventCore 三条引用、halevy→chen bib key 改名、清理 7 个无用 `_draw_*` 方法），逐条核实新增内容的准确性并修复渲染 bug。
+
+### 引用准确性修正（3 条，全部经 arXiv/HAL 官方页核实）
+
+- **`zep2025`**：作者占位符 "Zep Team" → 实际作者 Preston Rasmussen, Pavlo Paliychuk, Travis Beauvais, Jack Ryan, Daniel Chalef。
+- **`sokg2026`**：标题不全（"Knowledge Graph Construction via QA-Driven Fact Extraction"）→ 补全为 *SocraticKG: Knowledge Graph Construction via QA-Driven Fact Extraction*；作者占位符 "SoKG Team" → 实际作者 Sanghyeok Choi, Woosang Jeon, Kyuseok Yang, Taehyeong Kim。
+- **`xpeventcore2024`**：作者列表不全（"Piryani, R. and others"）→ 补全五位作者 Rajesh Piryani, Nathalie Aussenac-Gilles, Nathalie Jane Hernandez, Cédric Lopez, Camille Pradel。
+- 验证 7 个被删除的 `_draw_*` 方法（`overview`/`stack`/`ontology`/`double_helix`/`architecture_flow`/`results_bar`/`theme_convergence`）确系死代码，未被本论文任何 figure kind 引用，删除无风险。
+
+### 渲染 bug 修复（2 处）
+
+- **`\S` 替换缺空格**：新增命题总表里 `\S5.3`/`\S9.8`/`\S9.9` 渲染为 "Section5.3" 等无空格形式；`re.sub(r"\\S(?![a-zA-Z])", "Section", text)` 缺少尾随空格 → 改为 `"Section "`。
+- **法语重音符号 `\'` 未处理**：`Lopez, C{\'e}dric` 渲染为 "C edric"（缺失字母）；脚本此前只处理了变音符 `\"`（如 `K{\"u}ttler`→"Kuttler"），未处理锐音符 `\'`（以及类似的 `` \` ``/`\^`/`\~`/`\=`/`\.`）→ 新增对应正则，与变音符处理一致地去重音為纯 ASCII（"Cédric"→"Cedric"）。
+
+### 重建 PDF
+
+- 生成 `output/pdf/..._v8.pdf`（20 页），全文扫描确认无残留反斜杠/大括号、无相邻宏融合、无带空格短横线、无陈旧占位符作者名。
+
 ## v6 — 2026-07-23
 
 审查方式：本机 v5 PDF 与从 GitHub 拉取的 obsidian/architecture 仓库最新内容逐条比对；聚焦图表引用准确性与行文流畅度。

@@ -575,6 +575,8 @@ def clean_latex(text: str, cite_map: dict | None = None) -> str:
     text = text.replace("Guti茅rrez", "Gutierrez").replace("guti茅rrez", "gutierrez")
     text = re.sub(r'\{\\"([A-Za-z])\}', r"\1", text)
     text = re.sub(r'\\"([A-Za-z])', r"\1", text)
+    text = re.sub(r"\{\\['`^~=.]([A-Za-z])\}", r"\1", text)
+    text = re.sub(r"\\['`^~=.]([A-Za-z])", r"\1", text)
     text = re.sub(r"``|''", '"', text)
     text = text.replace("---", " - ").replace("--", "-")
     text = text.replace("~", " ")
@@ -595,7 +597,7 @@ def clean_latex(text: str, cite_map: dict | None = None) -> str:
     text = text.replace(r"\arabic*", "")
     text = text.replace(r"\%", "%").replace(r"\&", "&").replace(r"\_", "_")
     text = text.replace(r"\#", "#").replace(r"\$", "$")
-    text = re.sub(r"\\S(?![a-zA-Z])", "Section", text)
+    text = re.sub(r"\\S(?![a-zA-Z])", "Section ", text)
 
     def cite_repl(match):
         keys = [k.strip() for k in match.group(1).split(",") if k.strip()]
