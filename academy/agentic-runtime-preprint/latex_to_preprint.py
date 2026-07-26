@@ -1004,7 +1004,7 @@ def build_story(tex: str, bib: str, styles) -> list:
         "fig:dual-scaling": ("dual_scaling", 176),
         "fig:harness-contract": ("harness_contract", 176),
         "fig:control-data": ("control_data", 176),
-        "fig:derivation-closure": ("derivation_closure", 236),
+        "fig:derivation-closure": ("derivation_closure", 200),
         "fig:external-data": ("external_data", 176),
         "fig:dry-run": ("dry_run", 176),
         "fig:skill-as-code": ("skill_lifecycle", 176),
