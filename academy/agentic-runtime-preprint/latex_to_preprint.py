@@ -24,6 +24,8 @@ from reportlab.platypus import (
 
 
 TITLE = "A Contract-Centered Architecture for Scalable and Manageable Agentic Runtimes"
+AUTHOR = "Yaxiao Liu"
+AUTHOR_EMAIL = "rootliu@gmail.com"
 FIGURE_WIDTH = 462
 
 
@@ -989,10 +991,12 @@ def build_story(tex: str, bib: str, styles) -> list:
 
     story = [
         Paragraph(escape(TITLE), styles["Title"]),
+        Spacer(1, 10),
+        Paragraph(escape(f"{AUTHOR}"), styles["Author"]),
+        Paragraph(escape(AUTHOR_EMAIL), styles["Affiliation"]),
         Spacer(1, 8),
         Paragraph(
-            "Working preprint | Agentic Runtime Research Project | "
-            + dt.date.today().isoformat(),
+            "Working preprint | " + dt.date.today().isoformat(),
             styles["Subtitle"],
         ),
         Spacer(1, 18),
@@ -1166,6 +1170,24 @@ def make_styles():
         textColor=colors.HexColor("#111827"),
         spaceAfter=4,
     )
+    styles["Author"] = ParagraphStyle(
+        "Author",
+        parent=base["Normal"],
+        fontName="Times-Roman",
+        fontSize=12,
+        leading=15,
+        alignment=TA_CENTER,
+        textColor=colors.HexColor("#111827"),
+    )
+    styles["Affiliation"] = ParagraphStyle(
+        "Affiliation",
+        parent=base["Normal"],
+        fontName="Times-Roman",
+        fontSize=10,
+        leading=13,
+        alignment=TA_CENTER,
+        textColor=colors.HexColor("#334155"),
+    )
     styles["Subtitle"] = ParagraphStyle(
         "Subtitle",
         parent=base["Normal"],
@@ -1308,7 +1330,7 @@ def build_pdf(paper_dir: str, output_pdf: str):
         topMargin=0.72 * inch,
         bottomMargin=0.72 * inch,
         title=TITLE,
-        author="Agentic Runtime Research Project",
+        author=f"{AUTHOR} <{AUTHOR_EMAIL}>",
         subject="Scalable and manageable agentic runtime architecture",
     )
     styles = make_styles()

@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## v12 — 2026-07-27
+
+### 署名
+
+- 标题页新增作者署名 **Yaxiao Liu** 与联系邮箱 **rootliu@gmail.com**（新增 `Author` / `Affiliation` 两个段落样式：作者名 12pt Times-Roman 居中，邮箱 10pt 居中）。
+- 副标题行原为 "Working preprint | Agentic Runtime Research Project | {date}"，占位性的项目名已由真实署名取代，简化为 "Working preprint | {date}"。
+- PDF 元数据 author 字段由占位符 `Agentic Runtime Research Project` 改为 `Yaxiao Liu <rootliu@gmail.com>`。
+- 署名信息提取为脚本顶部常量 `AUTHOR` / `AUTHOR_EMAIL`，与 `TITLE` 并列。
+
 ## v11 — 2026-07-27
 
 审查方式：核实 v10（在其他机器上完成：拆分 §4/§10.1/§8.5 段落、Table 1 新增 Skillware/GRACE 两行、Figure 4 降高 236→200），逐条比对两篇论文 PDF 原文核实新增表格评级。
