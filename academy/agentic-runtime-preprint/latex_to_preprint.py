@@ -248,22 +248,33 @@ class FigureGraphic(Flowable):
                      18, h - 12, w - 36, "Helvetica-Bold", 9.2, "#0f172a")
 
         mx, mw = 16, 132
-        self._pill(canvas, mx, h - 92, mw, 44, "MAIN AGENT",
+        # Left column and right panel are laid out bottom-up so the figure
+        # stays correct if its declared height changes.
+        band = 34          # bottom strip reserved for the loop-back path
+        col_h = 38
+        sat_y = band
+        join_y = sat_y + col_h + 4
+        main_y = join_y + col_h + 4
+
+        self._pill(canvas, mx, main_y, mw, col_h, "MAIN AGENT",
                    "summarize returns\nno task tools", "#eff6ff", "#2563eb", "#1d4ed8")
-        self._pill(canvas, mx, h - 148, mw, 46, "semantic join + top-k",
+        self._pill(canvas, mx, join_y, mw, col_h, "semantic join + top-k",
                    "best-supported evidence\nper output field", "#ffffff", "#60a5fa", "#1d4ed8")
-        self._pill(canvas, mx, h - 206, mw, 48, "satisfaction ratio",
+        self._pill(canvas, mx, sat_y, mw, col_h, "satisfaction ratio",
                    "sat(sigma_out) over\ndeclared sub-domains", "#f5f3ff", "#8b5cf6", "#5b21b6")
 
         sx = mx + mw + 26
         sw = w - sx - 16
+        panel_top = main_y + col_h
+        panel_y = band + 14
         canvas.setFillColor(hx("#f0fdfa"))
         canvas.setStrokeColor(hx("#0f766e"))
         canvas.setLineWidth(0.7)
-        canvas.roundRect(sx, h - 178, sw, 132, 5, stroke=1, fill=1)
-        self._section_label(canvas, "BOUNDED SUB-AGENTS", sx + 8, h - 60, sw - 16, "#0f766e")
+        canvas.roundRect(sx, panel_y, sw, panel_top - panel_y, 5, stroke=1, fill=1)
+        self._section_label(canvas, "BOUNDED SUB-AGENTS", sx + 8, panel_top - 20, sw - 16, "#0f766e")
 
         cell_w = (sw - 32) / 3
+        cell_y = panel_top - 78
         subs = [
             ("A1", "tool-set T1", "data-set D1"),
             ("A2", "tool-set T2", "data-set D2"),
@@ -274,41 +285,43 @@ class FigureGraphic(Flowable):
             fill = "#ffffff" if i < 2 else "#fffbeb"
             stroke = "#2dd4bf" if i < 2 else "#f59e0b"
             color = "#115e59" if i < 2 else "#92400e"
-            self._pill(canvas, cx, h - 128, cell_w, 46, name, f"{tset}\n{dset}",
+            self._pill(canvas, cx, cell_y, cell_w, 44, name, f"{tset}\n{dset}",
                        fill, stroke, color)
-            draw_wrapped(canvas, "output range bounded", cx, h - 132, cell_w,
+            draw_wrapped(canvas, "output range bounded", cx, cell_y - 3, cell_w,
                          "Helvetica", 5.5, "#0f766e")
 
+        note_top = cell_y - 15
         draw_wrapped(canvas, "unmet reference to a tool or source outside the fixed sets becomes a derivation condition, not an inline grant",
-                     sx + 12, h - 150, sw - 40, "Helvetica-Bold", 6.0, "#b45309")
-        arrow_x = sx + sw - 14
+                     sx + 12, note_top, sw - 44, "Helvetica-Bold", 6.0, "#b45309")
+        arrow_x = sx + sw - 16
         canvas.saveState()
         canvas.setStrokeColor(hx("#b45309"))
         canvas.setLineWidth(1.0)
-        canvas.line(sx + sw - 30, h - 162, arrow_x, h - 162)
+        canvas.line(sx + sw - 32, note_top - 8, arrow_x, note_top - 8)
         canvas.restoreState()
-        draw_arrow(canvas, arrow_x, h - 162, arrow_x, h - 130, "#b45309", 1.0)
+        draw_arrow(canvas, arrow_x, note_top - 8, arrow_x, cell_y + 2, "#b45309", 1.0)
 
-        draw_arrow(canvas, mx + mw, h - 70, sx, h - 104, "#2563eb", 1.0)
-        draw_wrapped(canvas, "invoke / derive", mx + mw - 4, h - 60, 74,
+        draw_arrow(canvas, mx + mw, main_y + 14, sx, panel_top - 34, "#2563eb", 1.0)
+        draw_wrapped(canvas, "invoke / derive", mx + mw - 4, main_y + col_h - 4, 74,
                      "Helvetica", 5.8, "#1d4ed8", TA_LEFT)
-        draw_arrow(canvas, sx, h - 120, mx + mw, h - 126, "#0f766e", 1.0)
-        draw_wrapped(canvas, "summaries only", mx + mw - 4, h - 112, 74,
+        draw_arrow(canvas, sx, cell_y + 12, mx + mw, join_y + 20, "#0f766e", 1.0)
+        draw_wrapped(canvas, "summaries only", mx + mw - 4, join_y + col_h - 6, 74,
                      "Helvetica", 5.8, "#0f766e", TA_LEFT)
 
-        by = 20
+        by = 12
+        loop_x = w - 150
         canvas.setStrokeColor(hx("#8b5cf6"))
         canvas.setLineWidth(0.8)
         canvas.setDash(4, 3)
-        canvas.line(mx + mw / 2, h - 206, mx + mw / 2, by)
-        canvas.line(mx + mw / 2, by, w - 152, by)
+        canvas.line(mx + mw / 2, sat_y, mx + mw / 2, by)
+        canvas.line(mx + mw / 2, by, loop_x, by)
         canvas.setDash()
-        draw_arrow(canvas, w - 152, by, w - 152, h - 178, "#8b5cf6", 1.0)
+        draw_arrow(canvas, loop_x, by, loop_x, panel_y, "#8b5cf6", 1.0)
         draw_wrapped(canvas, "loop while ratio below target and an unsatisfied sub-domain still admits derivation",
-                     mx + mw + 14, by + 26, w - mx - mw - 176, "Helvetica-Bold", 6.0,
+                     mx + mw + 12, band - 2, loop_x - mx - mw - 22, "Helvetica-Bold", 6.0,
                      "#5b21b6", TA_LEFT)
 
-        self._pill(canvas, w - 104, by - 8, 88, 36, "terminate",
+        self._pill(canvas, w - 100, by - 6, 84, 32, "terminate",
                    "target met, budget out,\nor typed failure",
                    "#ffffff", "#94a3b8", "#334155")
 

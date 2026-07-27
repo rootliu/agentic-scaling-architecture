@@ -94,7 +94,7 @@ Table~1 summarizes where existing systems fall relative to five Harness responsi
 
 \begin{table}[t]
 \centering
-\caption{Comparison of Harness responsibilities across production agent and workflow systems. Assessment based on public documentation and cited sources; rows marked \textsuperscript{†} denote concurrent work (July 2026) positioned in Section~4, and the row for this paper denotes design goals, not validated results.}
+\caption{Comparison of Harness responsibilities across production agent and workflow systems. Assessment based on public documentation and cited sources; rows marked \textsuperscript{†} denote concurrent work (July 2026) positioned in Section~4, and the row for this paper denotes design goals, not validated results. The two concurrent entries are scored only on the responsibilities they address: Skillware governs Skill identity and lifecycle, so its contract and audit entries reflect manifest-level provenance rather than per-run replay; GRACE structures a system instruction rather than a Skill registry, so Skill registration does not apply, and its validation is local edit admission rather than policy gating on an activated path.}
 \label{tab:system-comparison}
 \begin{tabular}{lccccc}
 \hline
@@ -109,8 +109,8 @@ Temporal & yes & partial & yes & yes & yes \\
 Helium & no & no & no & partial & no \\
 Tool Forge & yes & partial & partial & no & partial \\
 Five-Plane & yes & no & yes & no & yes \\
-Skillware\textsuperscript{†} & yes & partial & no & no & yes \\
-GRACE\textsuperscript{†} & yes & no & yes & no & partial \\
+Skillware\textsuperscript{†} & yes & partial & no & no & partial \\
+GRACE\textsuperscript{†} & n/a & partial & partial & no & no \\
 \textbf{This paper}\textsuperscript{†} & \textbf{yes} & \textbf{yes} & \textbf{yes} & \textbf{yes} & \textbf{yes} \\
 \hline
 \end{tabular}

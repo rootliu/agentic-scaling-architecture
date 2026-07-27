@@ -1,5 +1,34 @@
 # CHANGELOG
 
+## v11 — 2026-07-27
+
+审查方式：核实 v10（在其他机器上完成：拆分 §4/§10.1/§8.5 段落、Table 1 新增 Skillware/GRACE 两行、Figure 4 降高 236→200），逐条比对两篇论文 PDF 原文核实新增表格评级。
+
+### Figure 4 版面回归修复
+
+- **v10 把 `fig:derivation-closure` 高度从 236 降到 200，但图内元素仍按 236 的绝对坐标绘制**，导致 `satisfaction ratio` 框底部越界、三处文字互相压叠（loop 标签压 satisfaction ratio 框、derivation 说明文字与 loop 标签重叠、terminate 框压住 sub-agents 面板）。
+- 改为**自底向上的相对布局**：底部预留 `band=34` 给回环路径，左列三个框按 `col_h=38` 依次堆叠，右侧面板顶部对齐主 agent 框顶、底部对齐 `band+14`，子 agent 单元与说明文字均相对面板定位。此后图高变化不再破坏版面。
+
+### Table 1 新增两行评级修正（核对 PDF 原文）
+
+- **GRACE 行**：v10 给 `Skill registration=yes / Policy gates=yes / Replay=partial`。核对 arXiv:2607.09175 全文——**"skill" 出现 0 次**（其结构化对象是系统指令而非 Skill 注册表），"gate" 仅 1 次，8 处 "audit" 全部指*实验后的诊断审计*（post-hoc LLM-as-Judge，明确声明不用于修改 checkpoint 或计算指标），并非运行时审计追踪。→ 改为 `n/a / partial / partial / no / no`。
+- **Skillware 行**：v10 给 `Replay=yes`。核对 arXiv:2607.18970 全文——**"replay" 出现 0 次**，3 处 "audit" 指*范畴归属可审计*与*语料快照可审计*（manifest/provenance 级），非 per-run replay。→ Replay 改为 `partial`。
+- **表注补充**说明两行并发工作只按其实际覆盖的责任评分，并解释 `n/a` 的含义（GRACE 结构化系统指令而非 Skill registry；其验证是局部编辑准入而非激活路径上的 policy gating），避免 `n/a` 让读者困惑。
+
+### 重建 PDF
+
+- 生成 `output/pdf/..._v11.pdf`（24 页）；全文扫描无残留反斜杠/花括号、无 `Section\d` 断字、无 `sum_`/`frac` 残留；Figure 4 高分辨率目视确认无重叠。
+
+## v10 — 2026-07-26
+
+在其他机器上完成的结构性调整（本机仅核实与修复，见 v11）：
+
+1. **§4 Related Work 拆为三段**，加 `\paragraph` 小标题：Runtime and serving layers / Concurrent work (July 2026) / Production frameworks。
+2. **§10.1 延迟讨论拆段**：把"policy evaluation 更便宜 + 开销须摊薄"另起一段，与前面的实测下界讨论分开。
+3. **§8.5 告警独立成段**：`\paragraph{Caveat: trustworthiness of process criteria.}`。
+4. **Table 1 新增 Skillware / GRACE 两行**（标 † 表示并发工作），表注相应改写。
+5. **Figure 4 高度 236 → 200**。
+
 ## v9 — 2026-07-25
 
 审查方式：检索 HuggingFace Daily Papers / arXiv 2026 年 7 月 trending 论文，下载并精读 15 篇直接相关工作（PDF 存于 `academy/papers/pdf/`），据此重划新颖性边界；并把用户口述的 harness 强度设计（子 agent 派生闭包）写入论文。
