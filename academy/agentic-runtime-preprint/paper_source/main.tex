@@ -90,11 +90,11 @@ Composition safety is especially relevant. Xie et al. show that components benig
 \paragraph{Production frameworks.}
 Production agent frameworks and orchestration engines occupy adjacent regions of the design space but do not expose the typed contract boundary studied here. AutoGen \cite{wu2023autogen} coordinates multi-agent conversations but treats tool registration as prompt-level metadata rather than a versioned contract with deterministic gates. LangGraph \cite{langgraph2024} constructs stateful graph workflows but conflates planning and execution in a single runtime without a separate binding boundary to isolated capacity. CrewAI \cite{crewai2024} assigns roles to agents but provides no path-level invariant checking or replay identity. The OpenAI Assistants API \cite{openai2024assistants} bundles tools, context, and execution into one managed service where the contract between capability and capacity is implicit. Temporal \cite{temporal2024} provides durable execution and replay for workflows but operates at the orchestration layer without agent-specific capability contracts or composition safety. AgentScope \cite{gao2024agentscope} and Agent-as-a-Service \cite{agentasaas2025} offer multi-agent platforms and scalable infrastructure, respectively, but neither separates logical capability scaling from physical throughput scaling as distinct axes governed by a typed contract. Autellix \cite{liu2025autellix} is the closest on the physical axis, modeling agents as general programs for serving throughput, but does not address the logical scaling axis.
 
-Table~1 summarizes where existing systems fall relative to five Harness responsibilities.
+Table~1 summarizes where these systems fall relative to five Harness responsibilities. It covers production frameworks and workflow engines only; the concurrent research discussed above is placed by argument rather than by rating, since its objects of governance are not the same.
 
 \begin{table}[t]
 \centering
-\caption{Comparison of Harness responsibilities across production agent and workflow systems. Assessment based on public documentation and cited sources; rows marked \textsuperscript{†} denote concurrent work (July 2026) positioned in Section~4, and the row for this paper denotes design goals, not validated results. The two concurrent entries are scored only on the responsibilities they address: Skillware governs Skill identity and lifecycle, so its contract and audit entries reflect manifest-level provenance rather than per-run replay; GRACE structures a system instruction rather than a Skill registry, so Skill registration does not apply, and its validation is local edit admission rather than policy gating on an activated path.}
+\caption{Comparison of Harness responsibilities across production agent and workflow systems. Assessment based on public documentation and cited sources; the row for this paper (marked \textsuperscript{†}) denotes design goals, not validated results. The table is restricted to systems that occupy the same design space, namely those that register task capabilities and execute them. Concurrent research whose object of governance differs, such as Skill identity and lifecycle or an evolving system instruction, is positioned in Section~4 rather than scored here, because a per-responsibility rating would compare mechanisms that were never intended to cover the same surface.}
 \label{tab:system-comparison}
 \begin{tabular}{lccccc}
 \hline
@@ -109,8 +109,6 @@ Temporal & yes & partial & yes & yes & yes \\
 Helium & no & no & no & partial & no \\
 Tool Forge & yes & partial & partial & no & partial \\
 Five-Plane & yes & no & yes & no & yes \\
-Skillware\textsuperscript{†} & yes & partial & no & no & partial \\
-GRACE\textsuperscript{†} & n/a & partial & partial & no & no \\
 \textbf{This paper}\textsuperscript{†} & \textbf{yes} & \textbf{yes} & \textbf{yes} & \textbf{yes} & \textbf{yes} \\
 \hline
 \end{tabular}

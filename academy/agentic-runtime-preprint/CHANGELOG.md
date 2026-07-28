@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## v13 — 2026-07-28
+
+### Table 1 收回单一维度
+
+v10 曾把并发工作 Skillware / GRACE 两行加入 Table 1，v11 已按原文核实下调其评级（GRACE 的 Skill registration 只能记 `n/a`）。但根本问题不是评级高低，而是**表格混了两类不可直接比较的对象**：生产框架与工作流引擎（AutoGen / LangGraph / Temporal……）注册并执行任务能力，而 Skillware 治理的是 Skill 身份与生命周期、GRACE 结构化的是系统指令——它们从未打算覆盖同一组责任，逐格打分需要一长段表注来解释 `n/a`，反而削弱表格的说服力。
+
+- **移除 Skillware / GRACE 两行**，Table 1 恢复为纯生产系统对比；`n/a` 一并消失。
+- 表注改为说明表格范围限定于"注册并执行任务能力"的同一设计空间，治理对象不同的并发研究改在 §4 以论证定位而非以评分定位。
+- §4 中 Table 1 的引导句同步补充该范围说明（"covers production frameworks and workflow engines only; the concurrent research discussed above is placed by argument rather than by rating"）。
+
+§4 关于 Skillware / GRACE 的边界论述（v9 加入、v10 拆段）全部保留不变——它们本来就在文字里讲清了差异，无需表格重复。
+
 ## v12 — 2026-07-27
 
 ### 署名
