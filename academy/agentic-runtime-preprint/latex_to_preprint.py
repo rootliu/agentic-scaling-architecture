@@ -404,58 +404,79 @@ class FigureGraphic(Flowable):
         w, h = self.width, self.height
         draw_wrapped(canvas, "Skill-as-Code: capability growth as a release lifecycle", 18, h - 12, w - 36,
                      "Helvetica-Bold", 9.2, "#0f172a")
-        steps = [
-            ("1", "Draft", "contract + tests", "#f8fafc", "#94a3b8"),
-            ("2", "Lint", "schema + effects", "#eff6ff", "#60a5fa"),
-            ("3", "Path tests", "composition", "#f0fdfa", "#2dd4bf"),
-            ("4", "Sandbox", "model matrix", "#fffbeb", "#f59e0b"),
-            ("5", "Sign", "immutable release", "#f5f3ff", "#a78bfa"),
-            ("6", "Activate", "staged registry", "#ecfdf5", "#10b981"),
+        stages = [
+            ("Draft", "contract + criteria", "#f8fafc", "#94a3b8"),
+            ("Train", "bounded edits", "#eff6ff", "#60a5fa"),
+            ("Validate", "tests + closure", "#f0fdfa", "#2dd4bf"),
+            ("Staged release", "signed + gradual", "#fffbeb", "#f59e0b"),
+            ("Monitor", "drift + evidence", "#ecfdf5", "#10b981"),
         ]
-        gap = 7
-        bw = (w - 32 - gap * 5) / 6
-        x = 16
-        for idx, title, subtitle, fill, stroke in steps:
-            self._pill(canvas, x, 78, bw, 52, f"{idx}. {title}", subtitle, fill, stroke, "#0f172a")
-            if idx != "6":
-                draw_arrow(canvas, x + bw, 104, x + bw + gap, 104, "#64748b", 0.8)
-            x += bw + gap
+        stage_gap = 9
+        stage_w = (w - 28 - stage_gap * 4) / 5
+        stage_y, stage_h = 96, 39
+        stage_centers = []
+        x = 14
+        for idx, (title, subtitle, fill, stroke) in enumerate(stages):
+            self._pill(canvas, x, stage_y, stage_w, stage_h, title, subtitle, fill, stroke, "#0f172a")
+            stage_centers.append(x + stage_w / 2)
+            if idx < len(stages) - 1:
+                draw_arrow(canvas, x + stage_w, stage_y + stage_h / 2,
+                           x + stage_w + stage_gap, stage_y + stage_h / 2, "#64748b", 0.8)
+            x += stage_w + stage_gap
 
-        self._pill(canvas, 34, 29, 132, 28, "Release gates",
-                   "operation closure | policy | evidence", "#fff1f2", "#fb7185", "#9f1239")
-        self._pill(canvas, w / 2 - 66, 29, 132, 28, "Production signals",
-                   "contract drift | path drift | failures", "#eff6ff", "#60a5fa", "#1d4ed8")
-        self._pill(canvas, w - 166, 29, 132, 28, "Response",
-                   "pause | rollback | supersede", "#ecfdf5", "#10b981", "#047857")
-        draw_arrow(canvas, w - 100, 78, w - 100, 57, "#0f766e")
-        draw_arrow(canvas, w - 166, 43, w / 2 + 66, 43, "#0f766e")
-        draw_arrow(canvas, w / 2 - 66, 43, 166, 43, "#be123c")
+        controls = [
+            ("Freeze / thaw", "code <-> training", "#f5f3ff", "#a78bfa"),
+            ("Drift / revalidate", "signal -> gate", "#eff6ff", "#60a5fa"),
+            ("Rollback", "restore release", "#fff1f2", "#fb7185"),
+            ("Retire", "close activation", "#f8fafc", "#94a3b8"),
+        ]
+        control_gap = 11
+        control_w = (w - 42 - control_gap * 3) / 4
+        control_y, control_h = 24, 33
+        control_centers = []
+        x = 21
+        for title, subtitle, fill, stroke in controls:
+            self._pill(canvas, x, control_y, control_w, control_h,
+                       title, subtitle, fill, stroke, "#0f172a")
+            control_centers.append(x + control_w / 2)
+            x += control_w + control_gap
+
+        draw_arrow(canvas, control_centers[0], control_y + control_h,
+                   stage_centers[1], stage_y, "#7c3aed", 0.85, dashed=True)
+        draw_arrow(canvas, control_centers[1], control_y + control_h,
+                   stage_centers[2], stage_y, "#2563eb", 0.85, dashed=True)
+        draw_arrow(canvas, control_centers[2], control_y + control_h,
+                   stage_centers[3], stage_y, "#be123c", 0.85, dashed=True)
+        draw_arrow(canvas, stage_centers[4], stage_y,
+                   control_centers[3], control_y + control_h, "#64748b", 0.85, dashed=True)
+        draw_wrapped(canvas, "release controls and feedback", 16, 16, w - 32,
+                     "Helvetica-Bold", 5.8, "#64748b")
 
     def _draw_evaluation_matrix(self, canvas):
         w, h = self.width, self.height
         draw_wrapped(canvas, "Falsification matrix", 18, h - 10, w - 36,
                      "Helvetica-Bold", 9.2, "#0f172a")
-        x0, y0 = 12, 14
+        x0, y0 = 12, 10
         table_w = w - 24
         cols = [84, 122, 116, table_w - 322]
         headers = ["Claim", "Controlled intervention", "Primary observations", "Counts against claim"]
         rows = [
-            ("Logical scaling", "Add unrelated Skills; freeze model and workload",
-             "context, selection error, task quality", "interference grows with registry"),
-            ("Physical scaling", "Add Scaffold instances; freeze Skills and policy",
-             "throughput, tail latency, decision consistency", "semantics or gates change"),
+            ("P1 logical axis", "Capability x Scaffold grid; add unrelated Skills",
+             "throughput, p95, gates, semantic drift", "factorial interaction exceeds bound"),
+            ("P1 physical axis", "Same grid; add Scaffolds + recoupling arms",
+             "shared metrics, queueing, binding, cost", "capacity changes interface semantics"),
             ("Harness mediation", "Introduce narrow bypasses", "effects, evidence, replay", "bypass has no control impact"),
             ("Control-plane leakage", "Seed canary metadata; vary activation opacity",
              "canary reproduction, prompt tokens, plan accuracy", "canaries leak despite opaque activation"),
             ("Path safety", "Compose locally allowed Skills", "hazard recall, false positives", "real hazards remain inexpressible"),
             ("Dry-run + locality", "Toggle dry-run and placement policy", "overhead, avoided work, bytes moved", "planning costs more than it saves"),
-            ("Skill-as-Code", "Change model; freeze Skill source", "contract and path stability", "material drift passes tests"),
-            ("Dual-subgoal reward", "Scalar gate vs dual gate; SkillOpt skeleton frozen",
-             "edits to converge, sub-domain balance, human interventions", "dual gate converges no faster"),
-            ("IR decoupling", "Swap only a source; swap only an output template",
-             "change blast radius, reconstruction accuracy", "edits spread into wiki structures"),
+            ("Skill lifecycle", "Change model; freeze Skill source", "contract, path, postcondition stability", "material drift passes release gate"),
+            ("P15 vector gate", "Scalar vs output vector vs output + process",
+             "Pareto admissions, regressions, attribution, edits", "no gain over output vector; false reasons"),
+            ("P16/P17 IR", "Held-out reconstruction; three change classes",
+             "held-out gap; entry/IR/schema/module edits", "leakage or needless cross-registry edits"),
         ]
-        row_h = 20
+        row_h = 21
         header_h = 20
         total_h = header_h + row_h * len(rows)
         top = y0 + total_h
@@ -474,7 +495,7 @@ class FigureGraphic(Flowable):
             for cidx, (width, text) in enumerate(zip(cols, row)):
                 draw_wrapped(canvas, text, xpos + 4, y + row_h - 4, width - 8,
                              "Helvetica-Bold" if cidx == 0 else "Helvetica",
-                             5.35, "#1f2937", TA_LEFT, 6.15)
+                             5.05, "#1f2937", TA_LEFT, 5.8)
                 xpos += width
         canvas.setStrokeColor(hx("#cbd5e1"))
         canvas.setLineWidth(0.45)

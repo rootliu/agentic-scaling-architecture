@@ -1,5 +1,32 @@
 # CHANGELOG
 
+## v14 — 2026-07-28
+
+### 收紧中心命题与证据边界
+
+- 将 P1 明确为声明运行域 $\Omega$ 内的**充分条件**，不再暗示必要性或普遍独立；共享的 capability-count $\times$ Scaffold-count 因子实验同时检验逻辑轴、物理轴及其交互，并用共享算力、锁、外部服务配额、授权延迟、调度反馈和可变策略注入再耦合因素。
+- Abstract 与贡献列表由五项收束为三项：有界双轴可分离条件、typed capability-to-capacity boundary、可证伪协议。外部数据、上下文分区、IR、locality/dry-run 与 Skill lifecycle 改称 architecture-compatible mechanisms 或 subsystem hypotheses，不再写成 P1 的逻辑推论。
+- Table 1 用 `documented / partial / implicit / not documented / proposed` 区分公开证据与缺失证据，避免把“文档未说明”误判为“系统没有”；本文一行也明确为设计目标而非实证结果。
+
+### 修正局部机制的可检验表述
+
+- Prefix cache 增加 model、tokenizer、policy metadata、tool serialization/order 与 token identity 条件；tool-set 稳定和最小重叠改为需直接测量 cache hit 与任务语义的工程启发式。
+- Amdahl 式物理扩展假设显式加入共享 Harness、锁、配额、授权后端和调度反馈等再耦合项。
+- Satisfaction ratio 限定为版本化、按输出子域登记的 verifier；只有确定性 verifier 或经过校准且阈值预登记的 gate 才能终止派生闭包。
+- Capability trace 只声称解释“已准入并激活”的能力，不把未激活候选误写成可观测事实。
+
+### 加固 P15 / P16 / P17
+
+- P15 定义逐输出子域加 process 的向量准入对象 $R(s)$，以 protected/target components、容差和 Pareto-style gate 防止聚合分数掩盖局部退化；协议改为 scalar、output-vector、output-plus-process 三组对照，并加入 oracle 对 process attribution 的反事实核验。
+- P16 使用严格 train/validation/held-out 划分：预登记用途、字段、结构描述、指标和 margin，禁止 reconstruction agent 访问源凭据，最终 summary 固定后仅检查 held-out 一次。
+- P17 区分 entry-content、registry schema/module 与 cross-registry 三类变更；普通 entry/IR 更新不再被误判为解耦失败，核心可证伪点是单侧变更是否无必要地传播为另一 registry 的 schema/module 修改。
+
+### 图表与产物
+
+- Figure 7 重绘为 Draft → Train → Validate → Staged release → Monitor 两层生命周期，并显示 revalidate、thaw、rollback 与 retire 的可逆路径。
+- Figure 8 更新为 P1 共享因子实验、P15 三组向量准入比较、P16/P17 held-out reconstruction 与三类变更矩阵。
+- 重建 v14 PDF，并执行全文残留扫描与逐页渲染检查。
+
 ## v13 — 2026-07-28
 
 ### Table 1 收回单一维度
