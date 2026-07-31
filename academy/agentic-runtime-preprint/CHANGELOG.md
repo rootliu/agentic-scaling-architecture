@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## v17 — 2026-07-31
+## v18 — 2026-07-31
 
 审查方式：核实 v15/v16（在其他机器上完成），把 §5.1 新增实证段的每个数字与 `2607.18970` 原文逐一比对，并核查 v15 对 GRACE 作者的改动。
 
@@ -15,9 +15,12 @@ v16 新增的 operation-closure 实证段所引六个数字（138,133 / 20,556 /
 - **精度**：原文为 **98.73%**，v16 写作 98.7%，已改回原文精度。
 - **过度断言**：v16 写 "only 32,069 records \emph{reference any} packaged artifact"，而原文明确说明该数字来自一个"narrow lexical detector"且"misses implicit dependencies"。原文能支持的是**下界**而非普查。改为陈述其为 lexical detector 结果、点明作者自陈的漏检局限、并将结论限定为"即便作为下界读也表明相当比例是无声明确定性执行成分的自然语言文本"。
 
-### 待补（已与作者确认处理方式）
+### §5.1 两个无法溯源的案例已移除
 
-- §5.1 中 "The two Skills we read in full"（音频转写 skill、主机加固 skill）目前未给出仓库/路径/固定 revision，审稿人无法核实。将在取得具体出处后补脚注（Skillware 本身即以 fixed-revision 作证据，宜对齐该做法）。
+- v16 以第一人称声称通读了两个 Skill（音频转写、主机加固）。溯源核查结果：**Skillware 原文全文 "audio" / "transcription" / "hardening" 均出现 0 次**；其 13 个 fixed-revision 案例名单为 Superpowers、gstack、ECC、last30days、scientific-schematics、financial-analysis、dot-skill、ui-ux-pro-max、Caveman、design-taste-frontend、darwin-skill、SkillOpt-Sleep、OpenMontage，**不含这两个**；已下载的其余 23 篇论文亦无（AEVAL 中 8 处 "transcript" 全指执行日志 τ，与音频转写无关）。
+- 结论：这两个案例既非出自 Skillware，也无任何可核实来源，而论文却以第一人称观察陈述。**已删除**，改为完全基于 Skillware 已发表测量的论证——论据不依赖它们本就成立。
+- 同时删去 "in the records we examined" 这一失去支撑的第一人称观察，并如实转述作者对两个数字的解释边界（frontmatter 普遍性只支持"结构化元数据封装是可见的主流约定"，明确不支持"字段已被验证"或"跨系统激活语义一致"）。
+- 结论句改为：语料统计所能支持的是"元数据封装是通行约定"，而本架构依赖的**typed 且可独立拒绝的接口**在集合尺度上不可见；这正是 Harness 必须把 closure 作为准入条件强制执行、而不能假定已注册 Skill 具备它的理由。并补一句"能否以可接受成本为既有 Skill 追加 closure 是本文不解决的经验问题"。
 
 ### 未改动（复核后确认无误）
 
@@ -25,15 +28,15 @@ v16 新增的 operation-closure 实证段所引六个数字（138,133 / 20,556 /
 
 ### 重建 PDF
 
-- 生成 `output/pdf/..._v17.pdf`（26 页）；全文扫描无残留反斜杠/花括号、无 `Section\d` 断字、无 `sum_`/`frac` 残留。
+- 生成 `output/pdf/..._v18.pdf`（26 页）；全文扫描无残留反斜杠/花括号、无 `Section\d` 断字、无 `sum_`/`frac` 残留，并确认 "audio"/"hardening"/"read in full" 已不在正文中。
 
 ## v16 — 2026-07-31
 
-在其他机器上完成（本机核实见 v17）：§5.1 新增 operation-closure 实证段，引 SkillMD-138K 语料统计与两个 skill 的通读观察，论证"架构所要求的 closure 并非公开实践的通行约定，故 Harness 必须强制而不能假定"。
+在其他机器上完成（本机核实见 v18）：§5.1 新增 operation-closure 实证段，引 SkillMD-138K 语料统计与两个 skill 的通读观察，论证"架构所要求的 closure 并非公开实践的通行约定，故 Harness 必须强制而不能假定"。
 
 ## v15 — 2026-07-30
 
-在其他机器上完成（本机核实见 v17）：Abstract 收紧为 scoped 表述；Soni 引用改为具名；`hsu2026grace` 作者删减（v17 已回退）；§3.4 增补数据子系统范围说明；§8.4 明确概率控制面的三层结构（probabilistic planning / deterministic execution / deterministic gates）；§8.5 把向量 gate 明示为 design hypothesis 而非逻辑必然；§9.1/§9.2 标题改为 factorial experiment 的两个轴；train-freeze-monitor 术语统一为 train-then-freeze with monitoring。
+在其他机器上完成（本机核实见 v18）：Abstract 收紧为 scoped 表述；Soni 引用改为具名；`hsu2026grace` 作者删减（v18 已回退）；§3.4 增补数据子系统范围说明；§8.4 明确概率控制面的三层结构（probabilistic planning / deterministic execution / deterministic gates）；§8.5 把向量 gate 明示为 design hypothesis 而非逻辑必然；§9.1/§9.2 标题改为 factorial experiment 的两个轴；train-freeze-monitor 术语统一为 train-then-freeze with monitoring。
 
 ## v14 — 2026-07-28
 
