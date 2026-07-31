@@ -1,5 +1,40 @@
 # CHANGELOG
 
+## v17 — 2026-07-31
+
+审查方式：核实 v15/v16（在其他机器上完成），把 §5.1 新增实证段的每个数字与 `2607.18970` 原文逐一比对，并核查 v15 对 GRACE 作者的改动。
+
+### 引用回退修正
+
+- **v15 把 `hsu2026grace` 作者从 `Hsu, Dan C. and Lu, Luke` 删成只剩 `Hsu, Dan C.`，此为回退**。核查 arXiv abs 页 `citation_author` 元数据与论文 PDF 首页：Luke Lu 是共同作者，有独立邮箱 `luke@redmindresearch.org` 与单位 RedMind Research。已恢复两位作者。（v9 当初正是从 arXiv API 核实为两位。）
+
+### §5.1 实证段数字校准
+
+v16 新增的 operation-closure 实证段所引六个数字（138,133 / 20,556 / 136,380 / 98.7% / 32,069 / 23.2%）全部在 `2607.18970` 原文中找到且语义一致，仅两处需收紧：
+
+- **精度**：原文为 **98.73%**，v16 写作 98.7%，已改回原文精度。
+- **过度断言**：v16 写 "only 32,069 records \emph{reference any} packaged artifact"，而原文明确说明该数字来自一个"narrow lexical detector"且"misses implicit dependencies"。原文能支持的是**下界**而非普查。改为陈述其为 lexical detector 结果、点明作者自陈的漏检局限、并将结论限定为"即便作为下界读也表明相当比例是无声明确定性执行成分的自然语言文本"。
+
+### 待补（已与作者确认处理方式）
+
+- §5.1 中 "The two Skills we read in full"（音频转写 skill、主机加固 skill）目前未给出仓库/路径/固定 revision，审稿人无法核实。将在取得具体出处后补脚注（Skillware 本身即以 fixed-revision 作证据，宜对齐该做法）。
+
+### 未改动（复核后确认无误）
+
+- v14 把 Table 1 由 `yes/no` 改为 `documented / partial / implicit / not documented / proposed`，避免把"文档未说明"误读为"系统不具备"——该分级严谨，保留。
+
+### 重建 PDF
+
+- 生成 `output/pdf/..._v17.pdf`（26 页）；全文扫描无残留反斜杠/花括号、无 `Section\d` 断字、无 `sum_`/`frac` 残留。
+
+## v16 — 2026-07-31
+
+在其他机器上完成（本机核实见 v17）：§5.1 新增 operation-closure 实证段，引 SkillMD-138K 语料统计与两个 skill 的通读观察，论证"架构所要求的 closure 并非公开实践的通行约定，故 Harness 必须强制而不能假定"。
+
+## v15 — 2026-07-30
+
+在其他机器上完成（本机核实见 v17）：Abstract 收紧为 scoped 表述；Soni 引用改为具名；`hsu2026grace` 作者删减（v17 已回退）；§3.4 增补数据子系统范围说明；§8.4 明确概率控制面的三层结构（probabilistic planning / deterministic execution / deterministic gates）；§8.5 把向量 gate 明示为 design hypothesis 而非逻辑必然；§9.1/§9.2 标题改为 factorial experiment 的两个轴；train-freeze-monitor 术语统一为 train-then-freeze with monitoring。
+
 ## v14 — 2026-07-28
 
 ### 收紧中心命题与证据边界
