@@ -1047,7 +1047,7 @@ def table_from_latex(block: str, styles, cite_map: dict) -> list:
         weights = []
         for c in range(max_cols):
             lens = [len(rows[r][c]) for r in range(len(rows))]
-            weights.append(min(max(max(lens), 8), 42))
+            weights.append(min(max(max(lens), 24), 42))
         total = sum(weights) or max_cols
         col_widths = [440 * w / total for w in weights]
 
@@ -1275,8 +1275,13 @@ def build_story(tex: str, bib: str, styles) -> list:
                     numbered_title = f"{sec_counter[0]}.{sec_counter[1]}.{sec_counter[2]} {clean_title}"
                 else:
                     numbered_title = clean_title
-                story.append(Paragraph(escape(numbered_title), styles[style_name]))
-                story.append(Spacer(1, 4))
+                heading_style = styles[style_name]
+                heading_spacer = 4
+                if command == "section" and clean_title == "Conclusion":
+                    heading_style = styles["Conclusion"]
+                    heading_spacer = 0
+                story.append(Paragraph(escape(numbered_title), heading_style))
+                story.append(Spacer(1, heading_spacer))
                 if rest:
                     buf.append(rest)
                 i += 1
@@ -1362,6 +1367,12 @@ def make_styles():
         textColor=colors.HexColor("#0f172a"),
         spaceBefore=9,
         spaceAfter=4,
+    )
+    styles["Conclusion"] = ParagraphStyle(
+        "Conclusion",
+        parent=styles["H1"],
+        spaceBefore=4,
+        spaceAfter=2,
     )
     styles["H2"] = ParagraphStyle(
         "H2",

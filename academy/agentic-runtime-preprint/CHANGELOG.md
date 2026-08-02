@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## v20 — 2026-08-03
+
+- Reframed the architecture as enterprise responsibilities: Skill-as-Code as the
+  business capability, Harness as runtime governance, Scaffold as the execution
+  and control boundary, and a CIO-governed semantic and telemetry data
+  foundation.
+- Redrew all eight figures and the responsibility table to make those ownership
+  boundaries legible; split evaluation into business/use-case and
+  system/runtime planes while preserving the P15-P17 controls.
+- Rebuilt the v20 preprint and release-checked its complete text, every
+  rendered page, and the byte identity of the v2-v19 PDFs.
+
 ## v19 — 2026-08-02
 
 - P1 renamed and narrowed to a testable conjecture.

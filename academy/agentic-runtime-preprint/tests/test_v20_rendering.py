@@ -213,6 +213,65 @@ class V20RenderingTests(unittest.TestCase):
         self.assertIn("Business/use-case", rendered_text)
         self.assertIn("System/runtime", rendered_text)
 
+    def test_v20_responsibility_table_does_not_split_boundary_header(self):
+        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v20-test-") as tmp:
+            output = Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v20.pdf"
+            subprocess.run(
+                [
+                    sys.executable,
+                    str(RENDERER),
+                    "--paper-dir",
+                    str(PAPER_SOURCE),
+                    "--output",
+                    str(output),
+                ],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            reader = PdfReader(str(output))
+
+        responsibility_page = next(
+            page
+            for page in reader.pages
+            if "Responsibility boundaries in the proposed architecture." in (page.extract_text() or "")
+        )
+        self.assertIn(
+            "Boundary",
+            responsibility_page.extract_text() or "",
+            "The responsibility-table header must fit on one line",
+        )
+
+    def test_v20_conclusion_does_not_orphan_its_final_clause(self):
+        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v20-test-") as tmp:
+            output = Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v20.pdf"
+            subprocess.run(
+                [
+                    sys.executable,
+                    str(RENDERER),
+                    "--paper-dir",
+                    str(PAPER_SOURCE),
+                    "--output",
+                    str(output),
+                ],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            reader = PdfReader(str(output))
+
+        conclusion_page = next(
+            page
+            for page in reader.pages
+            if "12. Conclusion" in (page.extract_text() or "")
+        )
+        conclusion_text = re.sub(r"\s+", " ", conclusion_page.extract_text() or "")
+        self.assertIn(
+            "organizational, or economic conditions under which they do not.",
+            conclusion_text,
+            "The Conclusion must not leave its final clause on a continuation page",
+        )
+
     def test_split_tables_repeat_the_header_on_every_page(self):
         renderer = load_renderer()
         rows = "\n".join(
