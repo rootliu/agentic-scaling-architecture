@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## v19 — 2026-08-02
+
+- P1 renamed and narrowed to a testable conjecture.
+- Six causal conditions separated from gate/trace observability requirements.
+- Interface semantics and three estimands made explicit.
+- Claim-type/evidence table and AI4Science walkthrough added.
+- P15-P17 controls strengthened.
+- Figure 8 synchronized and v19 PDF rebuilt.
+
 ## v18 — 2026-07-31
 
 审查方式：核实 v15/v16（在其他机器上完成），把 §5.1 新增实证段的每个数字与 `2607.18970` 原文逐一比对，并核查 v15 对 GRACE 作者的改动。

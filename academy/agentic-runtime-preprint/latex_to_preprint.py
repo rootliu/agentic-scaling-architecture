@@ -461,20 +461,22 @@ class FigureGraphic(Flowable):
         cols = [84, 122, 116, table_w - 322]
         headers = ["Claim", "Controlled intervention", "Primary observations", "Counts against claim"]
         rows = [
-            ("P1 logical axis", "Capability x Scaffold grid; add unrelated Skills",
-             "throughput, p95, gates, semantic drift", "factorial interaction exceeds bound"),
-            ("P1 physical axis", "Same grid; add Scaffolds + recoupling arms",
-             "shared metrics, queueing, binding, cost", "capacity changes interface semantics"),
+            ("P1 estimands", "Capability x Scaffold factorial",
+             "semantic invariance; capacity response; interaction/recoupling", "a preregistered margin fails"),
+            ("P1 mechanisms", "Six condition traces; recoupling diagnostic arms",
+             "configuration, binding, information flow, state, resources, scheduler", "conditions pass but P1 margin fails"),
             ("Harness mediation", "Introduce narrow bypasses", "effects, evidence, replay", "bypass has no control impact"),
             ("Control-plane leakage", "Seed canary metadata; vary activation opacity",
              "canary reproduction, prompt tokens, plan accuracy", "canaries leak despite opaque activation"),
             ("Path safety", "Compose locally allowed Skills", "hazard recall, false positives", "real hazards remain inexpressible"),
             ("Dry-run + locality", "Toggle dry-run and placement policy", "overhead, avoided work, bytes moved", "planning costs more than it saves"),
             ("Skill lifecycle", "Change model; freeze Skill source", "contract, path, postcondition stability", "material drift passes release gate"),
-            ("P15 vector gate", "Scalar vs output vector vs output + process",
-             "Pareto admissions, regressions, attribution, edits", "no gain over output vector; false reasons"),
-            ("P16/P17 IR", "Held-out reconstruction; three change classes",
-             "held-out gap; entry/IR/schema/module edits", "leakage or needless cross-registry edits"),
+            ("P15 vector gate", "fixed-bank offline comparison; multi-seed online training",
+             "discrimination, convergence, protected regressions, attribution", "either comparator contrast misses margin"),
+            ("P16 summary", "held-out reconstruction",
+             "direct-reading, metadata, ablation, shuffle controls", "leakage or summary misses joint contrast"),
+            ("P17 registry changes", "preregistered dependency graph",
+             "artifact-change oracle; entry, IR, schema/module blast radius", "unneeded cross-registry propagation"),
         ]
         row_h = 21
         header_h = 20
