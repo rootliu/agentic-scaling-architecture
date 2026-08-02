@@ -7,6 +7,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
+import pdfplumber
 from pypdf import PdfReader
 from reportlab.platypus import SimpleDocTemplate
 
@@ -229,18 +230,45 @@ class V20RenderingTests(unittest.TestCase):
                 capture_output=True,
                 text=True,
             )
-            reader = PdfReader(str(output))
+            with pdfplumber.open(output) as pdf:
+                responsibility_page = next(
+                    page
+                    for page in pdf.pages
+                    if "Responsibility boundaries in the proposed architecture."
+                    in (page.extract_text() or "")
+                )
+                words = responsibility_page.extract_words()
 
-        responsibility_page = next(
-            page
-            for page in reader.pages
-            if "Responsibility boundaries in the proposed architecture." in (page.extract_text() or "")
+        boundary_words = [word for word in words if word["text"] == "Boundary"]
+        self.assertEqual(
+            len(boundary_words),
+            1,
+            "Boundary must render as exactly one PDF word box",
         )
-        self.assertIn(
-            "Boundary",
-            responsibility_page.extract_text() or "",
-            "The responsibility-table header must fit on one line",
-        )
+        boundary = boundary_words[0]
+        for label in ("Business", "Runtime", "Physical", "Enterprise"):
+            candidates = [
+                word
+                for word in words
+                if word["text"] == label and word["x0"] > boundary["x0"]
+            ]
+            self.assertTrue(candidates, f"Missing responsibility-table header {label!r}")
+            header_word = min(
+                candidates,
+                key=lambda word: abs(word["top"] - boundary["top"]),
+            )
+            self.assertAlmostEqual(
+                header_word["top"],
+                boundary["top"],
+                delta=0.5,
+                msg=f"Boundary must share the header line with {label}",
+            )
+            self.assertAlmostEqual(
+                header_word["bottom"],
+                boundary["bottom"],
+                delta=0.5,
+                msg=f"Boundary must share the header line with {label}",
+            )
 
     def test_v20_conclusion_does_not_orphan_its_final_clause(self):
         with tempfile.TemporaryDirectory(prefix="agentic-runtime-v20-test-") as tmp:
