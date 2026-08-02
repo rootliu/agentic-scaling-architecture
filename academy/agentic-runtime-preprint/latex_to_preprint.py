@@ -27,6 +27,15 @@ TITLE = "A Contract-Centered Architecture for Scalable and Manageable Agentic Ru
 AUTHOR = "Yaxiao Liu"
 AUTHOR_EMAIL = "rootliu@gmail.com"
 FIGURE_WIDTH = 462
+PREPRINT_VERSION = "v20"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+DEFAULT_OUTPUT = os.path.join(
+    SCRIPT_DIR,
+    "output",
+    "pdf",
+    "Scalable_Manageable_Agentic_Runtime_Preprint_v20.pdf",
+)
+RESPONSIBILITY_BAND_HEIGHT = 74
 
 
 def hx(value: str):
@@ -73,7 +82,8 @@ class FigureGraphic(Flowable):
         super().__init__()
         self.kind = kind
         self.width = width
-        self.height = height
+        self.content_height = height
+        self.height = height + RESPONSIBILITY_BAND_HEIGHT
         self.hAlign = "CENTER"
 
     def wrap(self, availWidth, availHeight):
@@ -91,7 +101,10 @@ class FigureGraphic(Flowable):
         draw_method = getattr(self, f"_draw_{self.kind}", None)
         if draw_method is None:
             raise ValueError(f"Unknown figure kind: {self.kind}")
+        canvas.translate(0, RESPONSIBILITY_BAND_HEIGHT)
         draw_method(canvas)
+        canvas.translate(0, -RESPONSIBILITY_BAND_HEIGHT)
+        self._draw_responsibility_band(canvas)
         canvas.restoreState()
 
     def _pill(self, canvas, x, y, w, h, title, subtitle="", fill="#ffffff",
@@ -114,8 +127,56 @@ class FigureGraphic(Flowable):
         canvas.restoreState()
         draw_wrapped(canvas, text, x + 4, y + 12, width - 8, "Helvetica-Bold", 6.2, "#ffffff")
 
+    def _draw_responsibility_band(self, canvas):
+        w = self.width
+        x = 14
+        gap = 6
+        card_y = 39
+        card_h = 27
+        card_w = (w - 28 - 2 * gap) / 3
+        roles = [
+            ("Business capability: Skill-as-Code", "#f0fdfa", "#2dd4bf", "#115e59"),
+            ("Runtime governance: Harness", "#eff6ff", "#60a5fa", "#1d4ed8"),
+            ("Execution and control boundary: Scaffold", "#fffbeb", "#f59e0b", "#92400e"),
+        ]
+        for index, (label, fill, stroke, color) in enumerate(roles):
+            role_x = x + index * (card_w + gap)
+            self._pill(canvas, role_x, card_y, card_w, card_h, label, "",
+                       fill, stroke, color)
+            if index:
+                draw_arrow(canvas, role_x - gap, card_y + card_h / 2, role_x, card_y + card_h / 2,
+                           "#64748b", 0.75)
+
+        substrate_y = 8
+        substrate_h = 21
+        self._pill(
+            canvas,
+            x,
+            substrate_y,
+            w - 28,
+            substrate_h,
+            "CIO-governed semantic and telemetry foundation: data substrate",
+            "",
+            "#f5f3ff",
+            "#a78bfa",
+            "#5b21b6",
+        )
+        harness_x = x + card_w + gap + card_w / 2
+        draw_arrow(
+            canvas,
+            harness_x,
+            substrate_y + substrate_h,
+            harness_x,
+            card_y,
+            "#7c3aed",
+            0.8,
+            dashed=True,
+        )
+        draw_wrapped(canvas, "governed-contract access", harness_x + 4, 35, 92,
+                     "Helvetica", 4.9, "#5b21b6", TA_LEFT)
+
     def _draw_dual_scaling(self, canvas):
-        w, h = self.width, self.height
+        w, h = self.width, self.content_height
         draw_wrapped(canvas, "One runtime, two scaling axes", 18, h - 12, w - 36,
                      "Helvetica-Bold", 9.2, "#0f172a")
 
@@ -157,7 +218,7 @@ class FigureGraphic(Flowable):
             draw_arrow(canvas, w / 2 + 61, 90, w - 134, y, "#b45309", 0.9)
 
     def _draw_harness_contract(self, canvas):
-        w, h = self.width, self.height
+        w, h = self.width, self.content_height
         draw_wrapped(canvas, "From generated intent to governed execution", 18, h - 12, w - 36,
                      "Helvetica-Bold", 9.2, "#0f172a")
         self._pill(canvas, 16, 89, 86, 44, "Request context", "intent + identity\npolicy snapshot",
@@ -203,7 +264,7 @@ class FigureGraphic(Flowable):
                      "Helvetica-Bold", 6.0, "#475569")
 
     def _draw_control_data(self, canvas):
-        w, h = self.width, self.height
+        w, h = self.width, self.content_height
         draw_wrapped(canvas, "Control-plane activation versus request-path leakage", 18, h - 12, w - 36,
                      "Helvetica-Bold", 9.2, "#0f172a")
         gap = 12
@@ -245,7 +306,7 @@ class FigureGraphic(Flowable):
                      "Helvetica", 5.8, "#be123c")
 
     def _draw_derivation_closure(self, canvas):
-        w, h = self.width, self.height
+        w, h = self.width, self.content_height
         draw_wrapped(canvas, "Derivation closure: bounded sub-agents, satisfaction-driven loop",
                      18, h - 12, w - 36, "Helvetica-Bold", 9.2, "#0f172a")
 
@@ -328,27 +389,41 @@ class FigureGraphic(Flowable):
                    "#ffffff", "#94a3b8", "#334155")
 
     def _draw_external_data(self, canvas):
-        w, h = self.width, self.height
+        w, h = self.width, self.content_height
         draw_wrapped(canvas, "External data is a governed contract path", 18, h - 12, w - 36,
                      "Helvetica-Bold", 9.2, "#0f172a")
-        stages = [
-            (14, 80, 68, 46, "Sources", "warehouse\ndocuments | APIs", "#f8fafc", "#94a3b8"),
-            (96, 80, 78, 46, "Data adapter", "discover + query\nno task semantics", "#f0fdfa", "#2dd4bf"),
-            (188, 69, 112, 68, "Harness contract", "auth + policy\nschema + snapshot\nresidency + budget", "#eff6ff", "#2563eb"),
-            (314, 80, 62, 46, "Sandbox", "bound credential\nisolated fetch", "#fffbeb", "#f59e0b"),
-        ]
-        for x, y, bw, bh, title, subtitle, fill, stroke in stages:
-            self._pill(canvas, x, y, bw, bh, title, subtitle, fill, stroke, "#0f172a")
-        self._pill(canvas, 390, 80, 56, 46, "Evidence", "typed bundle\nprovenance ID",
+        canvas.saveState()
+        canvas.setFillColor(hx("#f5f3ff"))
+        canvas.setStrokeColor(hx("#a78bfa"))
+        canvas.setLineWidth(0.9)
+        canvas.roundRect(16, 54, 132, 83, 6, stroke=1, fill=1)
+        canvas.restoreState()
+        self._section_label(canvas, "CIO DATA FOUNDATION", 24, 116, 116, "#7c3aed")
+        self._pill(canvas, 26, 84, 50, 24, "Sources", "warehouse", "#ffffff", "#c4b5fd", "#5b21b6")
+        self._pill(canvas, 86, 84, 50, 24, "Sources", "documents | APIs", "#ffffff", "#c4b5fd", "#5b21b6")
+        draw_wrapped(canvas, "semantic catalog | residency policy | telemetry",
+                     26, 78, 110, "Helvetica-Bold", 5.7, "#5b21b6")
+        draw_wrapped(canvas, "independent data governance; no task semantics",
+                     24, 62, 116, "Helvetica", 5.4, "#5b21b6")
+
+        self._pill(canvas, 174, 64, 122, 70, "Harness contract",
+                   "authorized source\nschema + snapshot\nprincipal + budget\nprovenance duty",
+                   "#eff6ff", "#2563eb", "#1d4ed8")
+        self._pill(canvas, 322, 76, 62, 46, "Scaffold", "bound credential\nisolated fetch",
+                   "#fffbeb", "#f59e0b", "#92400e")
+        self._pill(canvas, 400, 76, 46, 46, "Evidence", "typed bundle\nlineage ID",
                    "#ecfdf5", "#10b981", "#047857")
-        for x1, x2 in [(82, 96), (174, 188), (300, 314), (376, 390)]:
-            draw_arrow(canvas, x1, 103, x2, 103, "#475569")
+        draw_arrow(canvas, 148, 96, 174, 96, "#7c3aed", 1.0, dashed=True)
+        draw_arrow(canvas, 296, 99, 322, 99, "#2563eb")
+        draw_arrow(canvas, 384, 99, 400, 99, "#b45309")
+        draw_wrapped(canvas, "governed contract", 149, 84, 54, "Helvetica-Bold", 5.4,
+                     "#5b21b6", TA_LEFT)
 
         canvas.setStrokeColor(hx("#cbd5e1"))
         canvas.setDash(3, 2)
-        canvas.line(16, 55, w - 16, 55)
+        canvas.line(16, 42, w - 16, 42)
         canvas.setDash()
-        draw_wrapped(canvas, "Recorded obligations", 18, 48, 92,
+        draw_wrapped(canvas, "Recorded obligations", 18, 35, 92,
                      "Helvetica-Bold", 6.2, "#475569", TA_LEFT)
         obligations = [
             ("principal", "#dbeafe", 56),
@@ -360,12 +435,12 @@ class FigureGraphic(Flowable):
         ox = 114
         for label, fill, bw in obligations:
             canvas.setFillColor(hx(fill))
-            canvas.roundRect(ox, 28, bw, 17, 3, stroke=0, fill=1)
-            draw_wrapped(canvas, label, ox + 3, 40, bw - 6, "Helvetica-Bold", 5.2, "#334155")
+            canvas.roundRect(ox, 15, bw, 17, 3, stroke=0, fill=1)
+            draw_wrapped(canvas, label, ox + 3, 27, bw - 6, "Helvetica-Bold", 5.2, "#334155")
             ox += bw + 5
 
     def _draw_dry_run(self, canvas):
-        w, h = self.width, self.height
+        w, h = self.width, self.content_height
         draw_wrapped(canvas, "Dry-run exposes parallelism, locality, and effects before commit", 18, h - 12, w - 36,
                      "Helvetica-Bold", 9.2, "#0f172a")
         self._section_label(canvas, "1  PLAN + VALIDATE", 16, 128, 122, "#2563eb")
@@ -401,7 +476,7 @@ class FigureGraphic(Flowable):
                      20, 29, w - 40, "Helvetica-Bold", 6.0, "#475569")
 
     def _draw_skill_lifecycle(self, canvas):
-        w, h = self.width, self.height
+        w, h = self.width, self.content_height
         draw_wrapped(canvas, "Skill-as-Code: capability growth as a release lifecycle", 18, h - 12, w - 36,
                      "Helvetica-Bold", 9.2, "#0f172a")
         stages = [
@@ -453,62 +528,120 @@ class FigureGraphic(Flowable):
                      "Helvetica-Bold", 5.8, "#64748b")
 
     def _draw_evaluation_matrix(self, canvas):
-        w, h = self.width, self.height
+        w, h = self.width, self.content_height
         draw_wrapped(canvas, "Falsification matrix", 18, h - 10, w - 36,
                      "Helvetica-Bold", 9.2, "#0f172a")
-        x0, y0 = 12, 10
-        table_w = w - 24
-        cols = [84, 122, 116, table_w - 322]
-        headers = ["Claim", "Controlled intervention", "Primary observations", "Counts against claim"]
-        rows = [
-            ("P1 estimands", "Capability x Scaffold factorial",
-             "semantic invariance; capacity response; interaction/recoupling", "a preregistered margin fails"),
-            ("P1 mechanisms", "Six condition traces; recoupling diagnostic arms",
-             "configuration, binding, information flow, state, resources, scheduler", "conditions pass but P1 margin fails"),
-            ("Harness mediation", "Introduce narrow bypasses", "effects, evidence, replay", "bypass has no control impact"),
-            ("Control-plane leakage", "Seed canary metadata; vary activation opacity",
-             "canary reproduction, prompt tokens, plan accuracy", "canaries leak despite opaque activation"),
-            ("Path safety", "Compose locally allowed Skills", "hazard recall, false positives", "real hazards remain inexpressible"),
-            ("Dry-run + locality", "Toggle dry-run and placement policy", "overhead, avoided work, bytes moved", "planning costs more than it saves"),
-            ("Skill lifecycle", "Change model; freeze Skill source", "contract, path, postcondition stability", "material drift passes release gate"),
-            ("P15 vector gate", "fixed-bank offline comparison; multi-seed online training",
-             "discrimination, convergence, protected regressions, attribution", "either comparator contrast misses margin"),
-            ("P16 summary", "held-out reconstruction",
-             "direct-reading, metadata, ablation, shuffle controls", "leakage or summary misses joint contrast"),
-            ("P17 registry changes", "preregistered dependency graph",
-             "artifact-change oracle; entry, IR, schema/module blast radius", "unneeded cross-registry propagation"),
+        panel_y = 129
+        panel_h = 96
+        panel_gap = 14
+        panel_w = (w - 32 - panel_gap) / 2
+        panels = [
+            (
+                16,
+                "BUSINESS / USE-CASE PLANE",
+                "Business/use-case evaluation",
+                "Does the versioned Skill improve the declared workflow for its users?",
+                "task outcome | quality | cycle time | correction | adoption",
+                "#f0fdfa",
+                "#0f766e",
+                "#115e59",
+            ),
+            (
+                16 + panel_w + panel_gap,
+                "SYSTEM / RUNTIME PLANE",
+                "System/runtime evaluation",
+                "Does the admitted path meet its contract and enterprise NFR envelope?",
+                "gate + trace integrity | isolation | capacity | latency | cost",
+                "#eff6ff",
+                "#2563eb",
+                "#1d4ed8",
+            ),
         ]
-        row_h = 21
-        header_h = 20
-        total_h = header_h + row_h * len(rows)
-        top = y0 + total_h
-        canvas.setFillColor(hx("#e2e8f0"))
-        canvas.rect(x0, top - header_h, table_w, header_h, stroke=0, fill=1)
-        xpos = x0
-        for width, header in zip(cols, headers):
-            draw_wrapped(canvas, header, xpos + 4, top - 5, width - 8,
-                         "Helvetica-Bold", 5.8, "#0f172a", TA_LEFT, 6.8)
-            xpos += width
-        for ridx, row in enumerate(rows):
-            y = top - header_h - (ridx + 1) * row_h
-            canvas.setFillColor(hx("#ffffff" if ridx % 2 == 0 else "#f8fafc"))
-            canvas.rect(x0, y, table_w, row_h, stroke=0, fill=1)
-            xpos = x0
-            for cidx, (width, text) in enumerate(zip(cols, row)):
-                draw_wrapped(canvas, text, xpos + 4, y + row_h - 4, width - 8,
-                             "Helvetica-Bold" if cidx == 0 else "Helvetica",
-                             5.05, "#1f2937", TA_LEFT, 5.8)
-                xpos += width
-        canvas.setStrokeColor(hx("#cbd5e1"))
-        canvas.setLineWidth(0.45)
-        xpos = x0
-        for width in cols:
-            canvas.line(xpos, y0, xpos, top)
-            xpos += width
-        canvas.line(xpos, y0, xpos, top)
-        for r in range(len(rows) + 2):
-            y = top - header_h - (r - 1) * row_h if r > 0 else top
-            canvas.line(x0, y, x0 + table_w, y)
+        for x, section, title, question, measures, fill, stroke, color in panels:
+            canvas.saveState()
+            canvas.setFillColor(hx(fill))
+            canvas.setStrokeColor(hx(stroke))
+            canvas.setLineWidth(0.85)
+            canvas.roundRect(x, panel_y, panel_w, panel_h, 6, stroke=1, fill=1)
+            canvas.restoreState()
+            self._section_label(canvas, section, x + 8, panel_y + panel_h - 21, panel_w - 16, stroke)
+            draw_wrapped(canvas, title, x + 10, panel_y + panel_h - 34, panel_w - 20,
+                         "Helvetica-Bold", 7.1, color, TA_LEFT)
+            draw_wrapped(canvas, question, x + 10, panel_y + 47, panel_w - 20,
+                         "Helvetica", 6.0, "#334155", TA_LEFT, 7.1)
+            draw_wrapped(canvas, measures, x + 10, panel_y + 22, panel_w - 20,
+                         "Helvetica-Bold", 5.65, color, TA_LEFT, 6.7)
+
+        draw_wrapped(canvas, "Each release names evidence from both planes; success in one does not substitute for the other.",
+                     22, 117, w - 44, "Helvetica-Bold", 6.15, "#475569")
+        draw_wrapped(canvas, "Protocol controls: preregistered intervention, fixed decision rule, and an explicit condition that counts against the claim.",
+                     22, 105, w - 44, "Helvetica", 5.75, "#475569")
+
+        protocol_y = 16
+        protocol_h = 76
+        protocol_gap = 8
+        protocol_w = (w - 32 - 2 * protocol_gap) / 3
+        protocols = [
+            (
+                "P15",
+                "vector gate",
+                "fixed proposal bank\nseparate (c)-(a) and (c)-(b) margins\nmulti-seed online\nfirst-attempt grading\nindependent grader\nphantom-violation oracle",
+                "#f5f3ff",
+                "#7c3aed",
+                "#5b21b6",
+            ),
+            (
+                "P16",
+                "summary reconstruction",
+                "strict held-out\ntoken-matched direct reading\nmetadata-only\nfield ablation\nshuffled summaries\njoint contrast",
+                "#ecfeff",
+                "#0891b2",
+                "#155e75",
+            ),
+            (
+                "P17",
+                "registry change control",
+                "preregistered dependency graph\nartifact-change oracle\nexpected versus unanticipated propagation",
+                "#fff7ed",
+                "#ea580c",
+                "#9a3412",
+            ),
+        ]
+        for index, (pid, title, detail, fill, stroke, color) in enumerate(protocols):
+            x = 16 + index * (protocol_w + protocol_gap)
+            canvas.saveState()
+            canvas.setFillColor(hx(fill))
+            canvas.setStrokeColor(hx(stroke))
+            canvas.setLineWidth(0.8)
+            canvas.roundRect(x, protocol_y, protocol_w, protocol_h, 6, stroke=1, fill=1)
+            canvas.restoreState()
+            used = draw_wrapped(
+                canvas,
+                f"{pid}  {title}",
+                x + 6,
+                protocol_y + protocol_h - 7,
+                protocol_w - 12,
+                "Helvetica-Bold",
+                7.2,
+                color,
+                TA_LEFT,
+            )
+            draw_wrapped(
+                canvas,
+                detail,
+                x + 6,
+                protocol_y + protocol_h - 8.5 - used,
+                protocol_w - 12,
+                "Helvetica",
+                5.1,
+                "#475569",
+                TA_LEFT,
+                6.15,
+            )
+            if index < len(protocols) - 1:
+                draw_arrow(canvas, x + protocol_w, protocol_y + protocol_h / 2,
+                           x + protocol_w + protocol_gap, protocol_y + protocol_h / 2,
+                           "#64748b", 0.75)
 
 
 def strip_comments(text: str) -> str:
@@ -909,7 +1042,7 @@ def table_from_latex(block: str, styles, cite_map: dict) -> list:
         data.append([Paragraph(escape(c), header_style if ridx == 0 else cell_style) for c in row])
 
     if max_cols == 4:
-        col_widths = [70, 134, 146, 90]
+        col_widths = [90, 124, 136, 90]
     else:
         weights = []
         for c in range(max_cols):
@@ -1354,7 +1487,7 @@ def build_pdf(paper_dir: str, output_pdf: str):
         bottomMargin=0.72 * inch,
         title=TITLE,
         author=f"{AUTHOR} <{AUTHOR_EMAIL}>",
-        subject="Scalable and manageable agentic runtime architecture",
+        subject=f"{PREPRINT_VERSION} enterprise agentic runtime responsibility architecture",
     )
     styles = make_styles()
     story = build_story(tex, bib, styles)
@@ -1364,7 +1497,7 @@ def build_pdf(paper_dir: str, output_pdf: str):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--paper-dir", required=True)
-    parser.add_argument("--output", required=True)
+    parser.add_argument("--output", default=DEFAULT_OUTPUT)
     args = parser.parse_args()
     build_pdf(args.paper_dir, args.output)
     print(args.output)
