@@ -214,6 +214,134 @@ class V20RenderingTests(unittest.TestCase):
         self.assertIn("Business/use-case", rendered_text)
         self.assertIn("System/runtime", rendered_text)
 
+    def test_v20_tables_have_sequential_captions_and_accurate_references(self):
+        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v20-test-") as tmp:
+            output = Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v20.pdf"
+            subprocess.run(
+                [
+                    sys.executable,
+                    str(RENDERER),
+                    "--paper-dir",
+                    str(PAPER_SOURCE),
+                    "--output",
+                    str(output),
+                ],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            reader = PdfReader(str(output))
+
+        rendered_text = re.sub(
+            r"\s+",
+            " ",
+            "\n".join(page.extract_text() or "" for page in reader.pages),
+        )
+        expected_captions = [
+            "Table 1. Enterprise ownership, typical change cadence, and stable contract.",
+            "Table 2. Responsibility boundaries in the proposed architecture.",
+            "Table 3. Claim types and evidence status.",
+            "Table 4. Two required evidence planes for enterprise adoption.",
+        ]
+        for caption in expected_captions:
+            self.assertIn(caption, rendered_text)
+        expected_references = [
+            "Table 1 is a responsibility model",
+            "Table 2 instead states the ownership",
+            "Table 3 separates claim type",
+            "both planes in Table 4",
+        ]
+        for reference in expected_references:
+            self.assertIn(reference, rendered_text)
+
+    def test_v20_pdf_has_no_raw_math_control_leaks(self):
+        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v20-test-") as tmp:
+            output = Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v20.pdf"
+            subprocess.run(
+                [
+                    sys.executable,
+                    str(RENDERER),
+                    "--paper-dir",
+                    str(PAPER_SOURCE),
+                    "--output",
+                    str(output),
+                ],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            reader = PdfReader(str(output))
+
+        rendered_text = "\n".join(page.extract_text() or "" for page in reader.pages)
+        for raw_leak in ("lambda", "sigma_out", "AND over", ">="):
+            self.assertNotIn(raw_leak, rendered_text)
+
+    def test_rendered_references_preserve_traceability_fields(self):
+        renderer = load_renderer()
+        tex = r"""
+        \documentclass{article}
+        Traceable source \cite{traceable}.
+        \begin{document}
+        \end{document}
+        """
+        bib = r"""
+        @article{traceable,
+          title={Traceable Runtime Evidence},
+          author={Example, Ada},
+          journal={Systems Journal},
+          year={2026},
+          date={2026-06-01},
+          volume={14},
+          number={4},
+          pages={28--31},
+          doi={10.1234/example.2026.1},
+          url={https://example.org/release}
+        }
+        """
+        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v20-reference-") as tmp:
+            output = Path(tmp) / "references.pdf"
+            story = renderer.build_story(tex, bib, renderer.make_styles())
+            SimpleDocTemplate(str(output)).build(story)
+            reader = PdfReader(str(output))
+
+        rendered_text = re.sub(
+            r"\s+",
+            " ",
+            "\n".join(page.extract_text() or "" for page in reader.pages),
+        )
+        self.assertIn("2026-06-01.", rendered_text)
+        self.assertIn("Volume 14, issue 4, pages 28-31.", rendered_text)
+        self.assertIn("DOI: 10.1234/example.2026.1.", rendered_text)
+        self.assertIn("URL: https://example.org/release.", rendered_text)
+
+    def test_figure_eight_shows_directed_runtime_contracts(self):
+        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v20-test-") as tmp:
+            output = Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v20.pdf"
+            subprocess.run(
+                [
+                    sys.executable,
+                    str(RENDERER),
+                    "--paper-dir",
+                    str(PAPER_SOURCE),
+                    "--output",
+                    str(output),
+                ],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            reader = PdfReader(str(output))
+
+        figure_eight = figure_page_text(reader, 8)
+        expected_relationships = [
+            "Skill -> Harness: versioned capability contract",
+            "Harness -> Scaffold: admission + compatible capacity binding",
+            "Harness <-> data substrate: semantic join + governed evidence",
+            "Scaffold -> Harness: enforceable execution facts",
+        ]
+        for relationship in expected_relationships:
+            self.assertIn(relationship, figure_eight)
+
     def test_v20_responsibility_table_does_not_split_boundary_header(self):
         with tempfile.TemporaryDirectory(prefix="agentic-runtime-v20-test-") as tmp:
             output = Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v20.pdf"

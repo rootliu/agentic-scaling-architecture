@@ -324,7 +324,7 @@ class FigureGraphic(Flowable):
         self._pill(canvas, mx, join_y, mw, col_h, "semantic join + top-k",
                    "best-supported evidence\nper output field", "#ffffff", "#60a5fa", "#1d4ed8")
         self._pill(canvas, mx, sat_y, mw, col_h, "satisfaction ratio",
-                   "sat(sigma_out) over\ndeclared sub-domains", "#f5f3ff", "#8b5cf6", "#5b21b6")
+                   "satisfied output domains over\ndeclared sub-domains", "#f5f3ff", "#8b5cf6", "#5b21b6")
 
         sx = mx + mw + 26
         sw = w - sx - 16
@@ -531,6 +531,25 @@ class FigureGraphic(Flowable):
         w, h = self.width, self.content_height
         draw_wrapped(canvas, "Falsification matrix", 18, h - 10, w - 36,
                      "Helvetica-Bold", 9.2, "#0f172a")
+        relationships = [
+            "Skill -> Harness: versioned capability contract",
+            "Harness -> Scaffold: admission + compatible capacity binding",
+            "Harness <-> data substrate: semantic join + governed evidence",
+            "Scaffold -> Harness: enforceable execution facts",
+        ]
+        for index, relationship in enumerate(relationships):
+            draw_wrapped(
+                canvas,
+                relationship,
+                22,
+                h - 28 - index * 12,
+                w - 44,
+                "Helvetica-Bold",
+                6.3,
+                "#334155",
+                TA_LEFT,
+                7.2,
+            )
         panel_y = 129
         panel_h = 96
         panel_gap = 14
@@ -633,10 +652,10 @@ class FigureGraphic(Flowable):
                 protocol_y + protocol_h - 8.5 - used,
                 protocol_w - 12,
                 "Helvetica",
-                5.1,
+                5.4,
                 "#475569",
                 TA_LEFT,
-                6.15,
+                6.3,
             )
             if index < len(protocols) - 1:
                 draw_arrow(canvas, x + protocol_w, protocol_y + protocol_h / 2,
@@ -736,9 +755,23 @@ def citation_order(tex: str) -> list[str]:
     return keys
 
 
+def table_label_map(tex: str) -> dict[str, int]:
+    labels = {}
+    table_pattern = re.compile(
+        r"\\begin\{table\*?\}(?:\[[^\]]+\])?.*?\\end\{table\*?\}",
+        re.S,
+    )
+    for number, match in enumerate(table_pattern.finditer(tex), start=1):
+        label_match = re.search(r"\\label\{([^}]+)\}", match.group(0))
+        if label_match:
+            labels[label_match.group(1)] = number
+    return labels
+
+
 def clean_math(text: str) -> str:
     text = re.sub(r"\\xrightarrow\{\\mathcal\{([^}]+)\}\}", r"-[\1]->", text)
-    text = re.sub(r"\\bigwedge_([A-Za-z0-9]+)", r"AND over \1", text)
+    text = re.sub(r"\\bigwedge_([A-Za-z0-9]+)", r"conjunction over \1", text)
+    text = re.sub(r"\\sigma(?:\^\{out\}|_\{?out\}?)", "output schema", text)
     # Two adjacent LaTeX commands (e.g. \lambda\rho) must not fuse into one
     # word once each resolves to a bare identifier; separate them first.
     text = re.sub(r"(\\[A-Za-z]+)(?=\\[A-Za-z])", r"\1 ", text)
@@ -750,13 +783,13 @@ def clean_math(text: str) -> str:
         r"\Theta": "Theta",
         r"\phi": "phi",
         r"\pi": "pi",
-        r"\sigma": "sigma",
+        r"\sigma": "output schema",
         r"\rho": "rho",
         r"\tau": "tau",
-        r"\lambda": "lambda",
+        r"\lambda": "overlap coefficient",
         r"\mu": "mu",
-        r"\geq": ">=",
-        r"\leq": "<=",
+        r"\geq": " at least ",
+        r"\leq": " at most ",
         r"\approx": "~",
         r"\equiv": "==",
         r"\times": "x",
@@ -816,11 +849,19 @@ def clean_math(text: str) -> str:
     return text
 
 
-def clean_latex(text: str, cite_map: dict | None = None) -> str:
+def clean_latex(
+    text: str,
+    cite_map: dict | None = None,
+    table_map: dict[str, int] | None = None,
+) -> str:
     cite_map = cite_map or {}
+    table_map = table_map or {}
     text = text.replace("\r", " ").replace("\n", " ")
     text = re.sub(r"\\xrightarrow\{\\mathcal\{([^}]+)\}\}", r"-[\1]->", text)
-    text = re.sub(r"\\bigwedge_([A-Za-z0-9]+)", r"AND over \1", text)
+    text = re.sub(r"\\bigwedge_([A-Za-z0-9]+)", r"conjunction over \1", text)
+    text = re.sub(r"\\sigma(?:\^\{out\}|_\{?out\}?)", "output schema", text)
+    text = text.replace(r"\lambda", "overlap coefficient")
+    text = text.replace(r"\geq", " at least ").replace(r"\leq", " at most ")
     text = text.replace("Guti茅rrez", "Gutierrez").replace("guti茅rrez", "gutierrez")
     text = re.sub(r'\{\\"([A-Za-z])\}', r"\1", text)
     text = re.sub(r'\\"([A-Za-z])', r"\1", text)
@@ -854,7 +895,12 @@ def clean_latex(text: str, cite_map: dict | None = None) -> str:
         return "[" + ", ".join(nums) + "]"
 
     text = re.sub(r"\\cite[a-zA-Z*]*\s*(?:\[[^\]]*\])?\s*\{([^}]+)\}", cite_repl, text)
-    text = re.sub(r"\bTable\s+\\ref\{[^}]+\}", "the table", text)
+    def table_ref_repl(match):
+        label = match.group(1)
+        number = table_map.get(label)
+        return f"Table {number}" if number is not None else "the table"
+
+    text = re.sub(r"\bTable\s+\\ref\{([^}]+)\}", table_ref_repl, text)
     text = re.sub(r"\bFigure\s+\\ref\{[^}]+\}", "the figure", text)
     text = re.sub(r"\bSection\s+\\ref\{[^}]+\}", "the section", text)
     text = re.sub(r"\bProposition\s+\\ref\{prop:p([0-9]+)\}", lambda m: f"Proposition P{m.group(1)}", text)
@@ -890,8 +936,13 @@ def clean_latex(text: str, cite_map: dict | None = None) -> str:
     return text
 
 
-def para(text: str, style: ParagraphStyle, cite_map: dict | None = None) -> Paragraph:
-    return Paragraph(escape(clean_latex(text, cite_map)), style)
+def para(
+    text: str,
+    style: ParagraphStyle,
+    cite_map: dict | None = None,
+    table_map: dict[str, int] | None = None,
+) -> Paragraph:
+    return Paragraph(escape(clean_latex(text, cite_map, table_map)), style)
 
 
 def split_document_body(tex: str) -> str:
@@ -982,24 +1033,33 @@ def extract_command_arg(block: str, command: str) -> str | None:
     return None
 
 
-def clean_table_cell(cell: str, cite_map: dict) -> str:
+def clean_table_cell(cell: str, cite_map: dict, table_map: dict[str, int]) -> str:
     raw = cell.strip()
     if re.fullmatch(r"\$?\s*\\checkmark\s*\$?", raw):
         return "yes"
     if re.fullmatch(r"\$?\s*\\times\s*\$?", raw):
         return "no"
-    return clean_latex(cell, cite_map)
+    return clean_latex(cell, cite_map, table_map)
 
 
-def table_from_latex(block: str, styles, cite_map: dict) -> list:
+def table_from_latex(
+    block: str,
+    styles,
+    cite_map: dict,
+    table_map: dict[str, int] | None = None,
+    table_number: int = 1,
+) -> list:
+    table_map = table_map or {}
     caption = ""
     caption_arg = extract_command_arg(block, "caption")
     if caption_arg:
-        caption = clean_latex(caption_arg, cite_map)
+        caption = clean_latex(caption_arg, cite_map, table_map)
 
     elements = []
     if caption:
-        elements.append(Paragraph("<b>Table.</b> " + escape(caption), styles["Caption"]))
+        elements.append(
+            Paragraph(f"<b>Table {table_number}.</b> " + escape(caption), styles["Caption"])
+        )
         elements.append(Spacer(1, 4))
     raw = extract_tabular_body(block)
     if raw is None:
@@ -1012,7 +1072,7 @@ def table_from_latex(block: str, styles, cite_map: dict) -> list:
         part = part.strip()
         if not part or "&" not in part:
             continue
-        cells = [clean_table_cell(c, cite_map) for c in part.split("&")]
+        cells = [clean_table_cell(c, cite_map, table_map) for c in part.split("&")]
         rows.append(cells)
     if not rows:
         return elements
@@ -1071,22 +1131,44 @@ def table_from_latex(block: str, styles, cite_map: dict) -> list:
     return [KeepTogether(elements)]
 
 
-def figure_caption_from_latex(block: str, cite_map: dict) -> str:
+def figure_caption_from_latex(
+    block: str,
+    cite_map: dict,
+    table_map: dict[str, int],
+) -> str:
     caption_arg = extract_command_arg(block, "caption")
-    return clean_latex(caption_arg, cite_map) if caption_arg else "Source figure from the LaTeX manuscript."
+    return (
+        clean_latex(caption_arg, cite_map, table_map)
+        if caption_arg
+        else "Source figure from the LaTeX manuscript."
+    )
 
 
-def proposition_from_latex(block: str, styles, cite_map: dict) -> list:
+def proposition_from_latex(
+    block: str,
+    styles,
+    cite_map: dict,
+    table_map: dict[str, int],
+) -> list:
     title_match = re.search(r"\\begin\{proposition\}(?:\[([^\]]+)\])?", block)
-    title = clean_latex(title_match.group(1), cite_map) if title_match and title_match.group(1) else "Proposition"
+    title = (
+        clean_latex(title_match.group(1), cite_map, table_map)
+        if title_match and title_match.group(1)
+        else "Proposition"
+    )
     body = re.sub(r"\\begin\{proposition\}(?:\[[^\]]+\])?", "", block)
     body = re.sub(r"\\end\{proposition\}", "", body)
-    body = clean_latex(body, cite_map)
+    body = clean_latex(body, cite_map, table_map)
     text = f"<b>{escape(title)}.</b> {escape(body)}"
     return [Paragraph(text, styles["Proposition"]), Spacer(1, 7)]
 
 
-def code_block(block: str, styles, cite_map: dict) -> list:
+def code_block(
+    block: str,
+    styles,
+    cite_map: dict,
+    table_map: dict[str, int],
+) -> list:
     if r"\mathcal{P}_{\text{raw}}" in block and r"\mathcal{P}_{\text{full}}" in block:
         lines = [
             "Retrieval policies:",
@@ -1116,19 +1198,25 @@ def code_block(block: str, styles, cite_map: dict) -> list:
     block = block.replace(r"\mapsto", "->")
     block = block.replace(r"\in", " in ")
     block = block.replace(r"\cdot", "*")
-    text = clean_latex(block, cite_map)
+    text = clean_latex(block, cite_map, table_map)
     text = re.sub(r"[ \t]+", " ", text).strip()
     return [Paragraph(escape(text).replace("\n", "<br/>"), styles["Formula"]), Spacer(1, 6)]
 
 
-def parse_items(block: str, styles, cite_map: dict, ordered: bool = False) -> list:
+def parse_items(
+    block: str,
+    styles,
+    cite_map: dict,
+    table_map: dict[str, int],
+    ordered: bool = False,
+) -> list:
     block = re.sub(r"\\begin\{(?:itemize|enumerate)\*?\}(?:\[[^\]]+\])?", "", block)
     block = re.sub(r"\\end\{(?:itemize|enumerate)\*?\}", "", block)
     parts = re.split(r"\\item\b", block)
     elements = []
     n = 1
     for part in parts[1:]:
-        txt = clean_latex(part, cite_map)
+        txt = clean_latex(part, cite_map, table_map)
         if not txt:
             continue
         bullet = f"{n}." if ordered else "-"
@@ -1141,6 +1229,7 @@ def parse_items(block: str, styles, cite_map: dict, ordered: bool = False) -> li
 def build_story(tex: str, bib: str, styles) -> list:
     cite_keys = citation_order(tex)
     cite_map = {k: i + 1 for i, k in enumerate(cite_keys)}
+    table_map = table_label_map(tex)
     entries = balanced_entries(bib)
     body = split_document_body(tex)
     lines = body.splitlines()
@@ -1181,10 +1270,11 @@ def build_story(tex: str, bib: str, styles) -> list:
         "fig:external-data": ("external_data", 176),
         "fig:dry-run": ("dry_run", 176),
         "fig:skill-as-code": ("skill_lifecycle", 176),
-        "fig:evaluation-matrix": ("evaluation_matrix", 250),
+        "fig:evaluation-matrix": ("evaluation_matrix", 310),
     }
 
     sec_counter = [0, 0, 0]
+    table_no = 0
     buf = []
 
     def flush():
@@ -1193,11 +1283,16 @@ def build_story(tex: str, bib: str, styles) -> list:
         if text:
             m = re.match(r"\\paragraph\{([^}]+)\}\.?\s*(.*)", text, re.S)
             if m:
-                story.append(Paragraph(escape(clean_latex(m.group(1), cite_map)), styles["ParaHead"]))
+                story.append(
+                    Paragraph(
+                        escape(clean_latex(m.group(1), cite_map, table_map)),
+                        styles["ParaHead"],
+                    )
+                )
                 if m.group(2).strip():
-                    story.append(para(m.group(2), styles["Body"], cite_map))
+                    story.append(para(m.group(2), styles["Body"], cite_map, table_map))
             else:
-                story.append(para(text, styles["Body"], cite_map))
+                story.append(para(text, styles["Body"], cite_map, table_map))
             story.append(Spacer(1, 5))
         buf = []
 
@@ -1216,22 +1311,23 @@ def build_story(tex: str, bib: str, styles) -> list:
         if re.match(r"\\begin\{itemize\*?\}", line):
             flush()
             block, i = collect_environment(lines, i, "itemize")
-            story.extend(parse_items(block, styles, cite_map, ordered=False))
+            story.extend(parse_items(block, styles, cite_map, table_map, ordered=False))
             continue
         if re.match(r"\\begin\{enumerate\*?\}", line):
             flush()
             block, i = collect_environment(lines, i, "enumerate")
-            story.extend(parse_items(block, styles, cite_map, ordered=True))
+            story.extend(parse_items(block, styles, cite_map, table_map, ordered=True))
             continue
         if re.match(r"\\begin\{table\*?\}", line):
             flush()
             block, i = collect_environment(lines, i, "table")
-            story.extend(table_from_latex(block, styles, cite_map))
+            table_no += 1
+            story.extend(table_from_latex(block, styles, cite_map, table_map, table_no))
             continue
         if re.match(r"\\begin\{figure\*?\}", line):
             flush()
             block, i = collect_environment(lines, i, "figure")
-            caption = figure_caption_from_latex(block, cite_map)
+            caption = figure_caption_from_latex(block, cite_map, table_map)
             label_match = re.search(r"\\label\{([^}]+)\}", block)
             label = label_match.group(1) if label_match else ""
             if label not in figure_map:
@@ -1242,13 +1338,13 @@ def build_story(tex: str, bib: str, styles) -> list:
         if re.match(r"\\begin\{proposition\}", line):
             flush()
             block, i = collect_environment(lines, i, "proposition")
-            story.extend(proposition_from_latex(block, styles, cite_map))
+            story.extend(proposition_from_latex(block, styles, cite_map, table_map))
             continue
         if re.match(r"\\begin\{(?:align|equation)\*?\}", line):
             flush()
             env = "align" if "align" in line else "equation"
             block, i = collect_environment(lines, i, env)
-            story.extend(code_block(block, styles, cite_map))
+            story.extend(code_block(block, styles, cite_map, table_map))
             continue
         handled = False
         for command, style_name in [
@@ -1260,7 +1356,7 @@ def build_story(tex: str, bib: str, styles) -> list:
             if rb:
                 flush()
                 title, rest = rb
-                clean_title = clean_latex(title, cite_map)
+                clean_title = clean_latex(title, cite_map, table_map)
                 if command == "section":
                     sec_counter[0] += 1
                     sec_counter[1] = 0
@@ -1305,12 +1401,28 @@ def build_story(tex: str, bib: str, styles) -> list:
             fields = entries.get(key, {})
             if fields:
                 author = fields.get("author", "").replace(" and ", ", ")
-                year = fields.get("year", "")
+                publication_date = fields.get("date") or fields.get("year", "")
                 title = fields.get("title", key)
                 venue = fields.get("journal") or fields.get("booktitle") or fields.get("howpublished") or ""
-                ref = f"[{number}] {author}. {year}. {title}."
+                ref = f"[{number}] {author}. {publication_date}. {title}."
                 if venue:
                     ref += f" {venue}."
+                volume = fields.get("volume")
+                issue = fields.get("number") or fields.get("issue")
+                pages = fields.get("pages")
+                if volume or issue or pages:
+                    publication_parts = []
+                    if volume:
+                        publication_parts.append(f"Volume {volume}")
+                    if issue:
+                        publication_parts.append(f"issue {issue}")
+                    if pages:
+                        publication_parts.append(f"pages {pages}")
+                    ref += " " + ", ".join(publication_parts) + "."
+                if fields.get("doi"):
+                    ref += f" DOI: {fields['doi']}."
+                if fields.get("url"):
+                    ref += f" URL: {fields['url']}."
             else:
                 ref = f"[{number}] {key}."
             story.append(Paragraph(escape(ref), styles["Reference"]))
@@ -1507,7 +1619,7 @@ def build_pdf(paper_dir: str, output_pdf: str):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--paper-dir", required=True)
+    parser.add_argument("--paper-dir", default=os.path.join(SCRIPT_DIR, "paper_source"))
     parser.add_argument("--output", default=DEFAULT_OUTPUT)
     args = parser.parse_args()
     build_pdf(args.paper_dir, args.output)
