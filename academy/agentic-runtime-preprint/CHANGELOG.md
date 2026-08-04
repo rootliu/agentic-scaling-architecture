@@ -4,6 +4,17 @@
 >
 > ⚠️ **历史遗留**：v20 这一个文件名下曾先后存在**三个不同的文档**——26 页（`1507a5b` 初版）、27 页（`c10b895`）、33 页（`a3fa38d`，本应是 v21）。第三个已改切为 v21，`..._v20.pdf` 已回退为 `c10b895` 的 27 页状态。若他处引用过"v20 共 33 页"，指的其实是 v21。
 
+## v22 — 2026-08-05
+
+- **聚焦论文主张**：将中心命题收束为声明运行域 Ω 内 capability 与 Scaffold capacity 的条件可分离性，不再把整套架构一次性当作待证对象。
+- **实验单位**：明确使用 cluster-period 作为随机化与分析单位，并采用 randomized crossover、reset 或 washout 约束处理顺序与残留效应。
+- **估计量**：预登记 capability-by-Scaffold interaction estimand，以 `Q(c,s)`、`R(c,s)` 与 `E(c,s)` 分别承载语义、运行时和执行开销证据。
+- **责任边界修正**：明确 activated behavior 属于 Skill；Harness 负责逻辑准入与控制；Scaffold 负责物理执行与隔离。
+- **三向决策规则**：结果只可读为 `supported within Ω`、`falsified within Ω` 或 `inconclusive`，并显式纳入功效不足、运行域失配和条件未满足。
+- **经典新颖性边界**：把版本化契约、准入、隔离、调度与遥测视为经典构件；本文的新颖性主张限于它们围绕可证伪的 capability × capacity 交互所形成的责任与测量契约。
+- **图形重绘**：Figure 1、4、5、6 改为清晰的契约路径与正交连接；Figure 8 替换为以 P1 为主行的 falsification matrix，次级协议在视觉上降级。
+- **v21 保全**：默认构建文件名升为 `..._v22.pdf`；冻结的 v21 release artifact 保持 SHA-256 `52DE73D7B3AF0CE20E632B929EB8BE4365C7CBC713805F949E5BE656F901969A` 不变。
+
 ## v21 — 2026-08-04
 
 来源：对 v20 全文（617 行 / ~13,600 词）做一次完整评审，得 19 条改进意见，本次全部实施。**27 页 → 33 页**。

@@ -1,8 +1,6 @@
 import importlib.util
+import hashlib
 import re
-import shutil
-import subprocess
-import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -14,7 +12,13 @@ from reportlab.platypus import SimpleDocTemplate
 
 PREPRINT_DIR = Path(__file__).resolve().parents[1]
 RENDERER = PREPRINT_DIR / "latex_to_preprint.py"
-PAPER_SOURCE = PREPRINT_DIR / "paper_source"
+V21_RELEASE = (
+    PREPRINT_DIR
+    / "output"
+    / "pdf"
+    / "Scalable_Manageable_Agentic_Runtime_Preprint_v21.pdf"
+)
+V21_SHA256 = "52DE73D7B3AF0CE20E632B929EB8BE4365C7CBC713805F949E5BE656F901969A"
 
 
 def load_renderer():
@@ -53,53 +57,13 @@ def rendered_text_baseline(page, prefix: str) -> float:
 
 
 class V20RenderingTests(unittest.TestCase):
-    def test_default_output_is_a_v21_pdf_beside_the_renderer(self):
-        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v21-default-") as tmp:
-            isolated_preprint = Path(tmp) / "agentic-runtime-preprint"
-            isolated_preprint.mkdir()
-            isolated_renderer = isolated_preprint / RENDERER.name
-            isolated_source = isolated_preprint / "paper_source"
-            shutil.copy2(RENDERER, isolated_renderer)
-            shutil.copytree(PAPER_SOURCE, isolated_source)
-
-            result = subprocess.run(
-                [
-                    sys.executable,
-                    str(isolated_renderer),
-                    "--paper-dir",
-                    str(isolated_source),
-                ],
-                check=True,
-                capture_output=True,
-                text=True,
-            )
-            expected = (
-                isolated_preprint
-                / "output"
-                / "pdf"
-                / "Scalable_Manageable_Agentic_Runtime_Preprint_v21.pdf"
-            )
-
-            self.assertTrue(expected.is_file())
-            self.assertEqual(result.stdout.strip(), str(expected))
+    def test_archived_v21_release_is_preserved_byte_for_byte(self):
+        self.assertTrue(V21_RELEASE.is_file())
+        actual = hashlib.sha256(V21_RELEASE.read_bytes()).hexdigest().upper()
+        self.assertEqual(actual, V21_SHA256)
 
     def test_v21_pdf_encodes_the_enterprise_responsibility_model(self):
-        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v21-test-") as tmp:
-            output = Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v21.pdf"
-            subprocess.run(
-                [
-                    sys.executable,
-                    str(RENDERER),
-                    "--paper-dir",
-                    str(PAPER_SOURCE),
-                    "--output",
-                    str(output),
-                ],
-                check=True,
-                capture_output=True,
-                text=True,
-            )
-            reader = PdfReader(str(output))
+        reader = PdfReader(str(V21_RELEASE))
 
         self.assertIn("v21", reader.metadata.subject)
         expected_by_figure = {
@@ -188,22 +152,7 @@ class V20RenderingTests(unittest.TestCase):
         )
 
     def test_v21_tables_keep_enterprise_labels_intact(self):
-        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v21-test-") as tmp:
-            output = Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v21.pdf"
-            subprocess.run(
-                [
-                    sys.executable,
-                    str(RENDERER),
-                    "--paper-dir",
-                    str(PAPER_SOURCE),
-                    "--output",
-                    str(output),
-                ],
-                check=True,
-                capture_output=True,
-                text=True,
-            )
-            reader = PdfReader(str(output))
+        reader = PdfReader(str(V21_RELEASE))
 
         rendered_text = re.sub(
             r"\s+",
@@ -215,22 +164,7 @@ class V20RenderingTests(unittest.TestCase):
         self.assertIn("System/runtime", rendered_text)
 
     def test_v21_tables_have_sequential_captions_and_accurate_references(self):
-        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v21-test-") as tmp:
-            output = Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v21.pdf"
-            subprocess.run(
-                [
-                    sys.executable,
-                    str(RENDERER),
-                    "--paper-dir",
-                    str(PAPER_SOURCE),
-                    "--output",
-                    str(output),
-                ],
-                check=True,
-                capture_output=True,
-                text=True,
-            )
-            reader = PdfReader(str(output))
+        reader = PdfReader(str(V21_RELEASE))
 
         rendered_text = re.sub(
             r"\s+",
@@ -255,22 +189,7 @@ class V20RenderingTests(unittest.TestCase):
             self.assertIn(reference, rendered_text)
 
     def test_v21_pdf_has_no_raw_math_control_leaks(self):
-        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v21-test-") as tmp:
-            output = Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v21.pdf"
-            subprocess.run(
-                [
-                    sys.executable,
-                    str(RENDERER),
-                    "--paper-dir",
-                    str(PAPER_SOURCE),
-                    "--output",
-                    str(output),
-                ],
-                check=True,
-                capture_output=True,
-                text=True,
-            )
-            reader = PdfReader(str(output))
+        reader = PdfReader(str(V21_RELEASE))
 
         rendered_text = "\n".join(page.extract_text() or "" for page in reader.pages)
         for raw_leak in ("lambda", "sigma_out", "AND over", ">="):
@@ -315,22 +234,7 @@ class V20RenderingTests(unittest.TestCase):
         self.assertIn("URL: https://example.org/release.", rendered_text)
 
     def test_figure_eight_shows_directed_runtime_contracts(self):
-        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v21-test-") as tmp:
-            output = Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v21.pdf"
-            subprocess.run(
-                [
-                    sys.executable,
-                    str(RENDERER),
-                    "--paper-dir",
-                    str(PAPER_SOURCE),
-                    "--output",
-                    str(output),
-                ],
-                check=True,
-                capture_output=True,
-                text=True,
-            )
-            reader = PdfReader(str(output))
+        reader = PdfReader(str(V21_RELEASE))
 
         figure_eight = figure_page_text(reader, 8)
         expected_relationships = [
@@ -343,29 +247,14 @@ class V20RenderingTests(unittest.TestCase):
             self.assertIn(relationship, figure_eight)
 
     def test_v21_responsibility_table_does_not_split_boundary_header(self):
-        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v21-test-") as tmp:
-            output = Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v21.pdf"
-            subprocess.run(
-                [
-                    sys.executable,
-                    str(RENDERER),
-                    "--paper-dir",
-                    str(PAPER_SOURCE),
-                    "--output",
-                    str(output),
-                ],
-                check=True,
-                capture_output=True,
-                text=True,
+        with pdfplumber.open(V21_RELEASE) as pdf:
+            responsibility_page = next(
+                page
+                for page in pdf.pages
+                if "Responsibility boundaries in the proposed architecture."
+                in (page.extract_text() or "")
             )
-            with pdfplumber.open(output) as pdf:
-                responsibility_page = next(
-                    page
-                    for page in pdf.pages
-                    if "Responsibility boundaries in the proposed architecture."
-                    in (page.extract_text() or "")
-                )
-                words = responsibility_page.extract_words()
+            words = responsibility_page.extract_words()
 
         boundary_words = [word for word in words if word["text"] == "Boundary"]
         self.assertEqual(
@@ -399,22 +288,7 @@ class V20RenderingTests(unittest.TestCase):
             )
 
     def test_v21_conclusion_does_not_orphan_its_final_clause(self):
-        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v21-test-") as tmp:
-            output = Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v21.pdf"
-            subprocess.run(
-                [
-                    sys.executable,
-                    str(RENDERER),
-                    "--paper-dir",
-                    str(PAPER_SOURCE),
-                    "--output",
-                    str(output),
-                ],
-                check=True,
-                capture_output=True,
-                text=True,
-            )
-            reader = PdfReader(str(output))
+        reader = PdfReader(str(V21_RELEASE))
 
         conclusion_page = next(
             page

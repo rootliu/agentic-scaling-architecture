@@ -29,7 +29,7 @@ TITLE = "A Contract-Centered Architecture for Scalable and Manageable Agentic Ru
 AUTHOR = "Yaxiao Liu"
 AUTHOR_EMAIL = "rootliu@gmail.com"
 FIGURE_WIDTH = 462
-PREPRINT_VERSION = "v21"
+PREPRINT_VERSION = "v22"
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 # Derived from PREPRINT_VERSION so a version bump cannot silently overwrite the
 # previous version's PDF: v20 shipped three different documents (26, 27 and 33
@@ -79,6 +79,39 @@ def draw_arrow(canvas, x1: float, y1: float, x2: float, y2: float,
     right = angle - math.pi * 0.82
     canvas.line(x2, y2, x2 + size * math.cos(left), y2 + size * math.sin(left))
     canvas.line(x2, y2, x2 + size * math.cos(right), y2 + size * math.sin(right))
+    canvas.restoreState()
+
+
+def draw_orthogonal_arrow(canvas, points: list[tuple[float, float]],
+                          color: str = "#2563eb", stroke_width: float = 1.15,
+                          dashed: bool = False):
+    if len(points) < 2:
+        raise ValueError("An orthogonal arrow needs at least two points")
+    canvas.saveState()
+    canvas.setStrokeColor(hx(color))
+    canvas.setFillColor(hx(color))
+    canvas.setLineWidth(stroke_width)
+    if dashed:
+        canvas.setDash(4, 3)
+    path = canvas.beginPath()
+    path.moveTo(*points[0])
+    for previous, point in zip(points, points[1:]):
+        if previous[0] != point[0] and previous[1] != point[1]:
+            raise ValueError("Orthogonal arrow segments must be horizontal or vertical")
+        path.lineTo(*point)
+    canvas.drawPath(path, stroke=1, fill=0)
+    canvas.setDash()
+    x1, y1 = points[-2]
+    x2, y2 = points[-1]
+    angle = math.atan2(y2 - y1, x2 - x1)
+    size = 5
+    for offset in (math.pi * 0.82, -math.pi * 0.82):
+        canvas.line(
+            x2,
+            y2,
+            x2 + size * math.cos(angle + offset),
+            y2 + size * math.sin(angle + offset),
+        )
     canvas.restoreState()
 
 
@@ -182,45 +215,80 @@ class FigureGraphic(Flowable):
 
     def _draw_dual_scaling(self, canvas):
         w, h = self.width, self.content_height
-        draw_wrapped(canvas, "One runtime, two scaling axes", 18, h - 12, w - 36,
+        draw_wrapped(canvas, "Focused causal contract and measurement planes", 18, h - 12, w - 36,
                      "Helvetica-Bold", 9.2, "#0f172a")
-
-        self._section_label(canvas, "LOGICAL CAPABILITY", 18, h - 43, 116, "#0f766e")
-        skill_y = [94, 62, 30]
-        skills = [
-            ("S3", "Procurement", "candidate"),
-            ("S2", "Code analysis", "released"),
-            ("S1", "Data query", "released"),
+        card_y, card_h, card_w = 101, 42, 118
+        xs = [16, 172, 328]
+        cards = [
+            ("Capability change", "activated configuration c", "#f0fdfa", "#2dd4bf", "#115e59"),
+            ("Harness contract", "admit + bind + trace", "#eff6ff", "#60a5fa", "#1d4ed8"),
+            ("Scaffold capacity", "compatible configuration s", "#fffbeb", "#f59e0b", "#92400e"),
         ]
-        for y, (sid, name, state) in zip(skill_y, skills):
-            self._pill(canvas, 18, y, 116, 25, f"{sid}  {name}", state,
-                       "#f0fdfa", "#2dd4bf", "#115e59", TA_LEFT)
-        draw_arrow(canvas, 8, 28, 8, 119, "#0f766e")
-        draw_wrapped(canvas, "add versioned Skills", 14, 27, 96, "Helvetica", 5.8, "#0f766e", TA_LEFT)
+        for x, (title, subtitle, fill, stroke, color) in zip(xs, cards):
+            self._pill(canvas, x, card_y, card_w, card_h, title, subtitle,
+                       fill, stroke, color)
+        draw_arrow(canvas, xs[0] + card_w, card_y + card_h / 2, xs[1], card_y + card_h / 2,
+                   "#0f766e")
+        draw_arrow(canvas, xs[1] + card_w, card_y + card_h / 2, xs[2], card_y + card_h / 2,
+                   "#2563eb")
 
-        self._pill(canvas, w / 2 - 61, 46, 122, 88, "HARNESS",
-                   "select + compile\nvalidate + gate\nbind + trace",
-                   "#eff6ff", "#2563eb", "#1d4ed8")
-        draw_wrapped(canvas, "typed contract boundary", w / 2 - 70, 39, 140,
-                     "Helvetica-Bold", 6.1, "#1d4ed8")
-
-        self._section_label(canvas, "PHYSICAL CAPACITY", w - 134, h - 43, 116, "#b45309")
-        scaffold_y = [94, 62, 30]
-        scaffolds = [
-            ("X3", "Regional pool", "locality"),
-            ("X2", "GPU sandbox", "isolated"),
-            ("X1", "CPU worker", "isolated"),
-        ]
-        for y, (xid, name, state) in zip(scaffold_y, scaffolds):
-            self._pill(canvas, w - 134, y, 116, 25, f"{xid}  {name}", state,
-                       "#fffbeb", "#f59e0b", "#92400e", TA_LEFT)
-        draw_arrow(canvas, w - 8, 28, w - 8, 119, "#b45309")
-        draw_wrapped(canvas, "add execution envelopes", w - 126, 27, 104,
-                     "Helvetica", 5.8, "#92400e", TA_RIGHT)
-
-        for y in [106, 74, 42]:
-            draw_arrow(canvas, 134, y, w / 2 - 61, 90, "#0f766e", 0.9)
-            draw_arrow(canvas, w / 2 + 61, 90, w - 134, y, "#b45309", 0.9)
+        data_x, data_y, data_w, data_h = 16, 30, 132, 46
+        self._pill(
+            canvas,
+            data_x,
+            data_y,
+            data_w,
+            data_h,
+            "Governed data and evidence",
+            "fixed snapshot | lineage",
+            "#f5f3ff",
+            "#a78bfa",
+            "#5b21b6",
+        )
+        measure_x, measure_y, measure_w, measure_h = 172, 20, 274, 62
+        self._pill(
+            canvas,
+            measure_x,
+            measure_y,
+            measure_w,
+            measure_h,
+            "Measurement plane",
+            "semantic outcome Q(c,s) | runtime response R(c,s)\n"
+            "condition coverage | enforcement overhead E(c,s)",
+            "#ecfdf5",
+            "#10b981",
+            "#047857",
+        )
+        draw_arrow(
+            canvas,
+            data_x + data_w,
+            data_y + data_h / 2,
+            measure_x,
+            data_y + data_h / 2,
+            "#7c3aed",
+            0.9,
+        )
+        draw_orthogonal_arrow(
+            canvas,
+            [
+                (data_x + data_w / 2, data_y + data_h),
+                (data_x + data_w / 2, 90),
+                (xs[1] + card_w / 2, 90),
+                (xs[1] + card_w / 2, card_y),
+            ],
+            "#7c3aed",
+            0.9,
+            dashed=True,
+        )
+        draw_arrow(
+            canvas,
+            xs[2] + card_w / 2,
+            card_y,
+            xs[2] + card_w / 2,
+            measure_y + measure_h,
+            "#b45309",
+            0.9,
+        )
 
     def _draw_harness_contract(self, canvas):
         w, h = self.width, self.content_height
@@ -312,173 +380,153 @@ class FigureGraphic(Flowable):
 
     def _draw_derivation_closure(self, canvas):
         w, h = self.width, self.content_height
-        draw_wrapped(canvas, "Derivation closure: bounded sub-agents, satisfaction-driven loop",
+        draw_wrapped(canvas, "Derivation closure with an explicit semantic join and stop gate",
                      18, h - 12, w - 36, "Helvetica-Bold", 9.2, "#0f172a")
-
-        mx, mw = 16, 132
-        # Left column and right panel are laid out bottom-up so the figure
-        # stays correct if its declared height changes.
-        band = 34          # bottom strip reserved for the loop-back path
-        col_h = 38
-        sat_y = band
-        join_y = sat_y + col_h + 4
-        main_y = join_y + col_h + 4
-
-        self._pill(canvas, mx, main_y, mw, col_h, "MAIN AGENT",
-                   "summarize returns\nno task tools", "#eff6ff", "#2563eb", "#1d4ed8")
-        self._pill(canvas, mx, join_y, mw, col_h, "semantic join + top-k",
-                   "best-supported evidence\nper output field", "#ffffff", "#60a5fa", "#1d4ed8")
-        self._pill(canvas, mx, sat_y, mw, col_h, "satisfaction ratio",
-                   "satisfied output domains over\ndeclared sub-domains", "#f5f3ff", "#8b5cf6", "#5b21b6")
-
-        sx = mx + mw + 26
-        sw = w - sx - 16
-        panel_top = main_y + col_h
-        panel_y = band + 14
-        canvas.setFillColor(hx("#f0fdfa"))
-        canvas.setStrokeColor(hx("#0f766e"))
-        canvas.setLineWidth(0.7)
-        canvas.roundRect(sx, panel_y, sw, panel_top - panel_y, 5, stroke=1, fill=1)
-        self._section_label(canvas, "BOUNDED SUB-AGENTS", sx + 8, panel_top - 20, sw - 16, "#0f766e")
-
-        cell_w = (sw - 32) / 3
-        cell_y = panel_top - 78
-        subs = [
-            ("A1", "tool-set T1", "data-set D1"),
-            ("A2", "tool-set T2", "data-set D2"),
-            ("A3 (derived)", "tool-set T3", "data-set D3"),
+        card_y, card_h = 112, 50
+        card_w, gap = 98, 12
+        xs = [16 + index * (card_w + gap) for index in range(4)]
+        stages = [
+            ("Main agent", "decompose request\nno task tools", "#eff6ff", "#60a5fa", "#1d4ed8"),
+            ("Bounded sub-agents", "fixed tools + sources\nbounded outputs", "#f0fdfa", "#2dd4bf", "#115e59"),
+            ("Verifier / semantic join", "field-level support\nbest evidence", "#f5f3ff", "#a78bfa", "#5b21b6"),
+            ("Termination gate", "target | budget\ntyped failure", "#fff7ed", "#fb923c", "#9a3412"),
         ]
-        for i, (name, tset, dset) in enumerate(subs):
-            cx = sx + 12 + i * (cell_w + 4)
-            fill = "#ffffff" if i < 2 else "#fffbeb"
-            stroke = "#2dd4bf" if i < 2 else "#f59e0b"
-            color = "#115e59" if i < 2 else "#92400e"
-            self._pill(canvas, cx, cell_y, cell_w, 44, name, f"{tset}\n{dset}",
+        for x, stage in zip(xs, stages):
+            title, subtitle, fill, stroke, color = stage
+            self._pill(canvas, x, card_y, card_w, card_h, title, subtitle,
                        fill, stroke, color)
-            draw_wrapped(canvas, "output range bounded", cx, cell_y - 3, cell_w,
-                         "Helvetica", 5.5, "#0f766e")
+        for index in range(3):
+            draw_arrow(
+                canvas,
+                xs[index] + card_w,
+                card_y + card_h / 2,
+                xs[index + 1],
+                card_y + card_h / 2,
+                "#475569",
+                0.9,
+            )
 
-        note_top = cell_y - 15
-        draw_wrapped(canvas, "unmet reference to a tool or source outside the fixed sets becomes a derivation condition, not an inline grant",
-                     sx + 12, note_top, sw - 44, "Helvetica-Bold", 6.0, "#b45309")
-        arrow_x = sx + sw - 16
-        canvas.saveState()
-        canvas.setStrokeColor(hx("#b45309"))
-        canvas.setLineWidth(1.0)
-        canvas.line(sx + sw - 32, note_top - 8, arrow_x, note_top - 8)
-        canvas.restoreState()
-        draw_arrow(canvas, arrow_x, note_top - 8, arrow_x, cell_y + 2, "#b45309", 1.0)
-
-        draw_arrow(canvas, mx + mw, main_y + 14, sx, panel_top - 34, "#2563eb", 1.0)
-        draw_wrapped(canvas, "invoke / derive", mx + mw - 4, main_y + col_h - 4, 74,
-                     "Helvetica", 5.8, "#1d4ed8", TA_LEFT)
-        draw_arrow(canvas, sx, cell_y + 12, mx + mw, join_y + 20, "#0f766e", 1.0)
-        draw_wrapped(canvas, "summaries only", mx + mw - 4, join_y + col_h - 6, 74,
-                     "Helvetica", 5.8, "#0f766e", TA_LEFT)
-
-        by = 12
-        loop_x = w - 150
-        canvas.setStrokeColor(hx("#8b5cf6"))
-        canvas.setLineWidth(0.8)
-        canvas.setDash(4, 3)
-        canvas.line(mx + mw / 2, sat_y, mx + mw / 2, by)
-        canvas.line(mx + mw / 2, by, loop_x, by)
-        canvas.setDash()
-        draw_arrow(canvas, loop_x, by, loop_x, panel_y, "#8b5cf6", 1.0)
-        draw_wrapped(canvas, "loop while ratio below target and an unsatisfied sub-domain still admits derivation",
-                     mx + mw + 12, band - 2, loop_x - mx - mw - 22, "Helvetica-Bold", 6.0,
-                     "#5b21b6", TA_LEFT)
-
-        self._pill(canvas, w - 100, by - 6, 84, 32, "terminate",
-                   "target met, budget out,\nor typed failure",
-                   "#ffffff", "#94a3b8", "#334155")
+        self._pill(canvas, xs[1], 57, card_w, 35, "Derivation condition",
+                   "unmet declared domain", "#ffffff", "#2dd4bf", "#115e59")
+        self._pill(canvas, xs[2], 57, card_w, 35, "Satisfaction ratio",
+                   "supported / declared", "#ffffff", "#a78bfa", "#5b21b6")
+        draw_arrow(canvas, xs[1] + card_w / 2, card_y, xs[1] + card_w / 2, 92,
+                   "#0f766e", 0.8)
+        draw_arrow(canvas, xs[2] + card_w / 2, 92, xs[2] + card_w / 2, card_y,
+                   "#7c3aed", 0.8)
+        draw_orthogonal_arrow(
+            canvas,
+            [
+                (xs[3] + card_w / 2, card_y),
+                (xs[3] + card_w / 2, 28),
+                (xs[1] + card_w / 2, 28),
+                (xs[1] + card_w / 2, 57),
+            ],
+            "#7c3aed",
+            0.9,
+            dashed=True,
+        )
+        draw_wrapped(
+            canvas,
+            "Continue only when the ratio is below target and a declared sub-domain still admits derivation.",
+            xs[1] - 4,
+            22,
+            xs[3] + card_w - xs[1] + 4,
+            "Helvetica-Bold",
+            5.8,
+            "#5b21b6",
+            TA_LEFT,
+        )
 
     def _draw_external_data(self, canvas):
         w, h = self.width, self.content_height
-        draw_wrapped(canvas, "External data is a governed contract path", 18, h - 12, w - 36,
+        draw_wrapped(canvas, "External data becomes evidence through a governed contract path", 18, h - 12, w - 36,
                      "Helvetica-Bold", 9.2, "#0f172a")
-        canvas.saveState()
-        canvas.setFillColor(hx("#f5f3ff"))
-        canvas.setStrokeColor(hx("#a78bfa"))
-        canvas.setLineWidth(0.9)
-        canvas.roundRect(16, 54, 132, 83, 6, stroke=1, fill=1)
-        canvas.restoreState()
-        self._section_label(canvas, "CIO DATA FOUNDATION", 24, 116, 116, "#7c3aed")
-        self._pill(canvas, 26, 84, 50, 24, "Sources", "warehouse", "#ffffff", "#c4b5fd", "#5b21b6")
-        self._pill(canvas, 86, 84, 50, 24, "Sources", "documents | APIs", "#ffffff", "#c4b5fd", "#5b21b6")
-        draw_wrapped(canvas, "semantic catalog | residency policy | telemetry",
-                     26, 78, 110, "Helvetica-Bold", 5.7, "#5b21b6")
-        draw_wrapped(canvas, "independent data governance; no task semantics",
-                     24, 62, 116, "Helvetica", 5.4, "#5b21b6")
-
-        self._pill(canvas, 174, 64, 122, 70, "Harness contract",
-                   "authorized source\nschema + snapshot\nprincipal + budget\nprovenance duty",
-                   "#eff6ff", "#2563eb", "#1d4ed8")
-        self._pill(canvas, 322, 76, 62, 46, "Scaffold", "bound credential\nisolated fetch",
-                   "#fffbeb", "#f59e0b", "#92400e")
-        self._pill(canvas, 400, 76, 46, 46, "Evidence", "typed bundle\nlineage ID",
-                   "#ecfdf5", "#10b981", "#047857")
-        draw_arrow(canvas, 148, 96, 174, 96, "#7c3aed", 1.0, dashed=True)
-        draw_arrow(canvas, 296, 99, 322, 99, "#2563eb")
-        draw_arrow(canvas, 384, 99, 400, 99, "#b45309")
-        draw_wrapped(canvas, "governed contract", 149, 84, 54, "Helvetica-Bold", 5.4,
-                     "#5b21b6", TA_LEFT)
-
-        canvas.setStrokeColor(hx("#cbd5e1"))
-        canvas.setDash(3, 2)
-        canvas.line(16, 42, w - 16, 42)
-        canvas.setDash()
-        draw_wrapped(canvas, "Recorded obligations", 18, 35, 92,
-                     "Helvetica-Bold", 6.2, "#475569", TA_LEFT)
-        obligations = [
-            ("principal", "#dbeafe", 56),
-            ("source + snapshot", "#dcfce7", 70),
-            ("query hash", "#fef3c7", 56),
-            ("residency", "#ede9fe", 58),
-            ("evidence lineage", "#ffe4e6", 70),
+        specs = [
+            (16, 100, "Data authority", "catalog + residency\nsource owner", "#f5f3ff", "#a78bfa", "#5b21b6"),
+            (128, 116, "Resolved contract", "principal | schema\nsnapshot | budget", "#eff6ff", "#60a5fa", "#1d4ed8"),
+            (256, 88, "Isolated fetch", "bound credential\nnetwork boundary", "#fffbeb", "#f59e0b", "#92400e"),
+            (356, 90, "Evidence bundle", "typed result\nlineage + query hash", "#ecfdf5", "#10b981", "#047857"),
         ]
-        ox = 114
-        for label, fill, bw in obligations:
+        card_y, card_h = 83, 56
+        for x, width, title, subtitle, fill, stroke, color in specs:
+            self._pill(canvas, x, card_y, width, card_h, title, subtitle,
+                       fill, stroke, color)
+        for left, right, color in zip(specs, specs[1:], ["#7c3aed", "#2563eb", "#b45309"]):
+            draw_arrow(
+                canvas,
+                left[0] + left[1],
+                card_y + card_h / 2,
+                right[0],
+                card_y + card_h / 2,
+                color,
+                0.9,
+            )
+        draw_wrapped(canvas, "Recorded contract and evidence duties", 18, 65, w - 36,
+                     "Helvetica-Bold", 6.3, "#475569", TA_LEFT)
+        obligations = [
+            ("principal", 63, "#dbeafe"),
+            ("source + snapshot", 85, "#ede9fe"),
+            ("schema", 57, "#dcfce7"),
+            ("residency", 61, "#fef3c7"),
+            ("lineage", 58, "#ffe4e6"),
+            ("query hash", 63, "#cffafe"),
+        ]
+        ox = 16
+        for label, width, fill in obligations:
             canvas.setFillColor(hx(fill))
-            canvas.roundRect(ox, 15, bw, 17, 3, stroke=0, fill=1)
-            draw_wrapped(canvas, label, ox + 3, 27, bw - 6, "Helvetica-Bold", 5.2, "#334155")
-            ox += bw + 5
+            canvas.roundRect(ox, 27, width, 22, 3, stroke=0, fill=1)
+            draw_wrapped(canvas, label, ox + 3, 42, width - 6,
+                         "Helvetica-Bold", 5.4, "#334155")
+            ox += width + 5
+        draw_wrapped(canvas, "No task semantics or credentials cross the path outside the resolved contract.",
+                     18, 19, w - 36, "Helvetica", 5.8, "#475569", TA_LEFT)
 
     def _draw_dry_run(self, canvas):
         w, h = self.width, self.content_height
-        draw_wrapped(canvas, "Dry-run exposes parallelism, locality, and effects before commit", 18, h - 12, w - 36,
+        draw_wrapped(canvas, "Dry-run separates logical control, physical execution, and evidence", 18, h - 12, w - 36,
                      "Helvetica-Bold", 9.2, "#0f172a")
-        self._section_label(canvas, "1  PLAN + VALIDATE", 16, 128, 122, "#2563eb")
-        self._section_label(canvas, "2  BIND BY LOCALITY", 170, 128, 126, "#0f766e")
-        self._section_label(canvas, "3  EXECUTE + TRACE", 328, 128, 118, "#b45309")
-
-        self._pill(canvas, 18, 82, 48, 30, "A", "discover", "#eff6ff", "#60a5fa")
-        self._pill(canvas, 82, 96, 48, 30, "B", "query east", "#eff6ff", "#60a5fa")
-        self._pill(canvas, 82, 60, 48, 30, "C", "query west", "#eff6ff", "#60a5fa")
-        draw_arrow(canvas, 66, 97, 82, 111, "#2563eb")
-        draw_arrow(canvas, 66, 97, 82, 75, "#2563eb")
-        draw_wrapped(canvas, "B || C", 91, 53, 32, "Helvetica-Bold", 5.8, "#1d4ed8")
-
-        self._pill(canvas, 172, 91, 55, 31, "Zone E", "data local", "#f0fdfa", "#2dd4bf")
-        self._pill(canvas, 239, 91, 55, 31, "Zone W", "data local", "#f0fdfa", "#2dd4bf")
-        self._pill(canvas, 204, 49, 58, 30, "Effect zone", "isolated", "#fff7ed", "#fb923c")
-        draw_arrow(canvas, 130, 111, 172, 107, "#0f766e")
-        draw_arrow(canvas, 130, 75, 239, 107, "#0f766e")
-
-        self._pill(canvas, 330, 91, 52, 31, "Run B", "trace b", "#fffbeb", "#f59e0b")
-        self._pill(canvas, 394, 91, 52, 31, "Run C", "trace c", "#fffbeb", "#f59e0b")
-        self._pill(canvas, 361, 48, 52, 30, "Commit", "approval", "#ecfdf5", "#10b981")
-        draw_arrow(canvas, 294, 107, 330, 107, "#b45309")
-        draw_arrow(canvas, 294, 107, 394, 107, "#b45309")
-        draw_arrow(canvas, 356, 91, 377, 78, "#b45309")
-        draw_arrow(canvas, 420, 91, 397, 78, "#b45309")
-
-        canvas.setStrokeColor(hx("#cbd5e1"))
-        canvas.setDash(3, 2)
-        canvas.line(16, 37, w - 16, 37)
-        canvas.setDash()
-        draw_wrapped(canvas, "dry-run report: graph hash | predicted budget | cross-zone bytes | missing capacity | irreversible effects",
-                     20, 29, w - 40, "Helvetica-Bold", 6.0, "#475569")
+        lane_x, lane_w, lane_h = 16, w - 32, 34
+        lane_ys = [106, 64, 22]
+        lane_specs = [
+            ("Logical control", ["Plan", "Admit", "Commit gate"], "#eff6ff", "#60a5fa", "#1d4ed8"),
+            ("Physical execution", ["Bind", "Run in isolation", "Effect boundary"], "#fffbeb", "#f59e0b", "#92400e"),
+            ("Evidence", ["Graph hash", "Trace stream", "Attestation"], "#ecfdf5", "#10b981", "#047857"),
+        ]
+        label_w, node_w, node_gap = 104, 88, 12
+        node_xs = [lane_x + 116 + index * (node_w + node_gap) for index in range(3)]
+        for y, (label, nodes, fill, stroke, color) in zip(lane_ys, lane_specs):
+            canvas.saveState()
+            canvas.setFillColor(hx(fill))
+            canvas.setStrokeColor(hx(stroke))
+            canvas.setLineWidth(0.75)
+            canvas.roundRect(lane_x, y, lane_w, lane_h, 5, stroke=1, fill=1)
+            canvas.restoreState()
+            draw_wrapped(canvas, label, lane_x + 8, y + 22, label_w - 12,
+                         "Helvetica-Bold", 6.4, color, TA_LEFT)
+            for node_x, node in zip(node_xs, nodes):
+                self._pill(canvas, node_x, y + 6, node_w, 22, node, "",
+                           "#ffffff", stroke, color)
+            for index in range(2):
+                draw_arrow(canvas, node_xs[index] + node_w, y + lane_h / 2,
+                           node_xs[index + 1], y + lane_h / 2, color, 0.75)
+        for node_x in node_xs:
+            center_x = node_x + node_w / 2
+            draw_arrow(canvas, center_x, lane_ys[0], center_x, lane_ys[1] + lane_h,
+                       "#64748b", 0.7, dashed=True)
+            draw_arrow(canvas, center_x, lane_ys[1], center_x, lane_ys[2] + lane_h,
+                       "#64748b", 0.7, dashed=True)
+        draw_wrapped(
+            canvas,
+            "Vertical links are declared mappings; each lane remains independently inspectable.",
+            lane_x + 8,
+            17,
+            lane_w - 16,
+            "Helvetica",
+            5.5,
+            "#475569",
+            TA_LEFT,
+        )
 
     def _draw_skill_lifecycle(self, canvas):
         w, h = self.width, self.content_height
@@ -534,138 +582,104 @@ class FigureGraphic(Flowable):
 
     def _draw_evaluation_matrix(self, canvas):
         w, h = self.width, self.content_height
-        draw_wrapped(canvas, "Falsification matrix", 18, h - 10, w - 36,
+        draw_wrapped(canvas, "Falsification matrix: P1 is the primary release decision", 18, h - 10, w - 36,
                      "Helvetica-Bold", 9.2, "#0f172a")
-        relationships = [
-            "Skill -> Harness: versioned capability contract",
-            "Harness -> Scaffold: admission + compatible capacity binding",
-            "Harness <-> data substrate: semantic join + governed evidence",
-            "Scaffold -> Harness: enforceable execution facts",
+        table_x = 16
+        widths = [62, 126, 105, 137]
+        xs = [table_x]
+        for width in widths[:-1]:
+            xs.append(xs[-1] + width)
+        header_y, header_h = 250, 35
+        headers = [
+            "Hypothesis",
+            "Intervention and control",
+            "Evidence plane",
+            "Falsification or inconclusive condition",
         ]
-        for index, relationship in enumerate(relationships):
+        for x, width, header in zip(xs, widths, headers):
+            canvas.setFillColor(hx("#1e3a5f"))
+            canvas.setStrokeColor(hx("#ffffff"))
+            canvas.setLineWidth(0.5)
+            canvas.rect(x, header_y, width, header_h, stroke=1, fill=1)
+            draw_wrapped(canvas, header, x + 5, header_y + header_h - 7, width - 10,
+                         "Helvetica-Bold", 5.8, "#ffffff", TA_LEFT, 6.7)
+
+        primary_y, primary_h = 109, 141
+        primary = [
+            ("P1", "P1  PRIMARY\ncapability x Scaffold\nseparability"),
+            (
+                "",
+                "Cluster-period randomized crossover. Independently vary activated capability "
+                "configuration c and Scaffold capacity configuration s; hold workload and data "
+                "snapshot fixed; preregister reset or washout.",
+            ),
+            (
+                "",
+                "Semantic outcome Q(c,s); runtime response R(c,s); enforcement overhead E(c,s); "
+                "six condition-violation rates; cluster-aware uncertainty; capability-by-Scaffold "
+                "interaction estimand.",
+            ),
+            (
+                "",
+                "Falsified within Omega if a semantic, runtime, or enforcement interaction exceeds "
+                "its preregistered margin. Inconclusive if operating-region, condition, or detectable-"
+                "interaction requirements fail. Otherwise supported within Omega.",
+            ),
+        ]
+        for index, (x, width, (_, text)) in enumerate(zip(xs, widths, primary)):
+            canvas.setFillColor(hx("#eff6ff" if index else "#dbeafe"))
+            canvas.setStrokeColor(hx("#93c5fd"))
+            canvas.setLineWidth(0.65)
+            canvas.rect(x, primary_y, width, primary_h, stroke=1, fill=1)
             draw_wrapped(
                 canvas,
-                relationship,
-                22,
-                h - 28 - index * 12,
-                w - 44,
-                "Helvetica-Bold",
-                6.3,
-                "#334155",
-                TA_LEFT,
-                7.2,
-            )
-        panel_y = 129
-        panel_h = 96
-        panel_gap = 14
-        panel_w = (w - 32 - panel_gap) / 2
-        panels = [
-            (
-                16,
-                "BUSINESS / USE-CASE PLANE",
-                "Business/use-case evaluation",
-                "Does the versioned Skill improve the declared workflow for its users?",
-                "task outcome | quality | cycle time | correction | adoption",
-                "#f0fdfa",
-                "#0f766e",
-                "#115e59",
-            ),
-            (
-                16 + panel_w + panel_gap,
-                "SYSTEM / RUNTIME PLANE",
-                "System/runtime evaluation",
-                "Does the admitted path meet its contract and enterprise NFR envelope?",
-                "gate + trace integrity | isolation | capacity | latency | cost",
-                "#eff6ff",
-                "#2563eb",
-                "#1d4ed8",
-            ),
-        ]
-        for x, section, title, question, measures, fill, stroke, color in panels:
-            canvas.saveState()
-            canvas.setFillColor(hx(fill))
-            canvas.setStrokeColor(hx(stroke))
-            canvas.setLineWidth(0.85)
-            canvas.roundRect(x, panel_y, panel_w, panel_h, 6, stroke=1, fill=1)
-            canvas.restoreState()
-            self._section_label(canvas, section, x + 8, panel_y + panel_h - 21, panel_w - 16, stroke)
-            draw_wrapped(canvas, title, x + 10, panel_y + panel_h - 34, panel_w - 20,
-                         "Helvetica-Bold", 7.1, color, TA_LEFT)
-            draw_wrapped(canvas, question, x + 10, panel_y + 47, panel_w - 20,
-                         "Helvetica", 6.0, "#334155", TA_LEFT, 7.1)
-            draw_wrapped(canvas, measures, x + 10, panel_y + 22, panel_w - 20,
-                         "Helvetica-Bold", 5.65, color, TA_LEFT, 6.7)
-
-        draw_wrapped(canvas, "Each release names evidence from both planes; success in one does not substitute for the other.",
-                     22, 117, w - 44, "Helvetica-Bold", 6.15, "#475569")
-        draw_wrapped(canvas, "Protocol controls: preregistered intervention, fixed decision rule, and an explicit condition that counts against the claim.",
-                     22, 105, w - 44, "Helvetica", 5.75, "#475569")
-
-        protocol_y = 16
-        protocol_h = 76
-        protocol_gap = 8
-        protocol_w = (w - 32 - 2 * protocol_gap) / 3
-        protocols = [
-            (
-                "P15",
-                "vector gate",
-                "fixed proposal bank\nseparate (c)-(a) and (c)-(b) margins\nmulti-seed online\nfirst-attempt grading\nindependent grader\nphantom-violation oracle",
-                "#f5f3ff",
-                "#7c3aed",
-                "#5b21b6",
-            ),
-            (
-                "P16",
-                "summary reconstruction",
-                "strict held-out\ntoken-matched direct reading\nmetadata-only\nfield ablation\nshuffled summaries\njoint contrast",
-                "#ecfeff",
-                "#0891b2",
-                "#155e75",
-            ),
-            (
-                "P17",
-                "registry change control",
-                "preregistered dependency graph\nartifact-change oracle\nexpected versus unanticipated propagation",
-                "#fff7ed",
-                "#ea580c",
-                "#9a3412",
-            ),
-        ]
-        for index, (pid, title, detail, fill, stroke, color) in enumerate(protocols):
-            x = 16 + index * (protocol_w + protocol_gap)
-            canvas.saveState()
-            canvas.setFillColor(hx(fill))
-            canvas.setStrokeColor(hx(stroke))
-            canvas.setLineWidth(0.8)
-            canvas.roundRect(x, protocol_y, protocol_w, protocol_h, 6, stroke=1, fill=1)
-            canvas.restoreState()
-            used = draw_wrapped(
-                canvas,
-                f"{pid}  {title}",
+                text,
                 x + 6,
-                protocol_y + protocol_h - 7,
-                protocol_w - 12,
-                "Helvetica-Bold",
-                7.2,
-                color,
+                primary_y + primary_h - 8,
+                width - 12,
+                "Helvetica-Bold" if index == 0 else "Helvetica",
+                5.4 if index == 0 else 5.25,
+                "#1e3a5f" if index == 0 else "#334155",
                 TA_LEFT,
+                6.35,
             )
-            draw_wrapped(
-                canvas,
-                detail,
-                x + 6,
-                protocol_y + protocol_h - 8.5 - used,
-                protocol_w - 12,
-                "Helvetica",
-                5.4,
-                "#475569",
-                TA_LEFT,
-                6.3,
-            )
-            if index < len(protocols) - 1:
-                draw_arrow(canvas, x + protocol_w, protocol_y + protocol_h / 2,
-                           x + protocol_w + protocol_gap, protocol_y + protocol_h / 2,
-                           "#64748b", 0.75)
+
+        secondary = [
+            ("P15", "Vector gate", "proposal-bank contrasts", "margin failure or phantom violation"),
+            ("P16", "Summary reconstruction", "held-out joint contrast", "direct-reading control wins"),
+            ("P17", "Registry change control", "dependency-change oracle", "unanticipated propagation"),
+        ]
+        row_h = 29
+        for row_index, row in enumerate(secondary):
+            y = primary_y - (row_index + 1) * row_h
+            for column, (x, width, text) in enumerate(zip(xs, widths, row)):
+                canvas.setFillColor(hx("#f8fafc" if row_index % 2 == 0 else "#f1f5f9"))
+                canvas.setStrokeColor(hx("#cbd5e1"))
+                canvas.setLineWidth(0.5)
+                canvas.rect(x, y, width, row_h, stroke=1, fill=1)
+                draw_wrapped(
+                    canvas,
+                    text,
+                    x + 5,
+                    y + row_h - 7,
+                    width - 10,
+                    "Helvetica-Bold" if column == 0 else "Helvetica",
+                    5.0,
+                    "#475569",
+                    TA_LEFT,
+                    5.8,
+                )
+        draw_wrapped(
+            canvas,
+            "Secondary protocols remain diagnostic; they do not substitute for the P1 release decision.",
+            table_x + 4,
+            16,
+            sum(widths) - 8,
+            "Helvetica-Bold",
+            5.4,
+            "#64748b",
+            TA_LEFT,
+        )
 
 
 def strip_comments(text: str) -> str:
