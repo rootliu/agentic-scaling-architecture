@@ -29,13 +29,16 @@ TITLE = "A Contract-Centered Architecture for Scalable and Manageable Agentic Ru
 AUTHOR = "Yaxiao Liu"
 AUTHOR_EMAIL = "rootliu@gmail.com"
 FIGURE_WIDTH = 462
-PREPRINT_VERSION = "v20"
+PREPRINT_VERSION = "v21"
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+# Derived from PREPRINT_VERSION so a version bump cannot silently overwrite the
+# previous version's PDF: v20 shipped three different documents (26, 27 and 33
+# pages) under one filename before the two were tied together.
 DEFAULT_OUTPUT = os.path.join(
     SCRIPT_DIR,
     "output",
     "pdf",
-    "Scalable_Manageable_Agentic_Runtime_Preprint_v20.pdf",
+    f"Scalable_Manageable_Agentic_Runtime_Preprint_{PREPRINT_VERSION}.pdf",
 )
 RESPONSIBILITY_BAND_HEIGHT = 74
 

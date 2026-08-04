@@ -1,8 +1,14 @@
 # CHANGELOG
 
-## v20 修订 2 — 2026-08-04
+> **版本号与文件名规则**：`latex_to_preprint.py` 的 `PREPRINT_VERSION` 现在同时决定输出文件名（`..._{version}.pdf`）。两者已绑定，故版本升号不会再静默覆盖上一版 PDF。
+>
+> ⚠️ **历史遗留**：v20 这一个文件名下曾先后存在**三个不同的文档**——26 页（`1507a5b` 初版）、27 页（`c10b895`）、33 页（`a3fa38d`，本应是 v21）。第三个已改切为 v21，`..._v20.pdf` 已回退为 `c10b895` 的 27 页状态。若他处引用过"v20 共 33 页"，指的其实是 v21。
 
-来源：对 v20 全文（617 行 / ~13,600 词）做一次完整评审，得 19 条改进意见，本次全部实施。29 页 → 33 页。
+## v21 — 2026-08-04
+
+来源：对 v20 全文（617 行 / ~13,600 词）做一次完整评审，得 19 条改进意见，本次全部实施。**27 页 → 33 页**。
+
+本版原以 "v20 修订 2" 提交并覆盖了 `..._v20.pdf`；因改动含三个新章节与统计承诺变更，属实质性内容修订而非勘误，故重新切为独立版本 v21。
 
 ### 术语与命名一致性（意见 1/2/5/8/9/14/15）
 
@@ -42,12 +48,12 @@
 
 ### 分页
 
-§9/§10 新增约 4 页后，此前为修 `test_v20_conclusion_does_not_orphan_its_final_clause` 而加在 `\section{Conclusion}` 前的 `\newpage` 反而造成 p32 只剩 679 字符的近空页。移除该 `\newpage`：Conclusion 现完整落在 p32，末句 "organizational, or economic conditions under which they do not." 不再被挤到续页。
+§9/§10 新增约 4 页后，此前为修 `test_v21_conclusion_does_not_orphan_its_final_clause` 而加在 `\section{Conclusion}` 前的 `\newpage` 反而造成 p32 只剩 679 字符的近空页。移除该 `\newpage`：Conclusion 现完整落在 p32，末句 "organizational, or economic conditions under which they do not." 不再被挤到续页。
 
 ### 验证
 
-- `tests/test_v20_rendering.py` 10/10 通过。
-- 重建 `output/pdf/..._v20.pdf`（33 页）：全部 `\ref` 正确解析（`Figure 1 establishes`、`Section 5.3`、`Sections 9.1--9.2`、`Protocols 9.1 and 9.2`、`Section 9.10 describes` 等），无 "the section"/"the protocol"/"the table" 降级回退（残留 3 处 "the protocol"/"the figure" 已逐一确认是正常散文，非 `\ref` 失败）。
+- `tests/test_v21_rendering.py`（原 `test_v20_rendering.py`，随版本重命名）10/10 通过。
+- 重建 `output/pdf/..._v21.pdf`（33 页）：全部 `\ref` 正确解析（`Figure 1 establishes`、`Section 5.3`、`Sections 9.1--9.2`、`Protocols 9.1 and 9.2`、`Section 9.10 describes` 等），无 "the section"/"the protocol"/"the table" 降级回退（残留 3 处 "the protocol"/"the figure" 已逐一确认是正常散文，非 `\ref` 失败）。
 - 全文扫描：无残留 LaTeX 控制序列、无 `{`/`}`、无 `??`、无占位符。cite key 与 `references.bib` 19 条双向完全匹配。章节编号 1–12 连续。
 - 三个新增 proposition 环境、两个新增子节、Table 3 两个新行均确认渲染。
 

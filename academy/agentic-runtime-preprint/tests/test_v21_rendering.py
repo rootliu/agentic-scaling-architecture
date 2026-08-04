@@ -53,8 +53,8 @@ def rendered_text_baseline(page, prefix: str) -> float:
 
 
 class V20RenderingTests(unittest.TestCase):
-    def test_default_output_is_a_v20_pdf_beside_the_renderer(self):
-        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v20-default-") as tmp:
+    def test_default_output_is_a_v21_pdf_beside_the_renderer(self):
+        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v21-default-") as tmp:
             isolated_preprint = Path(tmp) / "agentic-runtime-preprint"
             isolated_preprint.mkdir()
             isolated_renderer = isolated_preprint / RENDERER.name
@@ -77,15 +77,15 @@ class V20RenderingTests(unittest.TestCase):
                 isolated_preprint
                 / "output"
                 / "pdf"
-                / "Scalable_Manageable_Agentic_Runtime_Preprint_v20.pdf"
+                / "Scalable_Manageable_Agentic_Runtime_Preprint_v21.pdf"
             )
 
             self.assertTrue(expected.is_file())
             self.assertEqual(result.stdout.strip(), str(expected))
 
-    def test_v20_pdf_encodes_the_enterprise_responsibility_model(self):
-        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v20-test-") as tmp:
-            output = Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v20.pdf"
+    def test_v21_pdf_encodes_the_enterprise_responsibility_model(self):
+        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v21-test-") as tmp:
+            output = Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v21.pdf"
             subprocess.run(
                 [
                     sys.executable,
@@ -101,7 +101,7 @@ class V20RenderingTests(unittest.TestCase):
             )
             reader = PdfReader(str(output))
 
-        self.assertIn("v20", reader.metadata.subject)
+        self.assertIn("v21", reader.metadata.subject)
         expected_by_figure = {
             1: [
                 "Business capability: Skill-as-Code",
@@ -187,9 +187,9 @@ class V20RenderingTests(unittest.TestCase):
             "Figure 5's CIO data-foundation annotations must not overlap",
         )
 
-    def test_v20_tables_keep_enterprise_labels_intact(self):
-        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v20-test-") as tmp:
-            output = Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v20.pdf"
+    def test_v21_tables_keep_enterprise_labels_intact(self):
+        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v21-test-") as tmp:
+            output = Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v21.pdf"
             subprocess.run(
                 [
                     sys.executable,
@@ -214,9 +214,9 @@ class V20RenderingTests(unittest.TestCase):
         self.assertIn("Business/use-case", rendered_text)
         self.assertIn("System/runtime", rendered_text)
 
-    def test_v20_tables_have_sequential_captions_and_accurate_references(self):
-        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v20-test-") as tmp:
-            output = Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v20.pdf"
+    def test_v21_tables_have_sequential_captions_and_accurate_references(self):
+        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v21-test-") as tmp:
+            output = Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v21.pdf"
             subprocess.run(
                 [
                     sys.executable,
@@ -254,9 +254,9 @@ class V20RenderingTests(unittest.TestCase):
         for reference in expected_references:
             self.assertIn(reference, rendered_text)
 
-    def test_v20_pdf_has_no_raw_math_control_leaks(self):
-        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v20-test-") as tmp:
-            output = Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v20.pdf"
+    def test_v21_pdf_has_no_raw_math_control_leaks(self):
+        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v21-test-") as tmp:
+            output = Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v21.pdf"
             subprocess.run(
                 [
                     sys.executable,
@@ -298,7 +298,7 @@ class V20RenderingTests(unittest.TestCase):
           url={https://example.org/release}
         }
         """
-        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v20-reference-") as tmp:
+        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v21-reference-") as tmp:
             output = Path(tmp) / "references.pdf"
             story = renderer.build_story(tex, bib, renderer.make_styles())
             SimpleDocTemplate(str(output)).build(story)
@@ -315,8 +315,8 @@ class V20RenderingTests(unittest.TestCase):
         self.assertIn("URL: https://example.org/release.", rendered_text)
 
     def test_figure_eight_shows_directed_runtime_contracts(self):
-        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v20-test-") as tmp:
-            output = Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v20.pdf"
+        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v21-test-") as tmp:
+            output = Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v21.pdf"
             subprocess.run(
                 [
                     sys.executable,
@@ -342,9 +342,9 @@ class V20RenderingTests(unittest.TestCase):
         for relationship in expected_relationships:
             self.assertIn(relationship, figure_eight)
 
-    def test_v20_responsibility_table_does_not_split_boundary_header(self):
-        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v20-test-") as tmp:
-            output = Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v20.pdf"
+    def test_v21_responsibility_table_does_not_split_boundary_header(self):
+        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v21-test-") as tmp:
+            output = Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v21.pdf"
             subprocess.run(
                 [
                     sys.executable,
@@ -398,9 +398,9 @@ class V20RenderingTests(unittest.TestCase):
                 msg=f"Boundary must share the header line with {label}",
             )
 
-    def test_v20_conclusion_does_not_orphan_its_final_clause(self):
-        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v20-test-") as tmp:
-            output = Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v20.pdf"
+    def test_v21_conclusion_does_not_orphan_its_final_clause(self):
+        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v21-test-") as tmp:
+            output = Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v21.pdf"
             subprocess.run(
                 [
                     sys.executable,
@@ -441,7 +441,7 @@ class V20RenderingTests(unittest.TestCase):
         \end{{tabular}}
         \end{{table}}
         """
-        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v20-table-") as tmp:
+        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v21-table-") as tmp:
             output = Path(tmp) / "split-table.pdf"
             story = renderer.table_from_latex(block, renderer.make_styles(), {})
             SimpleDocTemplate(
