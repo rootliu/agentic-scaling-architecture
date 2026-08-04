@@ -128,3 +128,59 @@ geometry, and final artifact checks all passed.
 The Obsidian repository and prior release PDFs were not modified.
 
 Commit SHA: recorded in the final Git commit metadata reported with this task.
+
+## Fix Round 2 Evidence
+
+### Finding Addressed
+
+The geometry regression test previously opened the committed v22 PDF directly.
+It now calls the existing `render_pdf()` helper with a PDF path inside a
+`TemporaryDirectory`, then opens that freshly rendered file with `pdfplumber`.
+The renderer output is therefore exercised by the geometry assertion.
+
+### Changed Files
+
+- `academy/agentic-runtime-preprint/tests/test_v22_rendering.py`
+- `.superpowers/sdd/2026-08-04-v22-focused-thesis-revision/2026-08-04-task-4a-fix-1-report.md`
+
+No production source, manuscript, committed PDF, v21 release, figures, or
+Obsidian files were changed.
+
+### Verification
+
+Focused geometry command, run from
+`academy/agentic-runtime-preprint/tests`:
+
+```text
+C:\Users\liuya\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe -m unittest test_v22_rendering.V22RenderingTests.test_v22_pdf_keeps_compound_subscript_on_one_lowered_baseline -v
+```
+
+Output:
+
+```text
+test_v22_pdf_keeps_compound_subscript_on_one_lowered_baseline (test_v22_rendering.V22RenderingTests.test_v22_pdf_keeps_compound_subscript_on_one_lowered_baseline) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 1.216s
+
+OK
+```
+
+Complete preprint suite command, run from the worktree root:
+
+```text
+C:\Users\liuya\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe -m unittest discover -s academy\agentic-runtime-preprint\tests -p 'test_*.py' -v
+```
+
+Output:
+
+```text
+----------------------------------------------------------------------
+Ran 18 tests in 6.416s
+
+OK
+```
+
+`git diff --check` passed before commit. Commit:
+`2d8401cf24d6fcc9d82e91aba15a2d435a92cad8`
+(`test: render v22 geometry regression from fresh PDF`).
