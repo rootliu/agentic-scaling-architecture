@@ -273,41 +273,39 @@ class V22RenderingTests(unittest.TestCase):
                 Paragraph(escaped).wrap(300, 100)
 
     def test_v22_pdf_keeps_compound_subscript_on_one_lowered_baseline(self):
-        with pdfplumber.open(
-            PREPRINT_DIR
-            / "output"
-            / "pdf"
-            / "Scalable_Manageable_Agentic_Runtime_Preprint_v22.pdf"
-        ) as pdf:
-            page = next(
-                page
-                for page in pdf.pages
-                if "component budget" in (page.extract_text() or "")
+        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v22-geometry-") as tmp:
+            output = Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v22.pdf"
+            render_pdf(output)
+            with pdfplumber.open(output) as pdf:
+                page = next(
+                    page
+                    for page in pdf.pages
+                    if "component budget" in (page.extract_text() or "")
+                )
+                words = page.extract_words(use_text_flow=True, keep_blank_chars=False)
+
+            phrase_index = next(
+                index
+                for index, (current, following) in enumerate(zip(words, words[1:]))
+                if current["text"] == "component" and following["text"] == "budget"
             )
-            words = page.extract_words(use_text_flow=True, keep_blank_chars=False)
+            formula_words = words[phrase_index + 2 : phrase_index + 7]
+            self.assertGreaterEqual(len(formula_words), 3)
+            self.assertEqual(formula_words[0]["text"], "B")
 
-        phrase_index = next(
-            index
-            for index, (current, following) in enumerate(zip(words, words[1:]))
-            if current["text"] == "component" and following["text"] == "budget"
-        )
-        formula_words = words[phrase_index + 2 : phrase_index + 7]
-        self.assertGreaterEqual(len(formula_words), 3)
-        self.assertEqual(formula_words[0]["text"], "B")
-
-        base_top = formula_words[0]["top"]
-        next_word = formula_words[3]
-        operand_chars = [
-            char
-            for char in page.chars
-            if formula_words[0]["x1"] <= char["x0"] <= next_word["x0"]
-            and char["text"] in "E,k"
-            and base_top <= char["top"] <= base_top + 10
-        ]
-        self.assertEqual("".join(char["text"] for char in operand_chars), "E,k")
-        subscript_tops = [char["top"] for char in operand_chars]
-        self.assertGreater(min(subscript_tops) - base_top, 3.0)
-        self.assertLess(max(subscript_tops) - min(subscript_tops), 0.5)
+            base_top = formula_words[0]["top"]
+            next_word = formula_words[3]
+            operand_chars = [
+                char
+                for char in page.chars
+                if formula_words[0]["x1"] <= char["x0"] <= next_word["x0"]
+                and char["text"] in "E,k"
+                and base_top <= char["top"] <= base_top + 10
+            ]
+            self.assertEqual("".join(char["text"] for char in operand_chars), "E,k")
+            subscript_tops = [char["top"] for char in operand_chars]
+            self.assertGreater(min(subscript_tops) - base_top, 3.0)
+            self.assertLess(max(subscript_tops) - min(subscript_tops), 0.5)
 
 
 if __name__ == "__main__":
