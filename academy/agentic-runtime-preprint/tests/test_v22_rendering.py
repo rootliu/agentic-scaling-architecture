@@ -209,6 +209,43 @@ class V22RenderingTests(unittest.TestCase):
                     f"Figure {figure_number} must render {expected_term!r}",
                 )
 
+    def test_figure_two_uses_the_canonical_harness_contract_fields(self):
+        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v22-contract-") as tmp:
+            output = Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v22.pdf"
+            render_pdf(output)
+            with pdfplumber.open(output) as pdf:
+                page = next(
+                    page
+                    for page in pdf.pages
+                    if "Figure 2." in (page.extract_text() or "")
+                )
+                words = page.extract_words(use_text_flow=True, keep_blank_chars=False)
+                title_top = next(
+                    word["top"]
+                    for word in words
+                    if word["text"] == "From"
+                )
+                caption_top = next(
+                    current["top"]
+                    for current, following in zip(words, words[1:])
+                    if current["text"] == "Figure" and following["text"] == "2."
+                )
+                figure_text = re.sub(
+                    r"\s+",
+                    " ",
+                    page.crop((0, title_top - 2, page.width, caption_top)).extract_text()
+                    or "",
+                )
+
+        for expected_row in (
+            "I / O typed inputs and outputs",
+            "G activated Skill graph",
+            "A authority, effects + evidence duties",
+            "B time, cost, token, concurrency budgets",
+            "V policy, model, data, capability, verifier + trace versions",
+        ):
+            self.assertIn(expected_row, figure_text)
+
     def test_v22_pdf_repairs_formula_typography_and_first_use_acronyms(self):
         with tempfile.TemporaryDirectory(prefix="agentic-runtime-v22-typography-") as tmp:
             reader = render_pdf(

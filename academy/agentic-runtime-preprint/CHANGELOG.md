@@ -11,6 +11,7 @@
 - **估计量**：预登记 capability-by-Scaffold interaction estimand，以 `Q(c,s)`、`R(c,s)` 与 `E(c,s)` 分别承载语义、运行时和执行开销证据。
 - **责任边界修正**：明确 activated behavior 属于 Skill；Harness 负责逻辑准入与控制；Scaffold 负责物理执行与隔离。
 - **三向决策规则**：结果只可读为 `supported within Ω`、`falsified within Ω` 或 `inconclusive`，并显式纳入功效不足、运行域失配和条件未满足。
+- **重置失败偏差控制**：按进入/退出处理、周期和顺序预登记并报告 reset failure；complete-sequence 主估计必须配套 assignment-based ITT 边界与 tipping-point 敏感性分析，结论对排除假设敏感时判为 `inconclusive`。
 - **经典新颖性边界**：把版本化契约、准入、隔离、调度与遥测视为经典构件；本文的新颖性主张限于它们围绕可证伪的 capability × capacity 交互所形成的责任与测量契约。
 - **图形重绘**：Figure 1、4、5、6 改为清晰的契约路径与正交连接；Figure 8 替换为以 P1 为主行的 falsification matrix，次级协议在视觉上降级。
 - **v21 保全**：默认构建文件名升为 `..._v22.pdf`；冻结的 v21 release artifact 保持 SHA-256 `52DE73D7B3AF0CE20E632B929EB8BE4365C7CBC713805F949E5BE656F901969A` 不变。

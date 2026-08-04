@@ -331,9 +331,9 @@ class FigureGraphic(Flowable):
         rows = [
             ("I / O", "typed inputs and outputs"),
             ("G", "activated Skill graph"),
+            ("A", "authority, effects + evidence duties"),
             ("B", "time, cost, token, concurrency budgets"),
-            ("E", "authorized effects + evidence duties"),
-            ("T", "policy, model, data, trace identities"),
+            ("V", "policy, model, data, capability, verifier + trace versions"),
         ]
         ry = cy + ch - 34
         for key, value in rows:
