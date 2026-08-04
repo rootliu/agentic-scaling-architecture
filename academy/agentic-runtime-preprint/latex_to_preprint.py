@@ -43,19 +43,24 @@ DEFAULT_OUTPUT = os.path.join(
 RESPONSIBILITY_BAND_HEIGHT = 74
 
 
-_RICH_TEXT_TAG = re.compile(r"</?(?:sub|super)>")
+_SUB_OPEN = "__AGENTIC_RENDERER_SUB_OPEN_5D7A9C__"
+_SUB_CLOSE = "__AGENTIC_RENDERER_SUB_CLOSE_5D7A9C__"
+_SUPER_OPEN = "__AGENTIC_RENDERER_SUPER_OPEN_5D7A9C__"
+_SUPER_CLOSE = "__AGENTIC_RENDERER_SUPER_CLOSE_5D7A9C__"
+_RICH_TEXT_SENTINELS = {
+    _SUB_OPEN: "<sub>",
+    _SUB_CLOSE: "</sub>",
+    _SUPER_OPEN: "<super>",
+    _SUPER_CLOSE: "</super>",
+}
 
 
 def escape(text: str) -> str:
-    """Escape paragraph text while preserving the renderer's math tags."""
-    pieces = _RICH_TEXT_TAG.split(text)
-    tags = _RICH_TEXT_TAG.findall(text)
-    escaped = []
-    for index, piece in enumerate(pieces):
-        escaped.append(xml_escape(piece))
-        if index < len(tags):
-            escaped.append(tags[index])
-    return "".join(escaped)
+    """XML-escape text, restoring only markup emitted by this renderer."""
+    escaped = xml_escape(text)
+    for sentinel, tag in _RICH_TEXT_SENTINELS.items():
+        escaped = escaped.replace(xml_escape(sentinel), tag)
+    return escaped
 
 
 def hx(value: str):
@@ -910,10 +915,15 @@ def clean_math(text: str) -> str:
         text = new
     text = re.sub(r"\bsum_\{([^{}]+)\}", r"sum over \1 of", text)
     text = re.sub(r"\bsum_([A-Za-z0-9]+)", r"sum over \1 of", text)
+    text = re.sub(
+        r"\b([A-Za-z][A-Za-z0-9-]*)_\{([^{}]+)\}",
+        rf"\1{_SUB_OPEN}\2{_SUB_CLOSE}",
+        text,
+    )
     text = text.replace("{", "").replace("}", "")
     text = re.sub(
-        r"\b([A-Za-z][A-Za-z0-9-]*)_([A-Za-z0-9]+)\b",
-        r"\1<sub>\2</sub>",
+        r"\b([A-Za-z][A-Za-z0-9-]*)_([A-Za-z0-9-]+)\b",
+        rf"\1{_SUB_OPEN}\2{_SUB_CLOSE}",
         text,
     )
     text = re.sub(

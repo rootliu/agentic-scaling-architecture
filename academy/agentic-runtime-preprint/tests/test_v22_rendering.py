@@ -1,4 +1,5 @@
 import hashlib
+import importlib.util
 import re
 import shutil
 import subprocess
@@ -7,7 +8,9 @@ import tempfile
 import unittest
 from pathlib import Path
 
+import pdfplumber
 from pypdf import PdfReader
+from reportlab.platypus import Paragraph
 
 
 PREPRINT_DIR = Path(__file__).resolve().parents[1]
@@ -20,6 +23,13 @@ V21_RELEASE = (
     / "Scalable_Manageable_Agentic_Runtime_Preprint_v21.pdf"
 )
 V21_SHA256 = "52DE73D7B3AF0CE20E632B929EB8BE4365C7CBC713805F949E5BE656F901969A"
+
+
+def load_renderer():
+    spec = importlib.util.spec_from_file_location("latex_to_preprint", RENDERER)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 def render_pdf(output: Path) -> PdfReader:
@@ -224,7 +234,80 @@ class V22RenderingTests(unittest.TestCase):
             "Monitor, Analyze, Plan, Execute over a shared Knowledge base (MAPE-K)",
             text,
         )
-        self.assertIn("Chief Information Officer", text)
+        self.assertIn(
+            "Chief Information Officer",
+            figure_page_text(reader, 1),
+        )
+
+    def test_clean_math_formats_simple_compound_signed_and_hat_subscripts(self):
+        renderer = load_renderer()
+        expected = {
+            "x_i": "x<sub>i</sub>",
+            "B_{E,k}": "B<sub>E,k</sub>",
+            "x_{i,j}": "x<sub>i,j</sub>",
+            "x_{-1}": "x<sub>-1</sub>",
+            r"\widehat{E}_k(c,s)": "E-hat<sub>k</sub>(c,s)",
+        }
+
+        for source, rendered in expected.items():
+            with self.subTest(source=source):
+                self.assertEqual(renderer.escape(renderer.clean_math(source)), rendered)
+
+    def test_escape_treats_literal_rich_text_tags_as_text_and_paragraph_parses(self):
+        renderer = load_renderer()
+        sources = (
+            "literal <sub>balanced</sub> text",
+            "literal <sub>unmatched text",
+            "literal <sub>crossed</super> text",
+        )
+
+        for source in sources:
+            with self.subTest(source=source):
+                escaped = renderer.escape(source)
+                self.assertNotIn("<sub>", escaped)
+                self.assertNotIn("</sub>", escaped)
+                self.assertNotIn("<super>", escaped)
+                self.assertNotIn("</super>", escaped)
+                self.assertIn("&lt;", escaped)
+                self.assertIn("&gt;", escaped)
+                Paragraph(escaped).wrap(300, 100)
+
+    def test_v22_pdf_keeps_compound_subscript_on_one_lowered_baseline(self):
+        with pdfplumber.open(
+            PREPRINT_DIR
+            / "output"
+            / "pdf"
+            / "Scalable_Manageable_Agentic_Runtime_Preprint_v22.pdf"
+        ) as pdf:
+            page = next(
+                page
+                for page in pdf.pages
+                if "component budget" in (page.extract_text() or "")
+            )
+            words = page.extract_words(use_text_flow=True, keep_blank_chars=False)
+
+        phrase_index = next(
+            index
+            for index, (current, following) in enumerate(zip(words, words[1:]))
+            if current["text"] == "component" and following["text"] == "budget"
+        )
+        formula_words = words[phrase_index + 2 : phrase_index + 7]
+        self.assertGreaterEqual(len(formula_words), 3)
+        self.assertEqual(formula_words[0]["text"], "B")
+
+        base_top = formula_words[0]["top"]
+        next_word = formula_words[3]
+        operand_chars = [
+            char
+            for char in page.chars
+            if formula_words[0]["x1"] <= char["x0"] <= next_word["x0"]
+            and char["text"] in "E,k"
+            and base_top <= char["top"] <= base_top + 10
+        ]
+        self.assertEqual("".join(char["text"] for char in operand_chars), "E,k")
+        subscript_tops = [char["top"] for char in operand_chars]
+        self.assertGreater(min(subscript_tops) - base_top, 3.0)
+        self.assertLess(max(subscript_tops) - min(subscript_tops), 0.5)
 
 
 if __name__ == "__main__":
