@@ -5,7 +5,7 @@ import datetime as dt
 import math
 import os
 import re
-from xml.sax.saxutils import escape
+from xml.sax.saxutils import escape as xml_escape
 
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_LEFT, TA_RIGHT
@@ -41,6 +41,21 @@ DEFAULT_OUTPUT = os.path.join(
     f"Scalable_Manageable_Agentic_Runtime_Preprint_{PREPRINT_VERSION}.pdf",
 )
 RESPONSIBILITY_BAND_HEIGHT = 74
+
+
+_RICH_TEXT_TAG = re.compile(r"</?(?:sub|super)>")
+
+
+def escape(text: str) -> str:
+    """Escape paragraph text while preserving the renderer's math tags."""
+    pieces = _RICH_TEXT_TAG.split(text)
+    tags = _RICH_TEXT_TAG.findall(text)
+    escaped = []
+    for index, piece in enumerate(pieces):
+        escaped.append(xml_escape(piece))
+        if index < len(tags):
+            escaped.append(tags[index])
+    return "".join(escaped)
 
 
 def hx(value: str):
@@ -193,7 +208,7 @@ class FigureGraphic(Flowable):
             substrate_y,
             w - 28,
             substrate_h,
-            "CIO-governed semantic and telemetry foundation: data substrate",
+            "Chief Information Officer-governed semantic and telemetry foundation: data substrate",
             "",
             "#f5f3ff",
             "#a78bfa",
@@ -859,6 +874,7 @@ def clean_math(text: str) -> str:
         r"\cup": "union",
         r"\cap": "intersection",
         r"\sum": "sum",
+        r"\min": "min",
         r"\forall": "for all",
         r"\exists": "exists",
         r"\gg": ">>",
@@ -878,6 +894,7 @@ def clean_math(text: str) -> str:
         text = text.replace(k, v)
     text = re.sub(r"\\mathbb\{1\}", "indicator", text)
     text = re.sub(r"\\mathcal\{([^}]+)\}", r"\1", text)
+    text = re.sub(r"\\widehat\{([^}]+)\}", r"\1-hat", text)
     text = re.sub(r"\\hat\{([^}]+)\}", r"\1_hat", text)
     text = re.sub(r"\\bar\{([^}]+)\}", r"\1_bar", text)
     text = re.sub(r"\\text\{([^}]+)\}", r"\1", text)
@@ -894,6 +911,11 @@ def clean_math(text: str) -> str:
     text = re.sub(r"\bsum_\{([^{}]+)\}", r"sum over \1 of", text)
     text = re.sub(r"\bsum_([A-Za-z0-9]+)", r"sum over \1 of", text)
     text = text.replace("{", "").replace("}", "")
+    text = re.sub(
+        r"\b([A-Za-z][A-Za-z0-9-]*)_([A-Za-z0-9]+)\b",
+        r"\1<sub>\2</sub>",
+        text,
+    )
     text = re.sub(
         r"\b([A-Za-z][A-Za-z0-9_]*(?:_hat)?)\s+subset of\s+([A-Za-z][A-Za-z0-9_]*)",
         r"\1 is a subset of \2",
@@ -1278,7 +1300,7 @@ def code_block(
     block = block.replace(r"\mapsto", "->")
     block = block.replace(r"\in", " in ")
     block = block.replace(r"\cdot", "*")
-    text = clean_latex(block, cite_map, ref_map)
+    text = clean_latex(clean_math(block), cite_map, ref_map)
     text = re.sub(r"[ \t]+", " ", text).strip()
     return [Paragraph(escape(text).replace("\n", "<br/>"), styles["Formula"]), Spacer(1, 6)]
 

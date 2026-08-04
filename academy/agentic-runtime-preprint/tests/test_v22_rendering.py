@@ -199,6 +199,33 @@ class V22RenderingTests(unittest.TestCase):
                     f"Figure {figure_number} must render {expected_term!r}",
                 )
 
+    def test_v22_pdf_repairs_formula_typography_and_first_use_acronyms(self):
+        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v22-typography-") as tmp:
+            reader = render_pdf(
+                Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v22.pdf"
+            )
+
+        text = rendered_text(reader)
+        for forbidden in (
+            "Delta_R",
+            "Q_req",
+            "K_min",
+            "gamma_j",
+            "nu_j",
+            "eta_j",
+            "widehatE_k",
+        ):
+            self.assertNotIn(
+                forbidden,
+                text,
+                f"source-like formula token {forbidden!r} must not appear in the rendered PDF",
+            )
+        self.assertIn(
+            "Monitor, Analyze, Plan, Execute over a shared Knowledge base (MAPE-K)",
+            text,
+        )
+        self.assertIn("Chief Information Officer", text)
+
 
 if __name__ == "__main__":
     unittest.main()
