@@ -56,6 +56,19 @@ def figure_page_text(reader: PdfReader, figure_number: int) -> str:
     raise AssertionError(f"{marker} is missing from the rendered PDF")
 
 
+def rendered_figure_captions(reader: PdfReader) -> dict[int, str]:
+    text = rendered_text(reader)
+    matches = list(re.finditer(r"\bFigure\s+(\d+)\.\s+", text))
+    captions = {}
+    for match, next_match in zip(matches, matches[1:] + [None]):
+        figure_number = int(match.group(1))
+        if figure_number in captions:
+            raise AssertionError(f"Figure {figure_number} has more than one caption")
+        end = next_match.start() if next_match else len(text)
+        captions[figure_number] = text[match.end() : end].strip()
+    return captions
+
+
 class V22RenderingTests(unittest.TestCase):
     def test_default_v22_build_uses_new_filename_and_preserves_v21_release(self):
         before = hashlib.sha256(V21_RELEASE.read_bytes()).hexdigest().upper()
@@ -106,11 +119,41 @@ class V22RenderingTests(unittest.TestCase):
             "inconclusive",
             "cluster-period",
             "randomized crossover",
+            "activated capability configuration c",
+            "Scaffold capacity configuration s",
+            "runtime response R(c,s)",
+            "semantic outcome Q(c,s)",
+            "enforcement overhead E(c,s)",
+            "declared operating region Omega",
+            "capability-by-Scaffold interaction estimand",
+            "reset or washout",
+            "cluster-aware uncertainty",
+            "activated independently deployable behavior on admitted paths",
             "activated behavior",
             "Harness owns logical admission and control",
             "Scaffold owns physical execution and isolation",
         ):
             self.assertIn(expected_term, text)
+
+    def test_v22_pdf_defines_all_eight_captions_with_semantic_classification(self):
+        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v22-captions-") as tmp:
+            reader = render_pdf(
+                Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v22.pdf"
+            )
+
+        captions = rendered_figure_captions(reader)
+        self.assertEqual(
+            set(captions),
+            set(range(1, 9)),
+            "The rendered PDF must contain exactly one caption for each Figure 1 through Figure 8",
+        )
+        for figure_number, caption in captions.items():
+            self.assertRegex(
+                caption,
+                r"\bShown:\s+\S.+?\bWhy it matters:\s+\S.+?"
+                r"\bClass:\s+(?:architecture|protocol|proposed measurement design)\b",
+                f"Figure {figure_number} caption must state shown, significance, and class",
+            )
 
     def test_v22_figures_encode_focused_contract_labels(self):
         expected_by_figure = {
