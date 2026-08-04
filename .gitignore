@@ -7,3 +7,7 @@ node_modules/
 
 # Third-party reference PDFs (kept locally for reading; re-downloadable from arXiv)
 academy/papers/pdf/
+
+__pycache__/
+*.pyc
+tmp/

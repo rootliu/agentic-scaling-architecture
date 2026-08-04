@@ -196,18 +196,37 @@ weaken their causal or statistical requirements.
 All contemporary references retained in v20 must have a verifiable publication
 or release date on or after 2026-06-01. A 2026 year alone is insufficient.
 
-Eligible academic anchors include:
+Eligible academic anchors include, with the date taken from the arXiv API
+`<published>` field rather than from a year or a local filename:
 
-- arXiv:2606.12320, Five-Plane Reference Architecture;
-- arXiv:2606.15242, composition risks;
-- arXiv:2607.09175, GRACE;
-- arXiv:2607.10534, Skill misalignment;
-- arXiv:2607.13070, falsifiable release gates;
-- arXiv:2607.13285, Harness Handbook;
-- arXiv:2607.14004, continual optimizer evaluation;
-- arXiv:2607.15557, SkillCorpus;
-- arXiv:2607.16345, AEVAL;
-- arXiv:2607.18970, Skillware.
+- arXiv:2606.12320, Five-Plane Reference Architecture, 2026-06-10;
+- arXiv:2606.15242, composition risks, 2026-06-13;
+- arXiv:2607.09175, GRACE, 2026-07-10;
+- arXiv:2607.13070, falsifiable release gates, 2026-07-11;
+- arXiv:2607.10534, Skill misalignment, 2026-07-12;
+- arXiv:2607.13083, phantom guardrails, 2026-07-13;
+- arXiv:2607.13285, Harness Handbook, 2026-07-14;
+- arXiv:2607.13683, gated semantic quality-diversity, 2026-07-15;
+- arXiv:2607.14004, continual optimizer evaluation, 2026-07-15;
+- arXiv:2607.16345, AEVAL, 2026-07-16;
+- arXiv:2607.15557, SkillCorpus, 2026-07-17;
+- arXiv:2607.17598, progressive disclosure, 2026-07-20;
+- arXiv:2607.17937, Skill failure under long contexts, 2026-07-20;
+- arXiv:2607.18970, Skillware, 2026-07-21;
+- arXiv:2607.20999, workflow-localized mechanism learning, 2026-07-23.
+
+Tightening the date rule is not a licence to drop an eligible source. A source
+whose verified date is on or after 2026-06-01 must be retained if any claim
+depends on it; the five 2607 anchors above were dropped in the first v20 pass
+and had to be restored because their removal left four claims — a phantom
+oracle with no definition, two unmotivated §9.1 control conditions, a
+first-person attribution, and a deleted novelty-narrowing disclosure —
+stranded without support.
+
+Ineligible by verified date, and therefore usable only as recorded design
+motivation with no result of theirs asserted:
+
+- arXiv:2605.23904, SkillOpt, 2026-05-22.
 
 Eligible industry anchors include:
 

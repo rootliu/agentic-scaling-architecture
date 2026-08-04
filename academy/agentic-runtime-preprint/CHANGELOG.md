@@ -1,5 +1,109 @@
 # CHANGELOG
 
+## v20 修订 2 — 2026-08-04
+
+来源：对 v20 全文（617 行 / ~13,600 词）做一次完整评审，得 19 条改进意见，本次全部实施。29 页 → 33 页。
+
+### 术语与命名一致性（意见 1/2/5/8/9/14/15）
+
+- **"layer" 语言清除**：v20 已在概念上弃用"三层栈"，但正文残留 5 处 layer 表述。改为 responsibility object 语汇：`span all three runtime layers` → `distributed across the three runtime responsibility objects`；`(Skills layer)` / `(Scaffold layer)` → `(Skill)` / `(Scaffold)`；`across the Skills, orchestration, and Scaffold-placement layers` → `in all three runtime objects --- Skill declaration, Harness orchestration, and Scaffold placement ---`。经逐处检查保留的 layer 仍是合法用法（"不是第四运行时层"这一否认句、Cross-layer misalignment 论文名、routing layer、image layers、relation layer）。
+- **`data subsystem` → `data substrate`** 3 处，与图面标签统一。原"memory layer 吸收细节"句改写为数据基盘吸收，并补一句说明该基盘栈外故不引入运行时耦合。
+- **§3 标题**改为 `Origins: Organization, Boundaries, and Change Cadence`（原 "Origins of the Extensibility Framework" 与实际内容不符）。
+- **§5.1 标题**改为 `The Three Runtime Objects and the External Substrate`（原标题漏掉了该节实际包含的栈外基盘）。
+- **命题编号跳号说明**：P1 → P15/P16/P17 的跳号此前无解释。补一句：P2–P14 出自早期稿本，已被撤回、吸收进 P1 六条件、或降为 §8 的机制假设；仍可独立检验的三条保留原编号以便与协议和既有记录对齐。
+- **重复枚举削减**：§1 的 `train-freeze-monitor Skill lifecycle` 与 §10.1 的十个 NFR 再枚举改为交叉引用。
+
+### 交叉引用机制化（意见 3）
+
+- 为 12 个子节补 `\label`（`sec:runtime-objects`、`sec:harness-contract-def`、`sec:conditional-decoupling`、`sec:first-principle`、`sec:skill-as-code`、`sec:eval-capability`…`sec:eval-modelversion`）。
+- 把全文约 42 处硬编码交叉引用改为 `\ref`：8 处 `Figure N`、全部 `Section~N.M`、`Sections~9.1--9.2`、`Protocols 9.1 and 9.2`、Table 3 的 `(\S9.x)` 单元格。此前任一节插入都会使这些数字集体失效。
+- **构建器必须先改**：`clean_latex` 原先把 `\ref` 整体丢弃并降级成 "the figure"/"the section"。把 `table_label_map(tex) -> dict[str,int]` 重写为 `reference_label_map(tex) -> dict[str,str]`，同时跟踪 figure/table 环境与三级 section 计数器（排除 `prop:`，那些渲染为 "P1"），33 处 `table_map` 改名 `ref_map`，并按 Table/Figure/Section/Protocol 四种前缀 × 单数/复数范围/复数 and-形式解析。
+- Table 3 的 `\S\ref{a}--\S\ref{b}` 会渲染成 `(Section 9.1-Section 9.2)`，改为 `\S\ref{a}--\ref{b}`。
+
+### 新增内容（意见 6/7/16/19）
+
+- **§4 `\paragraph{The closest existing implementation.}`**：`soni2026gates` 此前只占一行，但它是本文机制最接近的已发表实现，评审必问二者边界。新增两段，说明其 6 个连续版本不变的 standing invariants、deliberate-breakage / shortest-counterexample 纪律、capability-token-before-effector 即 complete mediation + typed closure 合并执行、invariant 集在能力面翻倍以上后未被削弱；并明确 **0.021 ms/请求只作下界**（它只覆盖 invariant 求值，不含 resolved Harness contract 还需的 schema 校验、图构造与绑定，故本文不自行给出开销估计）。边界：其 invariant 管 action→effector，本文管 capability→capacity；验证在 bounded model 而非部署容量区间；无 capability × capacity 因子设计。
+- **§6.2 `\subsection{Threat Model}`**（新，`sec:threat-model`）：五条 —— trusted computing base（控制面，交叉引用 §10.1 集中化风险）、untrusted model output（plan 是权限请求而非授权）、semi-trusted Skills（引 `zhang2026misalignment`，closure 作为闸门）、untrusted external content（回答 prompt injection 的是契约解析而非指令过滤）、adversary capabilities（在范围内/外各 4 项）。收尾明确目标之窄：闸门与 trace 使违规可归因，但不阻止一个**已授权**的 effect 造成危害。
+- **§9.10 `\subsection{A Minimal Viable First Study}`**（新，`sec:eval-minimal`）：给出能产出关于 P1 的可发表结果的最省配置 —— 单租户、两个 Scaffold class、合成 Skill、复现预算花在 runs/cell 而非更多 cell；**六个条件全部工具化并报告违规率，但不要求全部通过**（instrument ≠ pass，只有一条 complete-mediation 率非零的首个研究给出的 conditional-engineering result，比未上报的合取失败对下一个研究更有用）；可接受的两处节省是 diagnostic 注入减到 shared-compute + external-service quota 两条通道、语义不变性指标收窄。
+- **§10.2 `\subsection{Artifact and Preregistration Statement}`**（新）：本文无实验故无 artifact；待判定的是"协议是否具体到独立小组无需联系作者即可执行"，任何无法仅凭正文实例化 margin/control/falsification 的协议即证伪该主张。三条承诺：先登记后采集且无论结果方向均发表、条件判定在任何 outcome 解盲前冻结、落入 conditional-engineering 状态照样上报。
+
+### 统计效力与方法论（意见 4/17）
+
+- **§9 preamble 新增 `\paragraph{Margins, replication, and detectable interaction.}`**（三段）：① margin 必须来自它所管辖的决策（release board 可接受的最大语义退化、会改变采购或放置决定的最小容量响应偏离），不得来自 pilot 观测方差 —— 否则噪声大的仪器可以靠放宽自己的 margin 自我认证；决策、决策 owner、数值 margin 分列为独立预登记字段。② 复现量按**交互**而非主效应定尺：交互是差之差、累积每个参与 cell 的方差，只按两条主效应定功效的设计会系统性无法解析 P1 真正依赖的 recoupling 项；须声明 runs/cell、由此得的最小可检出交互、以及它是否小于 interaction margin。③ 若最小可检出交互超过 margin，须**事先**声明该设计对 P1 功效不足 —— 此时非显著交互对可分离性不提供信息、而非支持之。把"把功效不足报成独立性结论"点名为本研究纲领最可能产生自利假阳性的方式。§11 相应改为指向 §9 的设计约束而非仅作 caveat。
+- **无协议机制显式登记**：mechanism 1（tool-set cohesion / prefix stability）与 mechanism 4（seed-affinity placement）以及 Amdahl 标定 `s=s₀+λρ+ηz` / `E=E₀−μc̄` 在 §9 中**没有任何协议**——现行协议不把 ρ 与 c̄ 作为受控因子扫描，而估计 λ/η/μ 恰需如此。正文改为如实说明这一点并给出所需设计（固定 workload 与 Scaffold pool、以 tool-set overlap 与 handoff summary size 为操纵变量、线性形式本身对单调非线性备择受检），Table 3 补两行：`Prefix stability / seed affinity`（Design pattern，No protocol in this paper）与 `Amdahl and handoff calibration`（Open question，No protocol in this paper）。
+
+### 形式与结构（意见 10/11/12/13/18）
+
+- **`conditional-engineering result` 补定义句**：此前是自创术语但只描述用法未给定义（对比 `phantom violation` / `derivation closure` / `Intermediate Relation` 均有定义句）。现定义为：outcome estimand 的完整报告 + 超阈条件具名 + 各自观测值，两个方向都不给出结论；并说明取此名是因为它刻画的是受测运行时的**工程状态**而非 P1 的科学状态。
+- **P1/P15/P16/P17 形式对称**（原先只有 P1 在 `proposition` 环境里，P15–P17 散在正文）：新增 `\begin{proposition}[Hypothesis P15: dual-subgoal gate benefit]`、`[Hypothesis P16: reconstructive-reflection sufficiency]`、`[Proposition P17: registry schema/module independence]`，P1 的标题补 `Proposition P1:` 前缀。构建器已有 `proposition_from_latex` 处理，无需改动。
+- **§4 与 §8.2/§8.5 去重**：`hsu2026grace` 的 flat-text baseline 增益、`luo2026gsme`/`lin2026wml` 的事后索引、`wang2026phantom` 的负面结果此前在两处各讲一遍。数据与结论归 §4，§8.2/§8.5 只保留"与本文差别在哪"，并回指 §4。
+- **§8.1 perovskite walkthrough 与 §1 动机接线**：§1 列举的是 procurement / customer-service / research / finance，§8.1 却直接跳到钙钛矿而未说明为何。补一段：那三个是契约边界最易划的场景（数据源、effects、审批权已institutionally settled），企业研发在每个维度上都更难（源集异构且部分外部、算力专用到足以检验容量是否真可替换、effects 含不可逆对外发布、证据义务是逐条引用而非工作流结果），故选作契约的**压力测试**而非代表性负载 —— 此处成立不反推那三个成立，反向不成立。
+- **超长段落拆分**（>200 词 6 处 → 0 处）：Abstract（247 词→4 段）、SkillMD-138K 段（278→2）、P1 reading rule 段（382→2）、AI4Science walkthrough（376→2）、新增的 power 段（337→3）、§4 Harness evolution 段（227→2）。
+
+### 分页
+
+§9/§10 新增约 4 页后，此前为修 `test_v20_conclusion_does_not_orphan_its_final_clause` 而加在 `\section{Conclusion}` 前的 `\newpage` 反而造成 p32 只剩 679 字符的近空页。移除该 `\newpage`：Conclusion 现完整落在 p32，末句 "organizational, or economic conditions under which they do not." 不再被挤到续页。
+
+### 验证
+
+- `tests/test_v20_rendering.py` 10/10 通过。
+- 重建 `output/pdf/..._v20.pdf`（33 页）：全部 `\ref` 正确解析（`Figure 1 establishes`、`Section 5.3`、`Sections 9.1--9.2`、`Protocols 9.1 and 9.2`、`Section 9.10 describes` 等），无 "the section"/"the protocol"/"the table" 降级回退（残留 3 处 "the protocol"/"the figure" 已逐一确认是正常散文，非 `\ref` 失败）。
+- 全文扫描：无残留 LaTeX 控制序列、无 `{`/`}`、无 `??`、无占位符。cite key 与 `references.bib` 19 条双向完全匹配。章节编号 1–12 连续。
+- 三个新增 proposition 环境、两个新增子节、Table 3 两个新行均确认渲染。
+
+## v20 修订 — 2026-08-03
+
+审查方式：把 v20 与 v19（commit `fb2c677`）的 `main.tex` / `references.bib` 逐条 diff，对每一条在 v20 中被删除的引用回 arXiv 官方 API 核验 `<published>` 字段，据此区分"误删"与"依日期规则应删"。
+
+### 引用回退：5 条被误删的合格来源已恢复（14 → 19 条）
+
+v20 收紧引用日期规则（当代来源须核验发布日期 ≥ 2026-06-01）时，连带删掉了 6 条引用，但其中 5 条本身完全合格。arXiv API `<published>` 核验结果：
+
+| key | arXiv ID | 核验发布日期 |
+|---|---|---:|
+| `wang2026phantom` | 2607.13083 | 2026-07-13 |
+| `luo2026gsme` | 2607.13683 | 2026-07-15（v2 2026-07-30） |
+| `he2026disclosure` | 2607.17598 | 2026-07-20 |
+| `xue2026longcontext` | 2607.17937 | 2026-07-20 |
+| `lin2026wml` | 2607.20999 | 2026-07-23 |
+
+五条已按日期顺序插回 `references.bib`。**`wang2026skillopt`（2605.23904）不予恢复**——它确实早于 2026-06-01，依规则不合格。
+
+### 四处因误删而悬空的论断已修复
+
+- **§8.5 Caveat**："phantom violation" 一词此前无定义即使用（幽灵术语）。现恢复硬数据"60 次运行中 15 次"，并显式声明本文沿用该文术语，给出定义：*已报告但记录中并不存在的过程失败*。
+- **§9.1 Control**：两个控制条件此前无动机即出现。现恢复其依据——渐进披露的收益在 harness 已能胜任分区与检索时趋零、仅在语料库规模下决定性（故须单源/多源双规模测）；第二层路由从不帮忙、有时降准确率（故激活深度固定一层）。
+- **§9.1 Metrics**：恢复 ">92% requirement coverage 而任务结果崩塌" 这一具体观测，聚合 recall 不足的理由不再是空断言。
+- **§8.5 开篇 SkillOpt 归属**：v20 删掉引用后该前提变成第一人称主张。现改为显式声明这是**本文不主张为自身贡献**的前提，并说明相关来源早于 §11 的日期边界、故只作为设计动机记录而不作为证据引用，不断言其任何结果。
+- **§8.5 并发工作段**：恢复被删的novelty-narrowing 披露段，具名 `luo2026gsme` 与 `lin2026wml`，明确二者"按事后推断的失败属性索引 credit"，并恢复"契约维度是否优于诊断维度是开放问题、非本文主张"。
+- **§9.8 Online**：修掉悬空的 "the same"，改为直接展开 §8.5 的 bounded Skill-training loop 三要素。
+- **§9.8 Falsification**：恢复 phantom-violation oracle 证伪条件（反事实提案 + 无违规 episode）。
+
+### 新增：P1 六路合取的部分满足读取规则（§5.3）
+
+P1 的判定规则是六个条件的合取，但此前未说明"部分条件满足"时如何读取结果。新增 `\paragraph{Reading rule under partial condition satisfaction.}`，**以追加方式**（不改动 spec 中列为 Scientific Core to Preserve 的六条件与既有 rejection criterion）规定三条：
+
+1. 每个条件都被工具化为一个**违规率**（undeclared operations / activated path、unbound invocations / invocation、undeclared information-flow edges / path pair、undeclared cross-partition accesses / mutable access、跨兼容 arm 语义输入字段哈希不一致数、declared fields 之外的 scheduler-labelled flows），预登记的 pass/fail 阈值是该率上的一个声明切点；
+2. 全部条件率均 ≤ 阈值时，P1 按原文判定；
+3. 任一率超阈值时，研究报告**conditional-engineering result** 而非 P1 判决。
+
+已接入 §9 preamble、§9.2 Falsification，并在 §11 作为限制如实承认：若合取代价高到 P1 只能在缩减设定下可测，其外部效度本身即成问题。
+
+### 其他
+
+- **§8.1 新增 field-level sketch**：把 resolved contract `C=⟨I,O,G,B,E,T⟩` 六个字段在 AI4Science 场景下逐一实例化（含 `write:external-publication` 因未声明而被拒的例子），并说明哪三个字段承载主要负荷。字段名一律用连字符而非下划线——构建器的 `clean_latex` 会吃掉 `\_`。
+- **§4 Related Work 新增 `\paragraph{Context scale and activation depth.}`** 安置 `he2026disclosure` + `xue2026longcontext`；"Harness evolution" 段扩写覆盖 `luo2026gsme`、`lin2026wml`、`wang2026phantom`。
+- **对冲表述削减**：4 处重复的免责/对冲句合并删减，保留每处论断的实质边界。
+- **Table 3**："Shared organizational contract" 行的 evidence 单元格改为如实标注 `Definitional framing choice of this paper, not a testable prediction; adoption value unevaluated`。
+- **交叉引用精确化**：`Section~9` → `Sections~9.1--9.2` / `Section~9.6`。
+- **Conclusion 分页**：§11 扩写后 Conclusion 末句被挤到续页，触发 `test_v20_conclusion_does_not_orphan_its_final_clause`。在 `\section{Conclusion}` 前加 `\newpage`。
+- **构建器 Python 3.9 兼容**：`latex_to_preprint.py` 使用 PEP 604 注解（`float | None` 等）但本机现仅有 Python 3.9.6，构建即 `TypeError`。加 `from __future__ import annotations`；已确认全部此类用法均为注解、无运行期 `isinstance(x, A|B)`，故行为不变。
+
+### 验证
+
+- `tests/test_v20_rendering.py` 10/10 通过。
+- 重建 `output/pdf/..._v20.pdf`（29 页）：参考文献编号 1–19 连续无缺号；`main.tex` 的 cite key 与 `references.bib` 条目双向完全匹配（既无未定义引用，也无未被引用的条目）；全文扫描无残留 `\cite`/`\ref`/`\texttt`/`\paragraph` 等 LaTeX 痕迹、无 `[?]`、无占位符。
+
 ## v20 — 2026-08-03
 
 - Reframed the architecture as enterprise responsibilities: Skill-as-Code as the
