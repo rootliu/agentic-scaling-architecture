@@ -1,16 +1,20 @@
 import hashlib
 import importlib.util
 import re
+import shutil
+import subprocess
+import sys
+import tempfile
 import unittest
 from pathlib import Path
 
-import pdfplumber
 from pypdf import PdfReader
 from reportlab.platypus import Paragraph
 
 
 PREPRINT_DIR = Path(__file__).resolve().parents[1]
 RENDERER = PREPRINT_DIR / "latex_to_preprint.py"
+PAPER_SOURCE = PREPRINT_DIR / "paper_source"
 V21_RELEASE = (
     PREPRINT_DIR
     / "output"
@@ -32,6 +36,31 @@ def load_renderer():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
+
+
+def unpack_preprint(tmp: Path) -> Path:
+    isolated_preprint = tmp / "agentic-runtime-preprint"
+    isolated_preprint.mkdir()
+    shutil.copy2(RENDERER, isolated_preprint / RENDERER.name)
+    shutil.copytree(PAPER_SOURCE, isolated_preprint / "paper_source")
+    return isolated_preprint
+
+
+def render_pdf(output: Path) -> PdfReader:
+    subprocess.run(
+        [
+            sys.executable,
+            str(RENDERER),
+            "--paper-dir",
+            str(PAPER_SOURCE),
+            "--output",
+            str(output),
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    return PdfReader(str(output))
 
 
 def rendered_text(reader: PdfReader) -> str:
@@ -64,16 +93,48 @@ def rendered_figure_captions(reader: PdfReader) -> dict[int, str]:
     return captions
 
 
-class V22RenderingTests(unittest.TestCase):
-    def test_archived_v21_and_v22_releases_are_preserved_byte_for_byte(self):
-        v21 = hashlib.sha256(V21_RELEASE.read_bytes()).hexdigest().upper()
-        v22 = hashlib.sha256(V22_RELEASE.read_bytes()).hexdigest().upper()
-        self.assertEqual(v21, V21_SHA256)
-        self.assertEqual(v22, V22_SHA256)
+class V23RenderingTests(unittest.TestCase):
+    def test_default_v23_build_uses_new_filename_and_preserves_prior_releases(self):
+        before = [
+            hashlib.sha256(V21_RELEASE.read_bytes()).hexdigest().upper(),
+            hashlib.sha256(V22_RELEASE.read_bytes()).hexdigest().upper(),
+        ]
+        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v23-default-") as tmp:
+            isolated_preprint = unpack_preprint(Path(tmp))
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(isolated_preprint / RENDERER.name),
+                    "--paper-dir",
+                    str(isolated_preprint / "paper_source"),
+                ],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            expected = (
+                isolated_preprint
+                / "output"
+                / "pdf"
+                / "Scalable_Manageable_Agentic_Runtime_Preprint_v23.pdf"
+            )
+            self.assertTrue(expected.is_file())
+            self.assertEqual(result.stdout.strip(), str(expected))
 
-    def test_v22_pdf_encodes_focused_thesis_and_responsibility_contract(self):
-        reader = PdfReader(str(V22_RELEASE))
-        self.assertTrue(reader.metadata.subject.startswith("v22"))
+        after = [
+            hashlib.sha256(V21_RELEASE.read_bytes()).hexdigest().upper(),
+            hashlib.sha256(V22_RELEASE.read_bytes()).hexdigest().upper(),
+        ]
+        self.assertEqual(before, [V21_SHA256, V22_SHA256])
+        self.assertEqual(after, [V21_SHA256, V22_SHA256])
+
+    def test_v23_pdf_encodes_focused_thesis_and_responsibility_contract(self):
+        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v23-test-") as tmp:
+            reader = render_pdf(
+                Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v23.pdf"
+            )
+
+        self.assertTrue(reader.metadata.subject.startswith("v23"))
         text = rendered_text(reader)
         for expected_term in (
             "supported within Omega",
@@ -97,8 +158,40 @@ class V22RenderingTests(unittest.TestCase):
         ):
             self.assertIn(expected_term, text)
 
-    def test_v22_pdf_defines_all_eight_captions_with_semantic_classification(self):
-        reader = PdfReader(str(V22_RELEASE))
+    def test_v23_pdf_adds_threat_model_and_methodological_repairs(self):
+        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v23-threat-") as tmp:
+            reader = render_pdf(
+                Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v23.pdf"
+            )
+
+        text = rendered_text(reader)
+        for expected_term in (
+            "Trusted computing base",
+            "Untrusted model output",
+            "Semi-trusted Skills",
+            "Untrusted external content",
+            "Adversary capabilities",
+            "contract resolution, rather than instruction filtering",
+            "two one sided tests (TOST) rule at level 0.05",
+            "a 10% multiplicative change in p95 tail latency",
+            "family-wise error rule",
+            "minimum detectable interaction at 80% power",
+            "41 clusters per treatment order",
+            "per-cell timeout rate",
+            "non-interference",
+            "Reference monitors and least authority",
+            "Control loops, quality models, and queueing",
+            "Contemporary agentic-runtime work",
+            "Novelty boundary",
+        ):
+            self.assertIn(expected_term, text)
+
+    def test_v23_pdf_defines_all_eight_captions_with_semantic_classification(self):
+        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v23-captions-") as tmp:
+            reader = render_pdf(
+                Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v23.pdf"
+            )
+
         captions = rendered_figure_captions(reader)
         self.assertEqual(
             set(captions),
@@ -113,7 +206,7 @@ class V22RenderingTests(unittest.TestCase):
                 f"Figure {figure_number} caption must state shown, significance, and class",
             )
 
-    def test_v22_figures_encode_focused_contract_labels(self):
+    def test_v23_figures_encode_focused_contract_labels(self):
         expected_by_figure = {
             1: [
                 "Capability change",
@@ -142,7 +235,11 @@ class V22RenderingTests(unittest.TestCase):
                 "Falsification or inconclusive condition",
             ],
         }
-        reader = PdfReader(str(V22_RELEASE))
+        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v23-figures-") as tmp:
+            reader = render_pdf(
+                Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v23.pdf"
+            )
+
         for figure_number, expected_terms in expected_by_figure.items():
             text = figure_page_text(reader, figure_number)
             for expected_term in expected_terms:
@@ -152,38 +249,12 @@ class V22RenderingTests(unittest.TestCase):
                     f"Figure {figure_number} must render {expected_term!r}",
                 )
 
-    def test_figure_two_uses_the_canonical_harness_contract_fields(self):
-        with pdfplumber.open(V22_RELEASE) as pdf:
-            page = next(
-                page
-                for page in pdf.pages
-                if "Figure 2." in (page.extract_text() or "")
-            )
-            words = page.extract_words(use_text_flow=True, keep_blank_chars=False)
-            title_top = next(word["top"] for word in words if word["text"] == "From")
-            caption_top = next(
-                current["top"]
-                for current, following in zip(words, words[1:])
-                if current["text"] == "Figure" and following["text"] == "2."
-            )
-            figure_text = re.sub(
-                r"\s+",
-                " ",
-                page.crop((0, title_top - 2, page.width, caption_top)).extract_text()
-                or "",
+    def test_v23_pdf_keeps_formula_typography_clean(self):
+        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v23-typography-") as tmp:
+            reader = render_pdf(
+                Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v23.pdf"
             )
 
-        for expected_row in (
-            "I / O typed inputs and outputs",
-            "G activated Skill graph",
-            "A authority, effects + evidence duties",
-            "B time, cost, token, concurrency budgets",
-            "V policy, model, data, capability, verifier + trace versions",
-        ):
-            self.assertIn(expected_row, figure_text)
-
-    def test_v22_pdf_repairs_formula_typography_and_first_use_acronyms(self):
-        reader = PdfReader(str(V22_RELEASE))
         text = rendered_text(reader)
         for forbidden in (
             "Delta_R",
@@ -193,20 +264,21 @@ class V22RenderingTests(unittest.TestCase):
             "nu_j",
             "eta_j",
             "widehatE_k",
+            "\\Omega",
+            "{",
+            "}",
+            "??",
         ):
             self.assertNotIn(
                 forbidden,
                 text,
-                f"source-like formula token {forbidden!r} must not appear in the rendered PDF",
+                f"source-like token {forbidden!r} must not appear in the rendered PDF",
             )
         self.assertIn(
             "Monitor, Analyze, Plan, Execute over a shared Knowledge base (MAPE-K)",
             text,
         )
-        self.assertIn(
-            "Chief Information Officer",
-            figure_page_text(reader, 1),
-        )
+        self.assertIn("Chief Information Officer", figure_page_text(reader, 1))
 
     def test_clean_math_formats_simple_compound_signed_and_hat_subscripts(self):
         renderer = load_renderer()
@@ -240,38 +312,6 @@ class V22RenderingTests(unittest.TestCase):
                 self.assertIn("&lt;", escaped)
                 self.assertIn("&gt;", escaped)
                 Paragraph(escaped).wrap(300, 100)
-
-    def test_v22_pdf_keeps_compound_subscript_on_one_lowered_baseline(self):
-        with pdfplumber.open(V22_RELEASE) as pdf:
-            page = next(
-                page
-                for page in pdf.pages
-                if "component budget" in (page.extract_text() or "")
-            )
-            words = page.extract_words(use_text_flow=True, keep_blank_chars=False)
-
-        phrase_index = next(
-            index
-            for index, (current, following) in enumerate(zip(words, words[1:]))
-            if current["text"] == "component" and following["text"] == "budget"
-        )
-        formula_words = words[phrase_index + 2 : phrase_index + 7]
-        self.assertGreaterEqual(len(formula_words), 3)
-        self.assertEqual(formula_words[0]["text"], "B")
-
-        base_top = formula_words[0]["top"]
-        next_word = formula_words[3]
-        operand_chars = [
-            char
-            for char in page.chars
-            if formula_words[0]["x1"] <= char["x0"] <= next_word["x0"]
-            and char["text"] in "E,k"
-            and base_top <= char["top"] <= base_top + 10
-        ]
-        self.assertEqual("".join(char["text"] for char in operand_chars), "E,k")
-        subscript_tops = [char["top"] for char in operand_chars]
-        self.assertGreater(min(subscript_tops) - base_top, 3.0)
-        self.assertLess(max(subscript_tops) - min(subscript_tops), 0.5)
 
 
 if __name__ == "__main__":

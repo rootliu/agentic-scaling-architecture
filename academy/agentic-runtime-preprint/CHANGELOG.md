@@ -4,6 +4,34 @@
 >
 > ⚠️ **历史遗留**：v20 这一个文件名下曾先后存在**三个不同的文档**——26 页（`1507a5b` 初版）、27 页（`c10b895`）、33 页（`a3fa38d`，本应是 v21）。第三个已改切为 v21，`..._v20.pdf` 已回退为 `c10b895` 的 27 页状态。若他处引用过"v20 共 33 页"，指的其实是 v21。
 
+## v23 — 2026-08-08
+
+修改目标记录见 `docs/superpowers/plans/2026-08-08-v23-methodological-and-threat-model-revision.md`。本轮不改变中心命题与实验设计，补齐审稿必问的四类缺口。
+
+### 聚焦论文（v22 → v23，16 → 18 页）
+
+- **威胁模型小节（§5.7）**：正文此前 3 处引用 "the threat model" 却未定义。新增五条（trusted computing base / untrusted model output / semi-trusted Skills / untrusted external content / adversary capabilities），收尾明确目标之窄——gates 与 trace 使违规可归因，但不阻止已授权 effect 造成危害。
+- **记法统一**：全文 operating region 统一为 `\Omega`（原 14 处 prose "Omega" 混用，P1 用 `$\Omega$`），渲染输出不变。
+- **统计稳健性三补丁**：① Y_R 端点超时截断敏感性（per-cell 超时率 + completed-run p95 / winsorized 备选端点）；② 六义务 + margin 的 family-wise error 规则（simultaneous confidence region 或 closed testing，须预登记）；③ 功效工作样例（σ=0.4 log-p95、ρ=0.05、n=500、k≈41 时 MDI≈0.08 < log(1.10)，更少 cluster 事先声明 underpowered）。
+- **表达与结构**：Abstract 拆 3 段；`two-one-sided-tests rule` → `two one sided tests (TOST)`；m_R 补 10% 乘法性交互释义；§4 Related Work 拆为四个 `\paragraph` 块（Reference monitors and least authority / Control loops, quality models, and queueing / Contemporary agentic-runtime work / Novelty boundary）；§8 Secondary Protocols 每个命名协议补 hypothesis/control/falsification。
+- **谱系引用**：references.bib 补 `goguen1982noninterference`，把 effect non-interference 落到信息流安全谱系——回应 vault 16 号 §1.2 未决冲突的方案 1。
+
+### 企业白皮书（v21 → v22，33 → 34 页）
+
+- **经典谱系引用**：references.bib 补 13 条经典文献（Anderson 1972 / Goguen-Meseguer 1982 / Saltzer-Schroeder 1975 / Parnas 1972 / Miller 2003 / Levin 1975 / Kreutz 2015 / Kephart 2003 / IBM 2006 / ISO 25010 / Kleinrock 1975 / Mars-Tang 2011 / Dean-Barroso 2013）；§4 新增 `\paragraph{Classical foundations.}` 把六条件映射到既有文献；§11 证据基础改为 "layered rather than uniform"。
+- **首次使用展开**：Abstract 中 NFR、CIO 先行展开，§1 去重。
+- **capability-count 调和**：§9.1 明确 count 轴是 registry-population dose under fixed activation，激活路径构成为行为轴，与聚焦论文 treatment 定义一致。
+- **Intermediate Relation schema + 端到端 join 示例**（§8.2，评审第 5 条）。
+- **Dispute and Escalation 小节**（§10，评审第 10 条）。
+- **形式化边界声明**：§5 一句 "notation for the measurement contract, not a formal operational model"（评审第 11 条）。
+- **设计动机登记**：2605.27744 / 2605.28000 按 SkillOpt 方式在 §4 登记为设计动机、非证据引用（不做 bib 条目）。
+
+### 版本与工程
+
+- 根 `PREPRINT_VERSION` v22 → **v23**，默认产物 `..._v23.pdf`；v21（`52DE73D7...`）与 v22（`E01761D7...`）PDF 校验和保持不变。
+- separability-study 子项目同步为 v23 内容并构建 `Separability_Study_v23.pdf`；enterprise-architecture 子项目构建 `Enterprise_Architecture_v22.pdf`。
+- 测试：新增 `test_v23_rendering.py`（9 项，含默认构建写入 v23 文件名、v21/v22 校验和保持、threat model / 统计补丁断言、8 图 caption 与标签、公式排版）；`test_v22_rendering.py` 改为读取冻结的 v22 PDF（不再从 live source 构建）；全套 27 项通过。
+
 ## v22 — 2026-08-05
 
 - **聚焦论文主张**：将中心命题收束为声明运行域 Ω 内 capability 与 Scaffold capacity 的条件可分离性，不再把整套架构一次性当作待证对象。

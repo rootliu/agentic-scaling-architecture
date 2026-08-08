@@ -2,11 +2,12 @@
 
 Focused scientific paper: one primary hypothesis (P1: Cost-Aware Separability) with a cluster-period randomized crossover experiment and six measured obligations.
 
-- **Current version**: v22 (16 pages, 2026-08-05)
-- **Source**: `paper_source/main.tex` (284 lines)
+- **Current version**: v23 (18 pages, 2026-08-08)
+- **Source**: `paper_source/main.tex` (synced from the canonical v23 `agentic-runtime-preprint/paper_source/main.tex`)
 - **Builder**: `latex_to_preprint.py --paper-dir paper_source --output output/pdf/Separability_Study_vXX.pdf`
 - **Split from**: v21 enterprise-architecture paper on 2026-08-05
 - **Scope**: P1 hypothesis + cluster-period crossover study + six measured obligations. No enterprise framing, no secondary propositions (P15/P16/P17), no context partitioning or data subsystem design.
 
 ## Version History
+- v23: Threat model added, notation unified, statistical robustness patches (timeout sensitivity, multiplicity, power example), abstract split, related-work and secondary-protocol restructure, non-interference citation.
 - v22: Initial focused version (split from v21). Cluster-period crossover design, six measured obligations, cost-aware separability.
