@@ -13,6 +13,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import inch
 from reportlab.pdfbase import pdfmetrics
+from reportlab.lib.utils import ImageReader
 from reportlab.platypus import (
     Flowable,
     KeepTogether,
@@ -135,14 +136,31 @@ def draw_orthogonal_arrow(canvas, points: list[tuple[float, float]],
     canvas.restoreState()
 
 
+FIGURE_IMAGE_MAP = {
+    "dual_scaling": "1.png",
+    "harness_contract": "2.png",
+    "control_data": "3.png",
+    "derivation_closure": "4.png",
+    "external_data": "5.png",
+    "dry_run": "6.png",
+    "skill_lifecycle": "7.png",
+}
+
+
 class FigureGraphic(Flowable):
-    def __init__(self, kind: str, width: float = FIGURE_WIDTH, height: float = 176):
+    def __init__(self, kind: str, width: float = FIGURE_WIDTH, height: float = 176,
+                 paper_dir: str | None = None):
         super().__init__()
         self.kind = kind
         self.width = width
         self.content_height = height
         self.height = height + RESPONSIBILITY_BAND_HEIGHT
         self.hAlign = "CENTER"
+        self.image_path = None
+        if paper_dir and kind in FIGURE_IMAGE_MAP:
+            candidate = os.path.join(paper_dir, FIGURE_IMAGE_MAP[kind])
+            if os.path.exists(candidate):
+                self.image_path = candidate
 
     def wrap(self, availWidth, availHeight):
         self.width = min(FIGURE_WIDTH, availWidth)
@@ -156,14 +174,40 @@ class FigureGraphic(Flowable):
         canvas.setStrokeColor(hx("#cbd5e1"))
         canvas.setLineWidth(0.7)
         canvas.roundRect(0, 0, self.width, self.height, 8, stroke=1, fill=0)
-        draw_method = getattr(self, f"_draw_{self.kind}", None)
-        if draw_method is None:
-            raise ValueError(f"Unknown figure kind: {self.kind}")
         canvas.translate(0, RESPONSIBILITY_BAND_HEIGHT)
-        draw_method(canvas)
+        if self.image_path:
+            self._draw_image(canvas)
+        else:
+            draw_method = getattr(self, f"_draw_{self.kind}", None)
+            if draw_method is None:
+                raise ValueError(f"Unknown figure kind: {self.kind}")
+            draw_method(canvas)
         canvas.translate(0, -RESPONSIBILITY_BAND_HEIGHT)
         self._draw_responsibility_band(canvas)
         canvas.restoreState()
+
+    def _draw_image(self, canvas):
+        try:
+            reader = ImageReader(self.image_path)
+            img_w, img_h = reader.getSize()
+        except Exception:
+            return
+        aspect = img_w / img_h
+        margin = 4
+        target_w = self.width - 2 * margin
+        target_h = self.content_height - 2 * margin
+        if target_w / target_h > aspect:
+            draw_h = target_h
+            draw_w = target_h * aspect
+        else:
+            draw_w = target_w
+            draw_h = target_w / aspect
+        x = margin + (target_w - draw_w) / 2
+        y = margin + (target_h - draw_h) / 2
+        canvas.drawImage(
+            self.image_path, x, y, draw_w, draw_h,
+            preserveAspectRatio=True, mask="auto",
+        )
 
     def _pill(self, canvas, x, y, w, h, title, subtitle="", fill="#ffffff",
               stroke="#94a3b8", title_color="#0f172a", align=TA_CENTER):
@@ -1338,7 +1382,7 @@ def parse_items(
     return elements
 
 
-def build_story(tex: str, bib: str, styles) -> list:
+def build_story(tex: str, bib: str, styles, paper_dir: str | None = None) -> list:
     cite_keys = citation_order(tex)
     cite_map = {k: i + 1 for i, k in enumerate(cite_keys)}
     ref_map = reference_label_map(tex)
@@ -1366,7 +1410,7 @@ def build_story(tex: str, bib: str, styles) -> list:
         story.append(
             KeepTogether(
                 [
-                    FigureGraphic(kind, height=height),
+                    FigureGraphic(kind, height=height, paper_dir=paper_dir),
                     Spacer(1, 4),
                     Paragraph(f"<b>Figure {figure_no}.</b> {escape(caption)}", styles["Caption"]),
                     Spacer(1, 10),
@@ -1725,7 +1769,7 @@ def build_pdf(paper_dir: str, output_pdf: str):
         subject=f"{PREPRINT_VERSION} enterprise agentic runtime responsibility architecture",
     )
     styles = make_styles()
-    story = build_story(tex, bib, styles)
+    story = build_story(tex, bib, styles, paper_dir=paper_dir)
     doc.build(story, onFirstPage=draw_page, onLaterPages=draw_page)
 
 
