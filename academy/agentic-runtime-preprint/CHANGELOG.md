@@ -4,6 +4,24 @@
 >
 > ⚠️ **历史遗留**：v20 这一个文件名下曾先后存在**三个不同的文档**——26 页（`1507a5b` 初版）、27 页（`c10b895`）、33 页（`a3fa38d`，本应是 v21）。第三个已改切为 v21，`..._v20.pdf` 已回退为 `c10b895` 的 27 页状态。若他处引用过"v20 共 33 页"，指的其实是 v21。
 
+## v24 — 2026-08-18
+
+本轮仅更新企业白皮书；聚焦论文与 separability-study 保持 v23 不变。
+
+### 企业白皮书（v22 → v23，34 → 37 页）
+
+- **Scaffold 三模块分解（§4.1）**：在 runtime objects 的 Scaffold 段后新增 `Scaffold decomposition: three functional modules` 段，把 Sandbox 环境 / API 路由双轨 / 治理 拆为三个模块，明确"Scaffold 管管道（可用、够快、够大）、Harness 管逻辑（调什么、为谁、为何）"的边界规则；各模块 NFR 表述为可测物理量（逃逸率、冷启动与快照恢复、故障切换、配额遵守、审计覆盖），以支撑物理扩展与能力覆盖的正交性。
+- **工具分类学（§6.2）**：新增 `Production evidence for a tool taxonomy` 段，以 2608.00101 生产 trace（761M LLM 调用、775M 工具调用、45 工具、单周）为据，把工具分为读取 / 修改 / 执行 / 元四类，记录 get_file 35.0%、run_command 17.0%、replace_string 9.8% 头部占比、执行类均值 68–78s 对中位数秒级的近两数量级偏斜、失败调用 P95 放大 48×、失败 build 注入 7–8× token、9% turn 因失败重试消耗约 4× 算力、4.6% 长尾自定义工具；补充 web_search / web_fetch / code_interpreter 标准内置工具及其性能约束。
+- **5W1H+Which 七维（§7.2）**：IR 公式从六维 `5W1H` 升级为七维 `5W1H+\mathrm{Which}`，Which 记录时间窗口内共现 temporal links 与 typed cross-references 的关系上下文，使同一七维记录可兼作 agent 侧记忆的索引原子；`quarterly-revenue-report` 示例条目补全 Which 维度并新增与 `quarterly-margin-report` 的血缘边示例。
+- **Agent-Side Memory 显隐双轨（新增 §7.3）**：新增 `Agent-Side Memory: An Explicit/Implicit Dual Track` 小节，显性（七维索引、角色/时间线组织、可查询）/ 隐性（部署配置、agent 不可见）双轨；四项可证伪工程决议（压缩外放 archive 而非删除 / SQLite 除重串行化写 / 哈希索引超容量 / 压缩小模型为内置 API 非 Skill）；跨 agent 共享经 summarize → semantic join 两步，join key 从 embedding 相似度升级为维度匹配（Who 同 + When 重叠 + Which 因果边）。
+- **引用**：references.bib 补 `agenticcoding2026wild`（arXiv:2608.00101），作者列表经原文第 1 页核验（Liu, Qiu, Goiri, Fonseca, Bianchini, Choukse）。
+
+### 工程
+
+- enterprise-architecture 恢复 v22 源（git `a2380c4`）并升为 v23，构建 `Enterprise_Architecture_v23.pdf`（37 页）。
+- 聚焦论文与 separability-study 未改动；根 `PREPRINT_VERSION` 保持 v23。
+- 引用一致性核验：正文 33 个 `\cite` key 与 references.bib 33 条逐一比对，零缺失、零未用；全部 `\ref` 命中既有 `\label`。
+
 ## v23 — 2026-08-08
 
 修改目标记录见 `docs/superpowers/plans/2026-08-08-v23-methodological-and-threat-model-revision.md`。本轮不改变中心命题与实验设计，补齐审稿必问的四类缺口。
