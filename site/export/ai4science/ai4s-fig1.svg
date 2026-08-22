@@ -16,39 +16,39 @@
   </style>
 
   <!-- CP / DP column headers -->
-  <text class="plab" x="300" y="26" fill="#6d3fd4" text-anchor="middle">控制面 CP · 决策/契约</text>
-  <text class="plab" x="830" y="26" fill="#1474a6" text-anchor="middle">数据面 DP · 取数/计算/serving</text>
+  <text class="plab" x="300" y="26" fill="#7C3AED" text-anchor="middle">控制面 CP · 决策/契约</text>
+  <text class="plab" x="830" y="26" fill="#059669" text-anchor="middle">数据面 DP · 取数/计算/serving</text>
   <line class="lane" x1="565" y1="40" x2="565" y2="672"/>
 
   <!-- 阶段 0 Intake -->
   <text class="stg" x="24" y="70">阶段 0</text><text class="stg" x="24" y="70" dy="15" font-weight="400" fill="#9aa2b0">Intake</text>
-  <rect class="box" x="120" y="48" width="300" height="42" rx="9" fill="#efe9fb" stroke="#6d3fd4"/>
+  <rect class="box" x="120" y="48" width="300" height="42" rx="9" fill="#F5F3FF" stroke="#7C3AED"/>
   <text class="bt" x="134" y="70" fill="#4a2f9e">[01–02] parse_intent · O4 plan</text>
-  <text class="bs" x="134" y="85" fill="#6d3fd4">分解 sub-goals {文献→候选→取物性→筛选→分析→报告}</text>
+  <text class="bs" x="134" y="85" fill="#7C3AED">分解 sub-goals {文献→候选→取物性→筛选→分析→报告}</text>
   <rect class="box" x="120" y="100" width="420" height="50" rx="9" fill="#f6efdf" stroke="#9a6a12"/>
   <text class="bt" x="134" y="122" fill="#7a530d">[02b/02c] P13 dry-run → M1/M2 partition(𝒫*)</text>
   <text class="bs" x="134" y="138" fill="#9a6a12">探工具集闭包 τ̂ + env_scope · 按不重合切并行子 agent · minimize ρ</text>
 
   <!-- 阶段 1 Skill 激活 -->
   <text class="stg" x="24" y="192">阶段 1</text><text class="stg" x="24" y="192" dy="15" font-weight="400" fill="#9aa2b0">Skill</text>
-  <rect class="box" x="120" y="170" width="420" height="46" rx="9" fill="#e4f1e8" stroke="#1a7d52"/>
+  <rect class="box" x="120" y="170" width="420" height="46" rx="9" fill="#EFF6FF" stroke="#3B82F6"/>
   <text class="bt" x="134" y="192" fill="#136040">[03–05] activate lit-review · materials-screening · data-report</text>
-  <text class="bs" x="134" y="208" fill="#1a7d52">声明 required_capabilities / required_data_themes（不绑 Scaffold，P2）</text>
+  <text class="bs" x="134" y="208" fill="#3B82F6">声明 required_capabilities / required_data_themes（不绑 Scaffold，P2）</text>
 
   <!-- 阶段 2 Context 组装 (CP -> DP) -->
   <text class="stg" x="24" y="262">阶段 2</text><text class="stg" x="24" y="262" dy="15" font-weight="400" fill="#9aa2b0">Context</text>
-  <rect class="box" x="120" y="240" width="300" height="46" rx="9" fill="#efe9fb" stroke="#6d3fd4"/>
+  <rect class="box" x="120" y="240" width="300" height="46" rx="9" fill="#F5F3FF" stroke="#7C3AED"/>
   <text class="bt" x="134" y="262" fill="#4a2f9e">[06–07] consult D₃ 用法 / D₄ 时效</text>
-  <text class="bs" x="134" y="278" fill="#6d3fd4">preferred_sources · join_plan · freshness · nfr_budget</text>
-  <rect class="box" x="620" y="240" width="420" height="46" rx="9" fill="#e1eff6" stroke="#1474a6"/>
+  <text class="bs" x="134" y="278" fill="#7C3AED">preferred_sources · join_plan · freshness · nfr_budget</text>
+  <rect class="box" x="620" y="240" width="420" height="46" rx="9" fill="#ECFDF5" stroke="#059669"/>
   <text class="bt" x="634" y="262" fill="#0f5a80">[08] D₂.semantic_join(valid_at=today)</text>
-  <text class="bs" x="634" y="278" fill="#1474a6">取带时序约束 SummaryEntry，每条带 evidence_ref（P7 共享摘要）</text>
+  <text class="bs" x="634" y="278" fill="#059669">取带时序约束 SummaryEntry，每条带 evidence_ref（P7 共享摘要）</text>
 
   <!-- 阶段 3 路由 + 资源 -->
   <text class="stg" x="24" y="332">阶段 3</text><text class="stg" x="24" y="332" dy="15" font-weight="400" fill="#9aa2b0">路由/资源</text>
-  <rect class="box" x="120" y="310" width="300" height="46" rx="9" fill="#efe9fb" stroke="#6d3fd4"/>
+  <rect class="box" x="120" y="310" width="300" height="46" rx="9" fill="#F5F3FF" stroke="#7C3AED"/>
   <text class="bt" x="134" y="332" fill="#4a2f9e">[10–13] O1 tool · O7 model · policy gate</text>
-  <text class="bs" x="134" y="348" fill="#6d3fd4">SSO/HPC · cloud=GPU pool · allowlist=[MP,arXiv]</text>
+  <text class="bs" x="134" y="348" fill="#7C3AED">SSO/HPC · cloud=GPU pool · allowlist=[MP,arXiv]</text>
   <rect class="box" x="620" y="310" width="420" height="46" rx="9" fill="#f6efdf" stroke="#9a6a12"/>
   <text class="bt" x="634" y="332" fill="#7a530d">[13b] M4 seed 亲和派生 → Scaffold</text>
   <text class="bs" x="634" y="348" fill="#9a6a12">同工具集同 seed 共置(affinity) · 异工具集分散 → k_max↑</text>
@@ -58,20 +58,20 @@
   <rect x="118" y="392" width="924" height="150" rx="12" fill="none" stroke="#d8dee8" stroke-dasharray="4 4"/>
   <text class="note" x="130" y="410" fill="#9a6a12">[13c] 各子 agent 冻结稳定前缀=⟨工具集 spec+system+D₃ 记忆⟩，任务变量放尾部 → 前缀命中 H↑（P11）</text>
   <!-- sub-agent a1 -->
-  <rect class="box" x="140" y="422" width="250" height="66" rx="9" fill="#e4f1e8" stroke="#1a7d52"/>
+  <rect class="box" x="140" y="422" width="250" height="66" rx="9" fill="#EFF6FF" stroke="#3B82F6"/>
   <text class="bt" x="154" y="444" fill="#136040">a₁ lit-review · τ_A</text>
-  <text class="bs" x="154" y="461" fill="#1a7d52">[14] arxiv_search（命中共享摘要则跳过）</text>
-  <text class="bs" x="154" y="476" fill="#1a7d52">select→gate→execute→observe→verify</text>
+  <text class="bs" x="154" y="461" fill="#3B82F6">[14] arxiv_search（命中共享摘要则跳过）</text>
+  <text class="bs" x="154" y="476" fill="#3B82F6">select→gate→execute→observe→verify</text>
   <!-- sub-agent a2 -->
-  <rect class="box" x="410" y="422" width="250" height="66" rx="9" fill="#e4f1e8" stroke="#1a7d52"/>
+  <rect class="box" x="410" y="422" width="250" height="66" rx="9" fill="#EFF6FF" stroke="#3B82F6"/>
   <text class="bt" x="424" y="444" fill="#136040">a₂ screening · τ_B</text>
-  <text class="bs" x="424" y="461" fill="#1a7d52">[15–17] D₁ 取物性 · code-gen · dft_screen</text>
-  <text class="bs" x="424" y="476" fill="#1a7d52">on Scaffold (cloud HPC microVM)</text>
+  <text class="bs" x="424" y="461" fill="#3B82F6">[15–17] D₁ 取物性 · code-gen · dft_screen</text>
+  <text class="bs" x="424" y="476" fill="#3B82F6">on Scaffold (cloud HPC microVM)</text>
   <!-- sub-agent a3 -->
-  <rect class="box" x="680" y="422" width="250" height="66" rx="9" fill="#e4f1e8" stroke="#1a7d52"/>
+  <rect class="box" x="680" y="422" width="250" height="66" rx="9" fill="#EFF6FF" stroke="#3B82F6"/>
   <text class="bt" x="694" y="444" fill="#136040">a₃ report · τ_C</text>
-  <text class="bs" x="694" y="461" fill="#1a7d52">[18–19] verifier: 数值合理性 + 引用接地</text>
-  <text class="bs" x="694" y="476" fill="#1a7d52">失败 → O6 reflect → 回 [14/16]</text>
+  <text class="bs" x="694" y="461" fill="#3B82F6">[18–19] verifier: 数值合理性 + 引用接地</text>
+  <text class="bs" x="694" y="476" fill="#3B82F6">失败 → O6 reflect → 回 [14/16]</text>
   <!-- summarized context between sub-agents (amber dashed, loose) -->
   <path class="pflow" d="M390,455 L410,455" marker-end="url(#uap)"/>
   <path class="pflow" d="M660,455 L680,455" marker-end="url(#uap)"/>
@@ -79,12 +79,12 @@
 
   <!-- 阶段 5 产出 + 回写 -->
   <text class="stg" x="24" y="590">阶段 5</text><text class="stg" x="24" y="590" dy="15" font-weight="400" fill="#9aa2b0">回写</text>
-  <rect class="box" x="620" y="562" width="420" height="44" rx="9" fill="#e1eff6" stroke="#1474a6"/>
+  <rect class="box" x="620" y="562" width="420" height="44" rx="9" fill="#ECFDF5" stroke="#059669"/>
   <text class="bt" x="634" y="584" fill="#0f5a80">[20] doc_generation → report artifact</text>
-  <text class="bs" x="634" y="599" fill="#1474a6">含引用 + 可复现脚本（DP）</text>
-  <rect class="box" x="120" y="562" width="440" height="44" rx="9" fill="#efe9fb" stroke="#6d3fd4"/>
+  <text class="bs" x="634" y="599" fill="#059669">含引用 + 可复现脚本（DP）</text>
+  <rect class="box" x="120" y="562" width="440" height="44" rx="9" fill="#F5F3FF" stroke="#7C3AED"/>
   <text class="bt" x="134" y="584" fill="#4a2f9e">[21–23] writeback D₂ · RunTrace→Ω · distill D₃</text>
-  <text class="bs" x="134" y="599" fill="#6d3fd4">逻辑追加 + evidence_ref（不覆盖）· P9 收敛</text>
+  <text class="bs" x="134" y="599" fill="#7C3AED">逻辑追加 + evidence_ref（不覆盖）· P9 收敛</text>
 
   <!-- vertical flows connecting stages (left CP spine) -->
   <path class="flow" d="M270,90 L270,100" marker-end="url(#uah)"/>

@@ -15,16 +15,16 @@ fs.mkdirSync(FIGDIR, { recursive: true });
 const W = 1200, H = 860;
 
 const C = {
-  skillFill:"#e6f4ec", skillStroke:"#1a7d52", skillText:"#11603d",
-  harnFill:"#ece4fb", harnStroke:"#6d3fd4", harnText:"#4f2da0", harnStrong:"#f4eeff",
-  scafFill:"#fbe7d3", scafStroke:"#bc5a16", scafText:"#9a4d12",
-  dataFill:"#ddeff8", dataStroke:"#1474a6", dataText:"#0f5e87",
-  neutFill:"#fffdf8", neutStroke:"#cabfa8", ink:"#221f1a", mut:"#6b6357",
-  page:"#fffdf8", grid:"#efe8db", badge:"#ffffff",
+  skillFill:"#EFF6FF", skillStroke:"#3B82F6", skillText:"#1E40AF",
+  harnFill:"#F5F3FF", harnStroke:"#7C3AED", harnText:"#5B21B6", harnStrong:"#EDE9FE",
+  scafFill:"#FFF7ED", scafStroke:"#EA580C", scafText:"#C2410C",
+  dataFill:"#ECFDF5", dataStroke:"#059669", dataText:"#047857",
+  neutFill:"#FFFFFF", neutStroke:"#E5E7EB", ink:"#111827", mut:"#6B7280",
+  page:"#FFFFFF", grid:"#F9FAFB", badge:"#FFFFFF",
 };
 
 const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-function rect(x,y,w,h,{fill="#fff",stroke=C.neutStroke,sw=1.4,rx=12,dash=null,op=1,filter=true}={}){
+function rect(x,y,w,h,{fill="#fff",stroke=C.neutStroke,sw=1.2,rx=8,dash=null,op=1,filter=true}={}){
   return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"`
     +(dash?` stroke-dasharray="${dash}"`:"")+` opacity="${op}"`+(filter?` filter="url(#sh)"`:"")+`/>`;
 }
@@ -56,20 +56,18 @@ function badge(cx,cy,n,col){
     +`<text x="${cx}" y="${cy+1}" text-anchor="middle" dominant-baseline="middle" font-size="15" font-weight="800" fill="#fff">${n}</text>`;
 }
 function defs(){
-  const m=(id,f)=>`<marker id="${id}" markerWidth="11" markerHeight="11" refX="7.5" refY="3.6" orient="auto"><path d="M0,0 L7.5,3.6 L0,7.2 Z" fill="${f}"/></marker>`;
+  const m=(id,f)=>`<marker id="${id}" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="${f}"/></marker>`;
   return `<defs>
-    <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M30 0H0V30" fill="none" stroke="${C.grid}" stroke-width="1"/></pattern>
-    <filter id="sh" x="-12%" y="-12%" width="124%" height="124%"><feDropShadow dx="0" dy="3" stdDeviation="4.5" flood-color="#3c2d14" flood-opacity=".11"/></filter>
+    <filter id="sh" x="-8%" y="-8%" width="116%" height="116%"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#000000" flood-opacity=".05"/></filter>
     ${m("a",C.harnStroke)}${m("g",C.skillStroke)}${m("o",C.scafStroke)}${m("t",C.dataStroke)}${m("k",C.mut)}
   </defs>`;
 }
 function frame(title,sub){
-  return `<rect width="${W}" height="${H}" rx="20" fill="${C.page}"/>`
-    +`<rect width="${W}" height="${H}" rx="20" fill="url(#grid)" opacity=".7"/>`
-    +tline(54,52,title,{size:23,weight:800})
-    +tline(54,80,sub,{size:13.5,fill:C.mut});
+  return `<rect width="${W}" height="${H}" fill="${C.page}"/>`
+    +tline(54,52,title,{size:22,weight:700})
+    +tline(54,80,sub,{size:13,fill:C.mut});
 }
-const svgWrap=inner=>`<svg viewBox="0 0 ${W} ${H}" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',Arial,sans-serif">${defs()}${inner}</svg>`;
+const svgWrap=inner=>`<svg viewBox="0 0 ${W} ${H}" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="'Inter','SF Pro Display',-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',Arial,sans-serif" text-rendering="geometricPrecision">${defs()}${inner}</svg>`;
 
 /* ===================================================================
    FIGURE 1 — LAYERS (what each layer is FOR)
@@ -138,10 +136,10 @@ function fig1(t){
   const DX=820, DW=324, DY=112, DH2=548;
   s+=rect(DX,DY,DW,DH2,{fill:C.dataFill,stroke:C.dataStroke,sw:1.7,rx:16});
   s+=tline(DX+22,DY+34,t.dh,{size:16,weight:800,fill:C.dataText});
-  s+=leftLines(DX+22,DY+58,wrap(t.dsub,DW-44,11.5),{size:11.5,fill:"#3d7a99",lh:16});
+  s+=leftLines(DX+22,DY+58,wrap(t.dsub,DW-44,11.5),{size:11.5,fill:C.mut,lh:16});
   s+=bullets(DX+24,DY+118,t.ditems,{size:11.5,fill:C.dataText,lh:24,marker:"›",mcol:C.dataStroke});
   // footer
-  s+=rect(LX,672,DX+DW-LX,80,{fill:"#f7f2e8",stroke:C.neutStroke,sw:1.3,rx:14,dash:"7 6",filter:false});
+  s+=rect(LX,672,DX+DW-LX,80,{fill:"#F9FAFB",stroke:C.neutStroke,sw:1.3,rx:8,dash:"7 6",filter:false});
   s+=leftLines(LX+24,706,wrap(t.foot,DX+DW-LX-48,13.5),{size:13.5,weight:600,fill:C.ink,lh:21});
   return svgWrap(s);
 }
@@ -290,8 +288,8 @@ function fig3(t){
   s+=tline(SX+18,y6+22,t.scaf[2],{size:10.8,fill:C.scafText});
   s+=rect(SX,y6+62,SW,86,{fill:C.dataFill,stroke:C.dataStroke,sw:1.5,rx:13});
   s+=tline(SX+18,y6+86,t.data[0],{size:14,weight:800,fill:C.dataText});
-  s+=tline(SX+18,y6+106,t.data[1],{size:10.8,fill:"#3d7a99"});
-  s+=tline(SX+18,y6+124,t.data[2],{size:10.8,fill:"#3d7a99"});
+  s+=tline(SX+18,y6+106,t.data[1],{size:10.8,fill:C.mut});
+  s+=tline(SX+18,y6+124,t.data[2],{size:10.8,fill:C.mut});
   // step6 -> scaffold (two-way style, single arrows to each)
   s+=elbow([[BX+BW,y6+sh/2-8],[SX,y6+3]],{stroke:C.scafStroke,sw:1.8,head:"o"});
   s+=elbow([[BX+BW,y6+sh/2+8],[845,y6+sh/2+8],[845,y6+105],[SX,y6+105]],{stroke:C.dataStroke,sw:1.8,head:"t"});
@@ -307,7 +305,7 @@ function fig3(t){
   s+=tline(laneX+8, (y8+ys[4])/2, t.retry,{size:10.5,weight:700,fill:C.scafStroke});
   // system skills note (bottom band)
   const NY=ys[7]+96;
-  s+=rect(BX,NY,SW+ (SX-BX),48,{fill:"#f1ebe0",stroke:C.harnStroke,sw:1.2,rx:12,dash:"6 6",filter:false});
+  s+=rect(BX,NY,SW+ (SX-BX),48,{fill:"#F9FAFB",stroke:C.harnStroke,sw:1.2,rx:12,dash:"6 6",filter:false});
   s+=leftLines(BX+18,NY+29,wrap(t.sysNote,SW+(SX-BX)-36,11.5),{size:11.5,fill:C.harnText,lh:15});
   return svgWrap(s);
 }
@@ -368,8 +366,8 @@ function fig4(t){
   let s=frame(t.title,t.sub);
   const LX=70, LW=470, RX=660, RW=470;
   const BANDTOP=118, BANDH=560;            // taller bands to fit the sub-agent decomposition
-  s+=rect(LX,BANDTOP,LW,BANDH,{fill:"#f7f2ff",stroke:C.harnStroke,sw:1.3,rx:16,dash:"6 5",filter:false});
-  s+=rect(RX,BANDTOP,RW,BANDH,{fill:"#fff6ee",stroke:C.scafStroke,sw:1.3,rx:16,dash:"6 5",filter:false});
+  s+=rect(LX,BANDTOP,LW,BANDH,{fill:"#F5F3FF",stroke:C.harnStroke,sw:1.3,rx:16,dash:"6 5",filter:false});
+  s+=rect(RX,BANDTOP,RW,BANDH,{fill:"#FFF7ED",stroke:C.scafStroke,sw:1.3,rx:16,dash:"6 5",filter:false});
   s+=tline(LX+20,BANDTOP+26,t.left,{size:12,weight:800,fill:C.harnText});
   s+=tline(RX+20,BANDTOP+26,t.right,{size:12,weight:800,fill:C.scafText});
   const bw=410, bh=66;
@@ -417,12 +415,12 @@ function fig4(t){
   const BY=BANDTOP+BANDH+22, BW2=RX+RW-LX;
   s+=rect(LX,BY,BW2,52,{fill:C.skillFill,stroke:C.skillStroke,sw:1.4,rx:13,filter:false});
   s+=tline(LX+18,BY+22,t.skill[0],{size:13,weight:800,fill:C.skillText});
-  s+=leftLines(LX+18,BY+40,wrap(t.skill[1],BW2-36,11),{size:11,fill:"#2c5e47",lh:14});
+  s+=leftLines(LX+18,BY+40,wrap(t.skill[1],BW2-36,11),{size:11,fill:"#3B82F6",lh:14});
   // verify(n5) -> skill band (reward-gated), straight down from n5 center
   s+=vArrow(RX+30+bw/2,R5+bh,BY,{stroke:C.skillStroke,sw:1.8,head:"g"});
   s+=tline(RX+30+bw/2+12,(R5+bh+BY)/2,t.reuse,{size:10,fill:C.skillText});
   // coupling note
-  s+=rect(LX,BY+62,BW2,38,{fill:"#f1ebe0",stroke:C.harnStroke,sw:1.2,rx:11,dash:"6 6",filter:false});
+  s+=rect(LX,BY+62,BW2,38,{fill:"#F9FAFB",stroke:C.harnStroke,sw:1.2,rx:11,dash:"6 6",filter:false});
   s+=center(LX+BW2/2,BY+81,[t.couple],{size:12,weight:700,fill:C.harnText});
   return svgWrap(s);
 }
@@ -465,10 +463,10 @@ const D5 = {
   }
 };
 function fig5(t){
-  const palOf={std:["#e6f4ec",C.skillStroke,C.skillText],model:["#fbe7d3",C.scafStroke,C.scafText],
-    skill:["#ece4fb",C.harnStroke,C.harnText],data:["#ddeff8",C.dataStroke,C.dataText],
-    meta:["#f4eeff",C.harnStroke,C.harnText],scaf:["#fbe7d3",C.scafStroke,C.scafText],
-    human:["#eef7e6","#5a8c1a","#3f6410"],eph:["#eeeafc","#6d3fd4","#4f2da0"]};
+  const palOf={std:[C.skillFill,C.skillStroke,C.skillText],model:[C.scafFill,C.scafStroke,C.scafText],
+    skill:[C.harnFill,C.harnStroke,C.harnText],data:[C.dataFill,C.dataStroke,C.dataText],
+    meta:[C.harnStrong,C.harnStroke,C.harnText],scaf:[C.scafFill,C.scafStroke,C.scafText],
+    human:["#F0FDF4","#16A34A","#15803D"],eph:["#F5F3FF","#7C3AED","#5B21B6"]};
   let s=frame(t.title,t.sub);
   // top: LLM-facing unified interface bar
   s+=rect(70,116,1060,48,{fill:C.harnStrong,stroke:C.harnStroke,sw:1.6,rx:13,filter:false});
@@ -495,7 +493,7 @@ function fig5(t){
   for(let i=0;i<4;i++) s+=drawCard(x0+i*(cw+gapx),y2,t.tools[4+i]);
   // note band
   const NY=y2+chh+20;
-  s+=rect(70,NY,1060,68,{fill:"#f1ebe0",stroke:C.neutStroke,sw:1.2,rx:12,dash:"6 6",filter:false});
+  s+=rect(70,NY,1060,68,{fill:"#F9FAFB",stroke:C.neutStroke,sw:1.2,rx:12,dash:"6 6",filter:false});
   s+=leftLines(90,NY+22,wrap(t.note,1020,11.5),{size:11.5,fill:C.ink,lh:16});
   return svgWrap(s);
 }
@@ -537,33 +535,33 @@ function fig6(t){
   let s=frame(t.title,t.sub);
   const LX=64, LW=520, RX=616, RW=520, TOP=128, PANH=548;
   // left panel (preset — grey/rigid)
-  s+=rect(LX,TOP,LW,PANH,{fill:"#f4f2ee",stroke:"#9a917f",sw:1.4,rx:16,filter:false});
+  s+=rect(LX,TOP,LW,PANH,{fill:"#F9FAFB",stroke:C.neutStroke,sw:1.4,rx:10,filter:false});
   s+=tline(LX+22,TOP+30,t.lh,{size:16,weight:800,fill:"#5f5748"});
   s+=tline(LX+22,TOP+50,t.lt,{size:11.5,weight:700,fill:"#8a8271"});
   // rigid fixed flowchart, single vertical path
   const nw=300, nh=64, nx=LX+(LW-nw)/2;
   const ny=[TOP+90,TOP+190,TOP+290];
   t.lsteps.forEach((n,i)=>{
-    s+=rect(nx,ny[i],nw,nh,{fill:"#e7e3da",stroke:"#9a917f",sw:1.4,rx:8,filter:false});
+    s+=rect(nx,ny[i],nw,nh,{fill:"#F3F4F6",stroke:C.neutStroke,sw:1.4,rx:8,filter:false});
     s+=tline(nx+18,ny[i]+27,n[0],{size:13,weight:800,fill:"#4f4838"});
     s+=leftLines(nx+18,ny[i]+46,wrap(n[1],nw-32,10.4),{size:10.4,fill:"#8a8271",lh:13});
   });
-  for(let i=0;i<2;i++) s+=vArrow(nx+nw/2,ny[i]+nh,ny[i+1],{stroke:"#9a917f",sw:2,head:"k"});
-  s+=rect(LX+22,TOP+PANH-70,LW-44,50,{fill:"#ecebe5",stroke:"#c9c1b2",sw:1,rx:9,filter:false});
-  s+=leftLines(LX+36,TOP+PANH-46,wrap(t.lnote,LW-70,11),{size:11,fill:"#6b6357",lh:15});
+  for(let i=0;i<2;i++) s+=vArrow(nx+nw/2,ny[i]+nh,ny[i+1],{stroke:C.mut,sw:1.8,head:"k"});
+  s+=rect(LX+22,TOP+PANH-70,LW-44,50,{fill:"#F3F4F6",stroke:C.neutStroke,sw:1,rx:8,filter:false});
+  s+=leftLines(LX+36,TOP+PANH-46,wrap(t.lnote,LW-70,11),{size:11,fill:C.mut,lh:15});
   // right panel (dynamic — colored/alive)
-  s+=rect(RX,TOP,RW,PANH,{fill:"#f3ecff",stroke:C.harnStroke,sw:1.5,rx:16,filter:false});
+  s+=rect(RX,TOP,RW,PANH,{fill:C.harnFill,stroke:C.harnStroke,sw:1.5,rx:10,filter:false});
   s+=tline(RX+22,TOP+30,t.rh,{size:16,weight:800,fill:C.harnText});
   s+=tline(RX+22,TOP+50,t.rt,{size:11.5,weight:700,fill:"#7a63c0"});
   // tool library chip cloud
   s+=rect(RX+22,TOP+70,RW-44,44,{fill:"#fff",stroke:C.harnStroke,sw:1.2,rx:10,filter:false});
   s+=tline(RX+34,TOP+88,t.rlib,{size:11.5,weight:800,fill:C.harnText});
-  const chips=["T1","T2","T3","T4","T5","T6","T7","T8"], ccol=[C.skillStroke,C.scafStroke,C.harnStroke,C.dataStroke,C.harnStroke,C.scafStroke,"#5a8c1a","#6d3fd4"];
+  const chips=["T1","T2","T3","T4","T5","T6","T7","T8"], ccol=[C.skillStroke,C.scafStroke,C.harnStroke,C.dataStroke,C.harnStroke,C.scafStroke,"#16A34A",C.harnStroke];
   const chipStart=RX+226, chipGap=35;
   chips.forEach((c,i)=>{ const cx=chipStart+i*chipGap; s+=`<circle cx="${cx}" cy="${TOP+92}" r="13" fill="${ccol[i]}"/><text x="${cx}" y="${TOP+93}" text-anchor="middle" dominant-baseline="middle" font-size="10.5" font-weight="800" fill="#fff">${c}</text>`; });
   // dynamic flow steps
   const rw=RW-44, rx=RX+22, rh2=56, ry=[TOP+130,TOP+200,TOP+270,TOP+340];
-  const rpal=[C.dataStroke,C.harnStroke,"#6d3fd4",C.harnStroke];
+  const rpal=[C.dataStroke,C.harnStroke,C.harnStroke,C.harnStroke];
   t.rflow.forEach((n,i)=>{
     const strong=(i===3);
     s+=rect(rx,ry[i],rw,rh2,{fill:strong?C.harnStrong:"#fff",stroke:rpal[i],sw:strong?1.7:1.2,rx:10,filter:false});
@@ -753,8 +751,8 @@ function pageHTML(P){
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>${P.title}</title>
 <style>
-  :root{--ink:#221f1a;--mut:#6b6357;--page:#fffdf8;--card:#ffffff;--line:#e7dfce;
-        --skill:#1a7d52;--harn:#6d3fd4;--scaf:#bc5a16;--data:#1474a6;}
+  :root{--ink:#111827;--mut:#6B7280;--page:#FFFFFF;--card:#ffffff;--line:#E5E7EB;
+        --skill:#3B82F6;--harn:#7C3AED;--scaf:#EA580C;--data:#059669;}
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
   body{margin:0;background:var(--page);color:var(--ink);
@@ -791,7 +789,7 @@ function pageHTML(P){
   .th{font-size:19px;font-weight:800;margin:.2em 0 .7em}
   .tbl{width:100%;border-collapse:collapse;font-size:14px;background:var(--card);
        border:1px solid var(--line);border-radius:12px;overflow:hidden}
-  .tbl th{background:#f3ecff;color:var(--harn);text-align:left;font-weight:800;padding:10px 14px;font-size:13px}
+  .tbl th{background:#F5F3FF;color:var(--harn);text-align:left;font-weight:800;padding:10px 14px;font-size:13px}
   .tbl td{padding:9px 14px;border-top:1px solid var(--line);vertical-align:top}
   .tbl td.id{font-weight:800;color:var(--data);white-space:nowrap}
   .tbl tbody tr:nth-child(even){background:#fbf8f1}
@@ -1427,7 +1425,7 @@ function dryRunHTML(D){
   return `<!DOCTYPE html><html lang="${D.htmllang}"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>${D.title}</title>
 <style>
-  :root{--ink:#221f1a;--mut:#6b6357;--page:#fffdf8;--card:#fff;--line:#e7dfce;--harn:#6d3fd4;--data:#1474a6;--skill:#1a7d52;--scaf:#bc5a16}
+  :root{--ink:#111827;--mut:#6B7280;--page:#FFFFFF;--card:#fff;--line:#E5E7EB;--harn:#7C3AED;--data:#059669;--skill:#3B82F6;--scaf:#EA580C}
   *{box-sizing:border-box} body{margin:0;background:var(--page);color:var(--ink);line-height:1.65;
     font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',Arial,sans-serif}
   .wrap{max-width:1080px;margin:0 auto;padding:0 28px}
@@ -1443,7 +1441,7 @@ function dryRunHTML(D){
        padding:9px 16px;border-radius:999px;font-family:inherit}
   .tab.on{background:var(--harn);color:#fff}
   .exwrap{display:none} .exwrap.on{display:block}
-  .goal{display:flex;gap:14px;align-items:flex-start;background:#f6f1fe;border:1px solid #e3d7fb;border-radius:14px;padding:16px 18px;margin:20px 0}
+  .goal{display:flex;gap:14px;align-items:flex-start;background:#F5F3FF;border:1px solid #EDE9FE;border-radius:14px;padding:16px 18px;margin:20px 0}
   .goal .badge{flex:0 0 auto;background:var(--harn);color:#fff;font-weight:800;border-radius:9px;padding:5px 11px;font-size:13px}
   .goal p{margin:0;font-size:16px;font-weight:600}
   .th{font-size:17px;font-weight:800;margin:26px 0 8px;color:var(--ink)}

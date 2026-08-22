@@ -8,28 +8,28 @@
   </style>
 
   <!-- offline off-policy loop band -->
-  <rect x="40" y="40" width="1040" height="96" rx="12" fill="#0c2330" opacity="0.04" stroke="#1474a6" stroke-dasharray="5 4"/>
+  <rect x="40" y="40" width="1040" height="96" rx="12" fill="#0c2330" opacity="0.04" stroke="#059669" stroke-dasharray="5 4"/>
   <text class="lbl" x="60" y="62" fill="#0f5a80">离线 off-policy loop 𝓛₂（栈外，不被 H 调度）</text>
   <rect class="box" x="60" y="72" width="200" height="52" rx="9" fill="#fff" stroke="#8a94a6"/>
   <text class="bt" x="74" y="94" fill="#3a4252">外部源</text>
   <text class="bs" x="74" y="112" fill="#6a7385"><tspan class="ab">arXiv<title>arXiv = 康奈尔大学的开放学术预印本库</title></tspan> · <tspan class="ab">MP<title>MP = Materials Project，劳伦斯伯克利国家实验室的开放 DFT 材料物性数据库</title></tspan> · <tspan class="ab">OQMD<title>OQMD = Open Quantum Materials Database，西北大学的开放 DFT 材料数据库</title></tspan> 快照</text>
-  <rect class="box" x="340" y="72" width="220" height="52" rx="9" fill="#e1eff6" stroke="#1474a6"/>
+  <rect class="box" x="340" y="72" width="220" height="52" rx="9" fill="#ECFDF5" stroke="#059669"/>
   <text class="bt" x="354" y="94" fill="#0f5a80">D₂.summarize（schema-on-read）</text>
-  <text class="bs" x="354" y="112" fill="#1474a6">→ SummaryEntry{claim, valid, ref}</text>
+  <text class="bs" x="354" y="112" fill="#059669">→ SummaryEntry{claim, valid, ref}</text>
   <path class="flow" d="M260,98 L340,98" marker-end="url(#dah)"/>
 
   <!-- shared summary DB (central hot store) -->
-  <rect class="box" x="640" y="66" width="240" height="64" rx="9" fill="#d3e8f2" stroke="#1474a6" stroke-width="1.8"/>
+  <rect class="box" x="640" y="66" width="240" height="64" rx="9" fill="#d3e8f2" stroke="#059669" stroke-width="1.8"/>
   <text class="bt" x="654" y="90" fill="#0f5a80">【结构化摘要 DB】共享只读</text>
-  <text class="bs" x="654" y="108" fill="#1474a6">索引: source / theme / valid</text>
-  <text class="bs" x="654" y="123" fill="#1474a6">多 agent 快照读，不重拉原文</text>
+  <text class="bs" x="654" y="108" fill="#059669">索引: source / theme / valid</text>
+  <text class="bs" x="654" y="123" fill="#059669">多 agent 快照读，不重拉原文</text>
   <path class="flow" d="M560,98 L640,98" marker-end="url(#dah)"/>
 
   <!-- Harness contract layer -->
-  <rect class="box" x="300" y="220" width="520" height="72" rx="10" fill="#efe9fb" stroke="#6d3fd4" stroke-width="1.6"/>
+  <rect class="box" x="300" y="220" width="520" height="72" rx="10" fill="#F5F3FF" stroke="#7C3AED" stroke-width="1.6"/>
   <text class="bt" x="320" y="246" fill="#4a2f9e">L2 Harness（契约 / 控制面）</text>
-  <text class="bs" x="320" y="266" fill="#6d3fd4">context assembly ← D₂摘要/D₃用法/D₄时效 · O1路由 · verifier</text>
-  <text class="bs" x="320" y="282" fill="#6d3fd4">policy gate ─▶ 翻译 𝓘→𝓔（P2）</text>
+  <text class="bs" x="320" y="266" fill="#7C3AED">context assembly ← D₂摘要/D₃用法/D₄时效 · O1路由 · verifier</text>
+  <text class="bs" x="320" y="282" fill="#7C3AED">policy gate ─▶ 翻译 𝓘→𝓔（P2）</text>
   <!-- semantic_join down, writeback up -->
   <path class="flow" d="M720,130 L640,220" marker-end="url(#dah)"/>
   <text class="note" x="600" y="180">semantic_join(valid_at=T, top_k)</text>
@@ -37,21 +37,21 @@
   <text class="note" x="360" y="168" fill="#9a6a12">[21] writeback 新条目（逻辑追加）</text>
 
   <!-- L3 Skills (left) -->
-  <rect class="box" x="60" y="220" width="200" height="72" rx="10" fill="#e4f1e8" stroke="#1a7d52"/>
+  <rect class="box" x="60" y="220" width="200" height="72" rx="10" fill="#EFF6FF" stroke="#3B82F6"/>
   <text class="bt" x="74" y="246" fill="#136040">L3 Skills</text>
-  <text class="bs" x="74" y="266" fill="#1a7d52">lit-review · screening</text>
-  <text class="bs" x="74" y="282" fill="#1a7d52">data-report</text>
+  <text class="bs" x="74" y="266" fill="#3B82F6">lit-review · screening</text>
+  <text class="bs" x="74" y="282" fill="#3B82F6">data-report</text>
   <path class="flow" d="M260,256 L300,256" marker-end="url(#dah)"/>
   <text class="note" x="255" y="212">intent/specs [03-05]</text>
 
   <!-- L1 Scaffold + D1 (data plane, bottom) -->
-  <rect class="box" x="300" y="360" width="240" height="66" rx="10" fill="#fbeee0" stroke="#bc5a16"/>
+  <rect class="box" x="300" y="360" width="240" height="66" rx="10" fill="#FFF7ED" stroke="#EA580C"/>
   <text class="bt" x="314" y="386" fill="#8f4410">L1 Scaffold（数据面）</text>
-  <text class="bs" x="314" y="405" fill="#bc5a16"><tspan class="ab">microVM<title>microVM = 微虚拟机，轻量强隔离执行沙箱</title></tspan> · GPU serving</text>
-  <text class="bs" x="314" y="420" fill="#bc5a16">cloud <tspan class="ab">HPC<title>HPC = High-Performance Computing 高性能计算集群，跑大规模 DFT 筛选</title></tspan> · <tspan class="ab">SSO<title>SSO = Single Sign-On 单点登录，授权访问机构 HPC</title></tspan> · network</text>
-  <rect class="box" x="600" y="360" width="220" height="66" rx="10" fill="#e1eff6" stroke="#1474a6"/>
+  <text class="bs" x="314" y="405" fill="#EA580C"><tspan class="ab">microVM<title>microVM = 微虚拟机，轻量强隔离执行沙箱</title></tspan> · GPU serving</text>
+  <text class="bs" x="314" y="420" fill="#EA580C">cloud <tspan class="ab">HPC<title>HPC = High-Performance Computing 高性能计算集群，跑大规模 DFT 筛选</title></tspan> · <tspan class="ab">SSO<title>SSO = Single Sign-On 单点登录，授权访问机构 HPC</title></tspan> · network</text>
+  <rect class="box" x="600" y="360" width="220" height="66" rx="10" fill="#ECFDF5" stroke="#059669"/>
   <text class="bt" x="614" y="386" fill="#0f5a80">D₁ 取数 API（在线）</text>
-  <text class="bs" x="614" y="405" fill="#1474a6"><tspan class="ab">MP<title>MP = Materials Project 开放 DFT 材料物性库（带隙/形成能等）</title></tspan> / <tspan class="ab">OQMD<title>OQMD = Open Quantum Materials Database 开放 DFT 材料库</title></tspan> 物性</text>
+  <text class="bs" x="614" y="405" fill="#059669"><tspan class="ab">MP<title>MP = Materials Project 开放 DFT 材料物性库（带隙/形成能等）</title></tspan> / <tspan class="ab">OQMD<title>OQMD = Open Quantum Materials Database 开放 DFT 材料库</title></tspan> 物性</text>
   <path class="flow" d="M470,292 L420,360" marker-end="url(#dah)"/>
   <text class="note" x="430" y="330">执行单元 𝓔</text>
   <path class="flow" d="M700,292 L710,360" marker-end="url(#dah)"/>

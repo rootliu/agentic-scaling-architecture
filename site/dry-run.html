@@ -110,89 +110,89 @@
       <svg viewBox="0 0 1120 700" width="100%" role="img" aria-label="用例 U spec 调用顺序：Intake→Skill激活→Context组装→路由/资源→并行执行→回写，标注 CP/DP 与 P13/M1-M4/P11/M3">
   <defs>
     <marker id="uah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#7a7f8c"/></marker>
-    <marker id="uap" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#9a6a12"/></marker>
+    <marker id="uap" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#CA8A04"/></marker>
   </defs>
   <style>
     .stg{font:600 12px system-ui,sans-serif;fill:#5a6478}
     .bt{font:600 12.5px system-ui,sans-serif}
     .bs{font:500 10.5px var(--mono,monospace)}
     .flow{stroke:#7a7f8c;stroke-width:1.5;fill:none}
-    .pflow{stroke:#9a6a12;stroke-width:1.6;fill:none;stroke-dasharray:5 4}
+    .pflow{stroke:#CA8A04;stroke-width:1.6;fill:none;stroke-dasharray:5 4}
     .lane{fill:none;stroke:#d8dee8;stroke-width:1;stroke-dasharray:4 4}
     .plab{font:600 11px var(--mono,monospace)}
     .note{font:italic 11px system-ui,sans-serif;fill:#7a7f8c}
   </style>
 
   <!-- CP / DP column headers -->
-  <text class="plab" x="300" y="26" fill="#6d3fd4" text-anchor="middle">控制面 CP · 决策/契约</text>
-  <text class="plab" x="830" y="26" fill="#1474a6" text-anchor="middle">数据面 DP · 取数/计算/serving</text>
+  <text class="plab" x="300" y="26" fill="#7C3AED" text-anchor="middle">控制面 CP · 决策/契约</text>
+  <text class="plab" x="830" y="26" fill="#059669" text-anchor="middle">数据面 DP · 取数/计算/serving</text>
   <line class="lane" x1="565" y1="40" x2="565" y2="672"/>
 
   <!-- 阶段 0 Intake -->
   <text class="stg" x="24" y="70">阶段 0</text><text class="stg" x="24" y="70" dy="15" font-weight="400" fill="#9aa2b0">Intake</text>
-  <rect class="box" x="120" y="48" width="300" height="42" rx="9" fill="#efe9fb" stroke="#6d3fd4"/>
+  <rect class="box" x="120" y="48" width="300" height="42" rx="9" fill="#F5F3FF" stroke="#7C3AED"/>
   <text class="bt" x="134" y="70" fill="#4a2f9e">[01–02] parse_intent · O4 plan</text>
-  <text class="bs" x="134" y="85" fill="#6d3fd4">分解 sub-goals {文献→候选→取物性→筛选→分析→报告}</text>
-  <rect class="box" x="120" y="100" width="420" height="50" rx="9" fill="#f6efdf" stroke="#9a6a12"/>
-  <text class="bt" x="134" y="122" fill="#7a530d">[02b/02c] P13 dry-run → M1/M2 partition(𝒫*)</text>
-  <text class="bs" x="134" y="138" fill="#9a6a12">探工具集闭包 τ̂ + env_scope · 按不重合切并行子 agent · minimize ρ</text>
+  <text class="bs" x="134" y="85" fill="#7C3AED">分解 sub-goals {文献→候选→取物性→筛选→分析→报告}</text>
+  <rect class="box" x="120" y="100" width="420" height="50" rx="9" fill="#FEFCE8" stroke="#CA8A04"/>
+  <text class="bt" x="134" y="122" fill="#A16207">[02b/02c] P13 dry-run → M1/M2 partition(𝒫*)</text>
+  <text class="bs" x="134" y="138" fill="#CA8A04">探工具集闭包 τ̂ + env_scope · 按不重合切并行子 agent · minimize ρ</text>
 
   <!-- 阶段 1 Skill 激活 -->
   <text class="stg" x="24" y="192">阶段 1</text><text class="stg" x="24" y="192" dy="15" font-weight="400" fill="#9aa2b0">Skill</text>
-  <rect class="box" x="120" y="170" width="420" height="46" rx="9" fill="#e4f1e8" stroke="#1a7d52"/>
+  <rect class="box" x="120" y="170" width="420" height="46" rx="9" fill="#EFF6FF" stroke="#3B82F6"/>
   <text class="bt" x="134" y="192" fill="#136040">[03–05] activate lit-review · materials-screening · data-report</text>
-  <text class="bs" x="134" y="208" fill="#1a7d52">声明 required_capabilities / required_data_themes（不绑 Scaffold，P2）</text>
+  <text class="bs" x="134" y="208" fill="#3B82F6">声明 required_capabilities / required_data_themes（不绑 Scaffold，P2）</text>
 
   <!-- 阶段 2 Context 组装 (CP -> DP) -->
   <text class="stg" x="24" y="262">阶段 2</text><text class="stg" x="24" y="262" dy="15" font-weight="400" fill="#9aa2b0">Context</text>
-  <rect class="box" x="120" y="240" width="300" height="46" rx="9" fill="#efe9fb" stroke="#6d3fd4"/>
+  <rect class="box" x="120" y="240" width="300" height="46" rx="9" fill="#F5F3FF" stroke="#7C3AED"/>
   <text class="bt" x="134" y="262" fill="#4a2f9e">[06–07] consult D₃ 用法 / D₄ 时效</text>
-  <text class="bs" x="134" y="278" fill="#6d3fd4">preferred_sources · join_plan · freshness · nfr_budget</text>
-  <rect class="box" x="620" y="240" width="420" height="46" rx="9" fill="#e1eff6" stroke="#1474a6"/>
+  <text class="bs" x="134" y="278" fill="#7C3AED">preferred_sources · join_plan · freshness · nfr_budget</text>
+  <rect class="box" x="620" y="240" width="420" height="46" rx="9" fill="#ECFDF5" stroke="#059669"/>
   <text class="bt" x="634" y="262" fill="#0f5a80">[08] D₂.semantic_join(valid_at=today)</text>
-  <text class="bs" x="634" y="278" fill="#1474a6">取带时序约束 SummaryEntry，每条带 evidence_ref（P7 共享摘要）</text>
+  <text class="bs" x="634" y="278" fill="#059669">取带时序约束 SummaryEntry，每条带 evidence_ref（P7 共享摘要）</text>
 
   <!-- 阶段 3 路由 + 资源 -->
   <text class="stg" x="24" y="332">阶段 3</text><text class="stg" x="24" y="332" dy="15" font-weight="400" fill="#9aa2b0">路由/资源</text>
-  <rect class="box" x="120" y="310" width="300" height="46" rx="9" fill="#efe9fb" stroke="#6d3fd4"/>
+  <rect class="box" x="120" y="310" width="300" height="46" rx="9" fill="#F5F3FF" stroke="#7C3AED"/>
   <text class="bt" x="134" y="332" fill="#4a2f9e">[10–13] O1 tool · O7 model · policy gate</text>
-  <text class="bs" x="134" y="348" fill="#6d3fd4">SSO/HPC · cloud=GPU pool · allowlist=[MP,arXiv]</text>
-  <rect class="box" x="620" y="310" width="420" height="46" rx="9" fill="#f6efdf" stroke="#9a6a12"/>
-  <text class="bt" x="634" y="332" fill="#7a530d">[13b] M4 seed 亲和派生 → Scaffold</text>
-  <text class="bs" x="634" y="348" fill="#9a6a12">同工具集同 seed 共置(affinity) · 异工具集分散 → k_max↑</text>
+  <text class="bs" x="134" y="348" fill="#7C3AED">SSO/HPC · cloud=GPU pool · allowlist=[MP,arXiv]</text>
+  <rect class="box" x="620" y="310" width="420" height="46" rx="9" fill="#FEFCE8" stroke="#CA8A04"/>
+  <text class="bt" x="634" y="332" fill="#A16207">[13b] M4 seed 亲和派生 → Scaffold</text>
+  <text class="bs" x="634" y="348" fill="#CA8A04">同工具集同 seed 共置(affinity) · 异工具集分散 → k_max↑</text>
 
   <!-- 阶段 4 并行执行循环 (three parallel sub-agents in DP) -->
   <text class="stg" x="24" y="418">阶段 4</text><text class="stg" x="24" y="418" dy="15" font-weight="400" fill="#9aa2b0">并行执行</text>
-  <rect x="118" y="392" width="924" height="150" rx="12" fill="none" stroke="#d8dee8" stroke-dasharray="4 4"/>
-  <text class="note" x="130" y="410" fill="#9a6a12">[13c] 各子 agent 冻结稳定前缀=⟨工具集 spec+system+D₃ 记忆⟩，任务变量放尾部 → 前缀命中 H↑（P11）</text>
+  <rect x="118" y="392" width="924" height="150" rx="8" fill="none" stroke="#d8dee8" stroke-dasharray="4 4"/>
+  <text class="note" x="130" y="410" fill="#CA8A04">[13c] 各子 agent 冻结稳定前缀=⟨工具集 spec+system+D₃ 记忆⟩，任务变量放尾部 → 前缀命中 H↑（P11）</text>
   <!-- sub-agent a1 -->
-  <rect class="box" x="140" y="422" width="250" height="66" rx="9" fill="#e4f1e8" stroke="#1a7d52"/>
+  <rect class="box" x="140" y="422" width="250" height="66" rx="9" fill="#EFF6FF" stroke="#3B82F6"/>
   <text class="bt" x="154" y="444" fill="#136040">a₁ lit-review · τ_A</text>
-  <text class="bs" x="154" y="461" fill="#1a7d52">[14] arxiv_search（命中共享摘要则跳过）</text>
-  <text class="bs" x="154" y="476" fill="#1a7d52">select→gate→execute→observe→verify</text>
+  <text class="bs" x="154" y="461" fill="#3B82F6">[14] arxiv_search（命中共享摘要则跳过）</text>
+  <text class="bs" x="154" y="476" fill="#3B82F6">select→gate→execute→observe→verify</text>
   <!-- sub-agent a2 -->
-  <rect class="box" x="410" y="422" width="250" height="66" rx="9" fill="#e4f1e8" stroke="#1a7d52"/>
+  <rect class="box" x="410" y="422" width="250" height="66" rx="9" fill="#EFF6FF" stroke="#3B82F6"/>
   <text class="bt" x="424" y="444" fill="#136040">a₂ screening · τ_B</text>
-  <text class="bs" x="424" y="461" fill="#1a7d52">[15–17] D₁ 取物性 · code-gen · dft_screen</text>
-  <text class="bs" x="424" y="476" fill="#1a7d52">on Scaffold (cloud HPC microVM)</text>
+  <text class="bs" x="424" y="461" fill="#3B82F6">[15–17] D₁ 取物性 · code-gen · dft_screen</text>
+  <text class="bs" x="424" y="476" fill="#3B82F6">on Scaffold (cloud HPC microVM)</text>
   <!-- sub-agent a3 -->
-  <rect class="box" x="680" y="422" width="250" height="66" rx="9" fill="#e4f1e8" stroke="#1a7d52"/>
+  <rect class="box" x="680" y="422" width="250" height="66" rx="9" fill="#EFF6FF" stroke="#3B82F6"/>
   <text class="bt" x="694" y="440" fill="#136040">a₃ report · τ_C</text>
-  <text class="bs" x="694" y="456" fill="#1a7d52">[18–19] r_out 带隙子域 · r_proc 引用接地</text>
-  <text class="bs" x="694" y="470" fill="#1a7d52">失败 → O6 reflect → [14/16]（P15）</text>
+  <text class="bs" x="694" y="456" fill="#3B82F6">[18–19] r_out 带隙子域 · r_proc 引用接地</text>
+  <text class="bs" x="694" y="470" fill="#3B82F6">失败 → O6 reflect → [14/16]（P15）</text>
   <!-- summarized context between sub-agents (amber dashed, loose) -->
   <path class="pflow" d="M390,455 L410,455" marker-end="url(#uap)"/>
   <path class="pflow" d="M660,455 L680,455" marker-end="url(#uap)"/>
-  <text class="note" x="470" y="512" fill="#9a6a12">[19b] 跨子 agent 只传 summarized context，detail 入 Ω memory（M3）</text>
+  <text class="note" x="470" y="512" fill="#CA8A04">[19b] 跨子 agent 只传 summarized context，detail 入 Ω memory（M3）</text>
 
   <!-- 阶段 5 产出 + 回写 -->
   <text class="stg" x="24" y="590">阶段 5</text><text class="stg" x="24" y="590" dy="15" font-weight="400" fill="#9aa2b0">回写</text>
-  <rect class="box" x="620" y="562" width="420" height="44" rx="9" fill="#e1eff6" stroke="#1474a6"/>
+  <rect class="box" x="620" y="562" width="420" height="44" rx="9" fill="#ECFDF5" stroke="#059669"/>
   <text class="bt" x="634" y="584" fill="#0f5a80">[20] doc_generation → report artifact</text>
-  <text class="bs" x="634" y="599" fill="#1474a6">含引用 + 可复现脚本（DP）</text>
-  <rect class="box" x="120" y="562" width="440" height="44" rx="9" fill="#efe9fb" stroke="#6d3fd4"/>
+  <text class="bs" x="634" y="599" fill="#059669">含引用 + 可复现脚本（DP）</text>
+  <rect class="box" x="120" y="562" width="440" height="44" rx="9" fill="#F5F3FF" stroke="#7C3AED"/>
   <text class="bt" x="134" y="584" fill="#4a2f9e">[21–23] writeback D₂ · RunTrace→Ω · distill D₃</text>
-  <text class="bs" x="134" y="599" fill="#6d3fd4">逻辑追加 + evidence_ref（不覆盖）· P9 收敛</text>
+  <text class="bs" x="134" y="599" fill="#7C3AED">逻辑追加 + evidence_ref（不覆盖）· P9 收敛</text>
 
   <!-- vertical flows connecting stages (left CP spine) -->
   <path class="flow" d="M270,90 L270,100" marker-end="url(#uah)"/>
@@ -203,7 +203,7 @@
   <path class="flow" d="M540,542 C540,555 340,552 340,562" marker-end="url(#uah)"/>
   <path class="flow" d="M700,542 L830,562" marker-end="url(#uah)"/>
   <!-- amdahl annotation -->
-  <text class="note" x="955" y="700" fill="#9a6a12">Speedup → 1/s · s=s₀+λρ</text>
+  <text class="note" x="955" y="700" fill="#CA8A04">Speedup → 1/s · s=s₀+λρ</text>
 </svg>
       <figcaption class="figcap"><b>Spec 调用顺序（U）：</b>规划期先 <span class="figcap-hint">P13</span> dry-run 探工具集闭包、按不重合切成三束并行子 agent（<span class="figcap-hint">M1/M2</span>）；Scaffold 依 seed 亲和派生（<span class="figcap-hint">M4</span>），各子 agent 冻结稳定前缀 → H↑（<span class="figcap-hint">P11</span>），彼此只沿<b>摘要</b>松耦合传递（<span class="figcap-hint">M3</span>）；回写逻辑追加、带 evidence_ref 防幻觉。</figcaption>
     </figure>
@@ -223,9 +223,9 @@
     <figure class="figure fade">
       <svg viewBox="0 0 1120 460" width="100%" role="img" aria-label="AI4Science 概率推理(hypothesis/reflection) → DFT实验验证门 → 固化为确定推理(定律/数据/skill-code) 的闭环">
   <defs>
-    <marker id="ufz" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#0f7a6b"/></marker>
+    <marker id="ufz" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#0284C7"/></marker>
     <marker id="upr" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#c2683a"/></marker>
-    <marker id="ugt" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#1474a6"/></marker>
+    <marker id="ugt" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#059669"/></marker>
   </defs>
   <style>
     .zt{font:600 12px system-ui,sans-serif}
@@ -237,11 +237,11 @@
 
   <!-- zone headers -->
   <text class="plab2" x="200" y="26" fill="#c2683a" text-anchor="middle">概率推理 · 用 θ 内在知识泛化</text>
-  <text class="plab2" x="560" y="26" fill="#1474a6" text-anchor="middle">实验 / 验证门</text>
-  <text class="plab2" x="930" y="26" fill="#0f7a6b" text-anchor="middle">确定推理 · 不调 θ、可复现</text>
+  <text class="plab2" x="560" y="26" fill="#059669" text-anchor="middle">实验 / 验证门</text>
+  <text class="plab2" x="930" y="26" fill="#0284C7" text-anchor="middle">确定推理 · 不调 θ、可复现</text>
 
   <!-- probabilistic zone (dashed warm) -->
-  <rect x="40" y="42" width="320" height="330" rx="14" fill="#fbeee2" stroke="#c2683a" stroke-width="1.4" stroke-dasharray="6 4"/>
+  <rect x="40" y="42" width="320" height="330" rx="8" fill="#fbeee2" stroke="#c2683a" stroke-width="1.4" stroke-dasharray="6 4"/>
   <rect class="box" x="66" y="74" width="270" height="70" rx="10" fill="#fff" stroke="#c2683a"/>
   <text class="bt2" x="82" y="100" fill="#a8522a">hypothesis 生成候选材料</text>
   <text class="bs2" x="82" y="118" fill="#c2683a">LLM 用 θ 提候选成分 / 结构</text>
@@ -254,24 +254,24 @@
   <text class="nt2" x="66" y="286" fill="#a8522a">下一轮 hypothesis 受已固化 skill 先验约束</text>
 
   <!-- verification gate (blue) -->
-  <path d="M470,150 L560,120 L650,150 L560,300 Z" fill="#e1eff6" stroke="#1474a6" stroke-width="1.6"/>
+  <path d="M470,150 L560,120 L650,150 L560,300 Z" fill="#ECFDF5" stroke="#059669" stroke-width="1.6"/>
   <text class="bt2" x="560" y="170" fill="#0f5a80" text-anchor="middle">DFT 筛选</text>
-  <text class="bs2" x="560" y="188" fill="#1474a6" text-anchor="middle">物性库比对</text>
-  <text class="bs2" x="560" y="204" fill="#1474a6" text-anchor="middle">引用接地</text>
+  <text class="bs2" x="560" y="188" fill="#059669" text-anchor="middle">物性库比对</text>
+  <text class="bs2" x="560" y="204" fill="#059669" text-anchor="middle">引用接地</text>
   <text class="nt2" x="560" y="238" fill="#0f5a80" text-anchor="middle">= 已知定律</text>
   <text class="nt2" x="560" y="254" fill="#0f5a80" text-anchor="middle">+ 固定方法</text>
 
   <!-- deterministic zone (solid teal-green) -->
-  <rect x="760" y="42" width="320" height="330" rx="14" fill="#e3f4f0" stroke="#0f7a6b" stroke-width="1.6"/>
-  <rect class="box" x="786" y="74" width="270" height="66" rx="10" fill="#fff" stroke="#0f7a6b"/>
+  <rect x="760" y="42" width="320" height="330" rx="8" fill="#F0F9FF" stroke="#0284C7" stroke-width="1.6"/>
+  <rect class="box" x="786" y="74" width="270" height="66" rx="10" fill="#fff" stroke="#0284C7"/>
   <text class="bt2" x="802" y="100" fill="#0b5f53">已知定律（DFT）+ 固定数据</text>
-  <text class="bs2" x="802" y="118" fill="#0f7a6b">Materials Project / OQMD 物性</text>
-  <text class="bs2" x="802" y="133" fill="#0f7a6b">固定实验方法（本就确定）</text>
-  <rect class="box" x="786" y="156" width="270" height="86" rx="10" fill="#d6efe8" stroke="#0f7a6b" stroke-width="1.6"/>
+  <text class="bs2" x="802" y="118" fill="#0284C7">Materials Project / OQMD 物性</text>
+  <text class="bs2" x="802" y="133" fill="#0284C7">固定实验方法（本就确定）</text>
+  <rect class="box" x="786" y="156" width="270" height="86" rx="10" fill="#d6efe8" stroke="#0284C7" stroke-width="1.6"/>
   <text class="bt2" x="802" y="182" fill="#0b5f53">perovskite-screening.skill-code</text>
-  <text class="bs2" x="802" y="200" fill="#0f7a6b">验证通过的 hypothesis 固化</text>
-  <text class="bs2" x="802" y="215" fill="#0f7a6b">获取→判断→核验→决策 → code</text>
-  <text class="bs2" x="802" y="230" fill="#0f7a6b">κ 超阈 → 冻结（N8）</text>
+  <text class="bs2" x="802" y="200" fill="#0284C7">验证通过的 hypothesis 固化</text>
+  <text class="bs2" x="802" y="215" fill="#0284C7">获取→判断→核验→决策 → code</text>
+  <text class="bs2" x="802" y="230" fill="#0284C7">κ 超阈 → 冻结（N8）</text>
   <text class="nt2" x="786" y="268" fill="#0b5f53">∂output/∂θ≈0：模型版本升级不漂移（P14）</text>
   <text class="nt2" x="786" y="286" fill="#0b5f53">可复制进工具集，作其它 agent 输入</text>
 
@@ -279,17 +279,17 @@
   <path d="M336,109 C400,109 420,135 468,146" fill="none" stroke="#c2683a" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#upr)"/>
   <path d="M336,199 C400,199 430,210 470,208" fill="none" stroke="#c2683a" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#upr)"/>
   <!-- freeze arrow: gate -> deterministic (thick solid teal) -->
-  <path d="M652,190 C700,190 720,150 784,120" fill="none" stroke="#0f7a6b" stroke-width="2.6" marker-end="url(#ufz)"/>
+  <path d="M652,190 C700,190 720,150 784,120" fill="none" stroke="#0284C7" stroke-width="2.6" marker-end="url(#ufz)"/>
   <text class="zt" x="662" y="132" fill="#0b5f53">verified → freeze</text>
-  <text class="bs2" x="662" y="148" fill="#0f7a6b">N8 / P14</text>
+  <text class="bs2" x="662" y="148" fill="#0284C7">N8 / P14</text>
   <!-- reject arrow: gate -> back to reflection (dashed blue) -->
-  <path d="M540,300 C520,340 380,330 200,245" fill="none" stroke="#1474a6" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#ugt)"/>
+  <path d="M540,300 C520,340 380,330 200,245" fill="none" stroke="#059669" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#ugt)"/>
   <text class="nt2" x="330" y="352" fill="#0f5a80">未过 → 回 reflection 重提 hypothesis</text>
   <!-- reuse dotted: deterministic skill -> next-round prior (down + left) -->
-  <path d="M920,372 C920,410 200,410 200,254" fill="none" stroke="#0f7a6b" stroke-width="1.4" stroke-dasharray="2 4" marker-end="url(#ufz)"/>
+  <path d="M920,372 C920,410 200,410 200,254" fill="none" stroke="#0284C7" stroke-width="1.4" stroke-dasharray="2 4" marker-end="url(#ufz)"/>
   <text class="zt" x="470" y="404" fill="#0b5f53">固化 skill 回流作下一轮 hypothesis 的确定先验（闭环 · 确定性梯度）</text>
 </svg>
-      <figcaption class="figcap"><b>固化闭环（U）：</b><span style="color:#c2683a">概率推理</span>提出候选材料 hypothesis（用 θ 内在知识泛化）→ 经 <span class="figcap-hint">DFT 筛选 / 物性库比对 / 引用接地</span> 验证门 → 通过则<b>固化为</b> <code>perovskite-screening.skill-code</code>，进入<span style="color:#0f7a6b">确定推理</span>区（已知定律+固定数据+固化方法，跨模型版本不漂移 <span class="figcap-hint">P14</span>）；未固化部分留 NL 概率生成保泛化。固化 skill 回流作下一轮 hypothesis 的确定先验，构成相变闭环。</figcaption>
+      <figcaption class="figcap"><b>固化闭环（U）：</b><span style="color:#c2683a">概率推理</span>提出候选材料 hypothesis（用 θ 内在知识泛化）→ 经 <span class="figcap-hint">DFT 筛选 / 物性库比对 / 引用接地</span> 验证门 → 通过则<b>固化为</b> <code>perovskite-screening.skill-code</code>，进入<span style="color:#0284C7">确定推理</span>区（已知定律+固定数据+固化方法，跨模型版本不漂移 <span class="figcap-hint">P14</span>）；未固化部分留 NL 概率生成保泛化。固化 skill 回流作下一轮 hypothesis 的确定先验，构成相变闭环。</figcaption>
     </figure>
   </div>
 
@@ -305,50 +305,50 @@
   </style>
 
   <!-- offline off-policy loop band -->
-  <rect x="40" y="40" width="1040" height="96" rx="12" fill="#0c2330" opacity="0.04" stroke="#1474a6" stroke-dasharray="5 4"/>
+  <rect x="40" y="40" width="1040" height="96" rx="8" fill="#0c2330" opacity="0.04" stroke="#059669" stroke-dasharray="5 4"/>
   <text class="lbl" x="60" y="62" fill="#0f5a80">离线 off-policy loop 𝓛₂（栈外，不被 H 调度）</text>
   <rect class="box" x="60" y="72" width="200" height="52" rx="9" fill="#fff" stroke="#8a94a6"/>
   <text class="bt" x="74" y="94" fill="#3a4252">外部源</text>
   <text class="bs" x="74" y="112" fill="#6a7385"><tspan class="ab">arXiv<title>arXiv = 康奈尔大学的开放学术预印本库</title></tspan> · <tspan class="ab">MP<title>MP = Materials Project，劳伦斯伯克利国家实验室的开放 DFT 材料物性数据库</title></tspan> · <tspan class="ab">OQMD<title>OQMD = Open Quantum Materials Database，西北大学的开放 DFT 材料数据库</title></tspan> 快照</text>
-  <rect class="box" x="340" y="72" width="220" height="52" rx="9" fill="#e1eff6" stroke="#1474a6"/>
+  <rect class="box" x="340" y="72" width="220" height="52" rx="9" fill="#ECFDF5" stroke="#059669"/>
   <text class="bt" x="354" y="94" fill="#0f5a80">D₂.summarize（schema-on-read）</text>
-  <text class="bs" x="354" y="112" fill="#1474a6">→ SummaryEntry{claim, valid, ref}</text>
+  <text class="bs" x="354" y="112" fill="#059669">→ SummaryEntry{claim, valid, ref}</text>
   <path class="flow" d="M260,98 L340,98" marker-end="url(#dah)"/>
 
   <!-- shared summary DB (central hot store) -->
-  <rect class="box" x="640" y="66" width="240" height="64" rx="9" fill="#d3e8f2" stroke="#1474a6" stroke-width="1.8"/>
+  <rect class="box" x="640" y="66" width="240" height="64" rx="9" fill="#d3e8f2" stroke="#059669" stroke-width="1.8"/>
   <text class="bt" x="654" y="90" fill="#0f5a80">【结构化摘要 DB】共享只读</text>
-  <text class="bs" x="654" y="108" fill="#1474a6">索引: source / theme / valid</text>
-  <text class="bs" x="654" y="123" fill="#1474a6">多 agent 快照读，不重拉原文</text>
+  <text class="bs" x="654" y="108" fill="#059669">索引: source / theme / valid</text>
+  <text class="bs" x="654" y="123" fill="#059669">多 agent 快照读，不重拉原文</text>
   <path class="flow" d="M560,98 L640,98" marker-end="url(#dah)"/>
 
   <!-- Harness contract layer -->
-  <rect class="box" x="300" y="220" width="520" height="72" rx="10" fill="#efe9fb" stroke="#6d3fd4" stroke-width="1.6"/>
+  <rect class="box" x="300" y="220" width="520" height="72" rx="10" fill="#F5F3FF" stroke="#7C3AED" stroke-width="1.6"/>
   <text class="bt" x="320" y="246" fill="#4a2f9e">L2 Harness（契约 / 控制面）</text>
-  <text class="bs" x="320" y="266" fill="#6d3fd4">context assembly ← D₂摘要/D₃用法/D₄时效 · O1路由 · verifier</text>
-  <text class="bs" x="320" y="282" fill="#6d3fd4">policy gate ─▶ 翻译 𝓘→𝓔（P2）</text>
+  <text class="bs" x="320" y="266" fill="#7C3AED">context assembly ← D₂摘要/D₃用法/D₄时效 · O1路由 · verifier</text>
+  <text class="bs" x="320" y="282" fill="#7C3AED">policy gate ─▶ 翻译 𝓘→𝓔（P2）</text>
   <!-- semantic_join down, writeback up -->
   <path class="flow" d="M720,130 L640,220" marker-end="url(#dah)"/>
   <text class="note" x="600" y="180">semantic_join(valid_at=T, top_k)</text>
   <path class="flow" d="M470,220 C440,175 470,150 620,132" marker-end="url(#dah)"/>
-  <text class="note" x="360" y="168" fill="#9a6a12">[21] writeback 新条目（逻辑追加）</text>
+  <text class="note" x="360" y="168" fill="#CA8A04">[21] writeback 新条目（逻辑追加）</text>
 
   <!-- L3 Skills (left) -->
-  <rect class="box" x="60" y="220" width="200" height="72" rx="10" fill="#e4f1e8" stroke="#1a7d52"/>
+  <rect class="box" x="60" y="220" width="200" height="72" rx="10" fill="#EFF6FF" stroke="#3B82F6"/>
   <text class="bt" x="74" y="246" fill="#136040">L3 Skills</text>
-  <text class="bs" x="74" y="266" fill="#1a7d52">lit-review · screening</text>
-  <text class="bs" x="74" y="282" fill="#1a7d52">data-report</text>
+  <text class="bs" x="74" y="266" fill="#3B82F6">lit-review · screening</text>
+  <text class="bs" x="74" y="282" fill="#3B82F6">data-report</text>
   <path class="flow" d="M260,256 L300,256" marker-end="url(#dah)"/>
   <text class="note" x="255" y="212">intent/specs [03-05]</text>
 
   <!-- L1 Scaffold + D1 (data plane, bottom) -->
-  <rect class="box" x="300" y="360" width="240" height="66" rx="10" fill="#fbeee0" stroke="#bc5a16"/>
+  <rect class="box" x="300" y="360" width="240" height="66" rx="10" fill="#FFF7ED" stroke="#EA580C"/>
   <text class="bt" x="314" y="386" fill="#8f4410">L1 Scaffold（数据面）</text>
-  <text class="bs" x="314" y="405" fill="#bc5a16"><tspan class="ab">microVM<title>microVM = 微虚拟机，轻量强隔离执行沙箱</title></tspan> · GPU serving</text>
-  <text class="bs" x="314" y="420" fill="#bc5a16">cloud <tspan class="ab">HPC<title>HPC = High-Performance Computing 高性能计算集群，跑大规模 DFT 筛选</title></tspan> · <tspan class="ab">SSO<title>SSO = Single Sign-On 单点登录，授权访问机构 HPC</title></tspan> · network</text>
-  <rect class="box" x="600" y="360" width="220" height="66" rx="10" fill="#e1eff6" stroke="#1474a6"/>
+  <text class="bs" x="314" y="405" fill="#EA580C"><tspan class="ab">microVM<title>microVM = 微虚拟机，轻量强隔离执行沙箱</title></tspan> · GPU serving</text>
+  <text class="bs" x="314" y="420" fill="#EA580C">cloud <tspan class="ab">HPC<title>HPC = High-Performance Computing 高性能计算集群，跑大规模 DFT 筛选</title></tspan> · <tspan class="ab">SSO<title>SSO = Single Sign-On 单点登录，授权访问机构 HPC</title></tspan> · network</text>
+  <rect class="box" x="600" y="360" width="220" height="66" rx="10" fill="#ECFDF5" stroke="#059669"/>
   <text class="bt" x="614" y="386" fill="#0f5a80">D₁ 取数 API（在线）</text>
-  <text class="bs" x="614" y="405" fill="#1474a6"><tspan class="ab">MP<title>MP = Materials Project 开放 DFT 材料物性库（带隙/形成能等）</title></tspan> / <tspan class="ab">OQMD<title>OQMD = Open Quantum Materials Database 开放 DFT 材料库</title></tspan> 物性</text>
+  <text class="bs" x="614" y="405" fill="#059669"><tspan class="ab">MP<title>MP = Materials Project 开放 DFT 材料物性库（带隙/形成能等）</title></tspan> / <tspan class="ab">OQMD<title>OQMD = Open Quantum Materials Database 开放 DFT 材料库</title></tspan> 物性</text>
   <path class="flow" d="M470,292 L420,360" marker-end="url(#dah)"/>
   <text class="note" x="430" y="330">执行单元 𝓔</text>
   <path class="flow" d="M700,292 L710,360" marker-end="url(#dah)"/>
@@ -360,7 +360,7 @@
   <text class="bs" x="320" y="514" fill="#6a7385">RunTrace · IntermediateRelation(候选↔物性↔文献) · LLM Wiki ─▶ D₃ 更新[23]（P9）</text>
   <path class="flow" d="M420,426 L440,470" marker-end="url(#dah)"/>
   <path class="flow" d="M710,426 L680,470" marker-end="url(#dah)"/>
-  <text class="note" x="850" y="500" fill="#9a6a12">P7 · 新增源不抬单请求成本</text>
+  <text class="note" x="850" y="500" fill="#CA8A04">P7 · 新增源不抬单请求成本</text>
 </svg>
       <figcaption class="figcap"><b>数据流（U）：</b>离线 𝓛₂ 把原文预消化成带时序约束的 SummaryEntry 存入<b>共享只读摘要 DB</b>（不在主请求路径 → 新增源不抬单请求成本，<span class="figcap-hint">P7</span>）；在线只做 <span class="figcap-hint">D₂.semantic_join</span> + <span class="figcap-hint">D₁</span> 取数，均经 Harness 契约；执行结果经 Ω 蒸馏回灌 D₂/D₃，逻辑追加、可回指原文防幻觉。<br><span class="mut" style="font-size:12px">缩写：<b>arXiv</b>=学术预印本库 · <b>MP</b>=Materials Project（开放 DFT 材料物性库）· <b>OQMD</b>=Open Quantum Materials Database · <b>DFT</b>=密度泛函理论（第一性原理算物性）· <b>HPC</b>=高性能计算集群 · <b>microVM</b>=微虚拟机沙箱 · <b>SSO</b>=单点登录</span></figcaption>
     </figure>
@@ -400,54 +400,54 @@
     <figure class="figure fade">
       <svg viewBox="0 0 1120 560" width="100%" role="img" aria-label="用例 K spec 调用顺序：plan/dry-run→Skill→契约/seed→取数/预测/回测→验证→回写，CP/DP 泳道">
   <defs><marker id="kah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#7a7f8c"/></marker>
-  <marker id="kap" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#9a6a12"/></marker></defs>
+  <marker id="kap" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#CA8A04"/></marker></defs>
   <style>
     .bt{font:600 12.5px system-ui,sans-serif}.bs{font:500 10.5px var(--mono,monospace)}
-    .flow{stroke:#7a7f8c;stroke-width:1.5;fill:none}.pflow{stroke:#9a6a12;stroke-width:1.6;fill:none;stroke-dasharray:5 4}
+    .flow{stroke:#7a7f8c;stroke-width:1.5;fill:none}.pflow{stroke:#CA8A04;stroke-width:1.6;fill:none;stroke-dasharray:5 4}
     .plab{font:600 11px var(--mono,monospace)}.note{font:italic 11px system-ui,sans-serif;fill:#7a7f8c}
     .lane{fill:none;stroke:#d8dee8;stroke-width:1;stroke-dasharray:4 4}
   </style>
-  <text class="plab" x="300" y="26" fill="#6d3fd4" text-anchor="middle">控制面 CP</text>
-  <text class="plab" x="830" y="26" fill="#1474a6" text-anchor="middle">数据面 DP</text>
+  <text class="plab" x="300" y="26" fill="#7C3AED" text-anchor="middle">控制面 CP</text>
+  <text class="plab" x="830" y="26" fill="#059669" text-anchor="middle">数据面 DP</text>
   <line class="lane" x1="565" y1="40" x2="565" y2="532"/>
 
-  <rect class="box" x="120" y="48" width="420" height="44" rx="9" fill="#efe9fb" stroke="#6d3fd4"/>
+  <rect class="box" x="120" y="48" width="420" height="44" rx="9" fill="#F5F3FF" stroke="#7C3AED"/>
   <text class="bt" x="134" y="70" fill="#4a2f9e">[01–02] parse_intent · O4 plan {取K线→预测→信号→回测→报告}</text>
-  <text class="bs" x="134" y="86" fill="#6d3fd4">标的 · 时长 · 风险</text>
-  <rect class="box" x="120" y="104" width="420" height="44" rx="9" fill="#f6efdf" stroke="#9a6a12"/>
-  <text class="bt" x="134" y="126" fill="#7a530d">[02b] P13 dry-run → M1/M2 partition</text>
-  <text class="bs" x="134" y="142" fill="#9a6a12">多标的/多周期按工具集不重合切并行 · minimize ρ</text>
+  <text class="bs" x="134" y="86" fill="#7C3AED">标的 · 时长 · 风险</text>
+  <rect class="box" x="120" y="104" width="420" height="44" rx="9" fill="#FEFCE8" stroke="#CA8A04"/>
+  <text class="bt" x="134" y="126" fill="#A16207">[02b] P13 dry-run → M1/M2 partition</text>
+  <text class="bs" x="134" y="142" fill="#CA8A04">多标的/多周期按工具集不重合切并行 · minimize ρ</text>
 
-  <rect class="box" x="120" y="164" width="420" height="44" rx="9" fill="#e4f1e8" stroke="#1a7d52"/>
+  <rect class="box" x="120" y="164" width="420" height="44" rx="9" fill="#EFF6FF" stroke="#3B82F6"/>
   <text class="bt" x="134" y="186" fill="#136040">[03–08] activate skills · consult D₃/D₄ · schema</text>
-  <text class="bs" x="134" y="202" fill="#1a7d52">lookback=400 · pred_len=120 · ensemble 权重 · 信号 schema</text>
+  <text class="bs" x="134" y="202" fill="#3B82F6">lookback=400 · pred_len=120 · ensemble 权重 · 信号 schema</text>
 
-  <rect class="box" x="120" y="224" width="420" height="60" rx="9" fill="#efe9fb" stroke="#6d3fd4"/>
+  <rect class="box" x="120" y="224" width="420" height="60" rx="9" fill="#F5F3FF" stroke="#7C3AED"/>
   <text class="bt" x="134" y="246" fill="#4a2f9e">[09–11] O1 tool · O7 model · policy gate</text>
-  <text class="bs" x="134" y="262" fill="#6d3fd4">GPU pool · allowlist=[AKShare] · 不授予下单(只读, P3)</text>
-  <rect class="box" x="620" y="224" width="420" height="60" rx="9" fill="#f6efdf" stroke="#9a6a12"/>
-  <text class="bt" x="634" y="246" fill="#7a530d">[11b] M4 seed 亲和 → serving</text>
-  <text class="bs" x="634" y="262" fill="#9a6a12">同 Kronos 工具集同 seed 共置复用；前缀=⟨kronos capsule+system⟩</text>
-  <text class="bs" x="634" y="277" fill="#9a6a12">标的/窗口放尾部（P11）→ k_max↑</text>
+  <text class="bs" x="134" y="262" fill="#7C3AED">GPU pool · allowlist=[AKShare] · 不授予下单(只读, P3)</text>
+  <rect class="box" x="620" y="224" width="420" height="60" rx="9" fill="#FEFCE8" stroke="#CA8A04"/>
+  <text class="bt" x="634" y="246" fill="#A16207">[11b] M4 seed 亲和 → serving</text>
+  <text class="bs" x="634" y="262" fill="#CA8A04">同 Kronos 工具集同 seed 共置复用；前缀=⟨kronos capsule+system⟩</text>
+  <text class="bs" x="634" y="277" fill="#CA8A04">标的/窗口放尾部（P11）→ k_max↑</text>
 
   <!-- DP execute band -->
-  <rect x="618" y="300" width="424" height="130" rx="12" fill="none" stroke="#d8dee8" stroke-dasharray="4 4"/>
-  <rect class="box" x="636" y="312" width="390" height="40" rx="9" fill="#e1eff6" stroke="#1474a6"/>
+  <rect x="618" y="300" width="424" height="130" rx="8" fill="none" stroke="#d8dee8" stroke-dasharray="4 4"/>
+  <rect class="box" x="636" y="312" width="390" height="40" rx="9" fill="#ECFDF5" stroke="#059669"/>
   <text class="bt" x="650" y="331" fill="#0f5a80">[12–13] market_data_fetch(D₁) · kronos_predict</text>
-  <text class="bs" x="650" y="345" fill="#1474a6">predict(df, pred_len, T, top_p, sample_count)</text>
-  <rect class="box" x="636" y="360" width="390" height="34" rx="9" fill="#e1eff6" stroke="#1474a6"/>
+  <text class="bs" x="650" y="345" fill="#059669">predict(df, pred_len, T, top_p, sample_count)</text>
+  <rect class="box" x="636" y="360" width="390" height="34" rx="9" fill="#ECFDF5" stroke="#059669"/>
   <text class="bt" x="650" y="381" fill="#0f5a80">[14–15] ensemble_sampling · backtest_run</text>
-  <rect class="box" x="636" y="400" width="390" height="26" rx="9" fill="#e1eff6" stroke="#1474a6"/>
-  <text class="bs" x="650" y="417" fill="#1474a6">[18] doc_generation → report(预测图+回测+脚本)</text>
+  <rect class="box" x="636" y="400" width="390" height="26" rx="9" fill="#ECFDF5" stroke="#059669"/>
+  <text class="bs" x="650" y="417" fill="#059669">[18] doc_generation → report(预测图+回测+脚本)</text>
 
-  <rect class="box" x="120" y="312" width="420" height="60" rx="9" fill="#efe9fb" stroke="#6d3fd4"/>
+  <rect class="box" x="120" y="312" width="420" height="60" rx="9" fill="#F5F3FF" stroke="#7C3AED"/>
   <text class="bt" x="134" y="334" fill="#4a2f9e">[16–17] verifier + O6 reflect（P15 双维）</text>
-  <text class="bs" x="134" y="350" fill="#6d3fd4">r_out：回测收益子域(Sharpe/回撤) · r_proc：①无未来泄漏 ②校准度</text>
-  <text class="bs" x="134" y="365" fill="#6d3fd4">失败 → 调 lookback/pred_len/权重 → 回 [12/13]</text>
+  <text class="bs" x="134" y="350" fill="#7C3AED">r_out：回测收益子域(Sharpe/回撤) · r_proc：①无未来泄漏 ②校准度</text>
+  <text class="bs" x="134" y="365" fill="#7C3AED">失败 → 调 lookback/pred_len/权重 → 回 [12/13]</text>
 
-  <rect class="box" x="120" y="452" width="920" height="44" rx="9" fill="#efe9fb" stroke="#6d3fd4"/>
+  <rect class="box" x="120" y="452" width="920" height="44" rx="9" fill="#F5F3FF" stroke="#7C3AED"/>
   <text class="bt" x="134" y="474" fill="#4a2f9e">[19–21] writeback D₂ ForecastEntry{valid_from=t, valid_to=t+N, ref} · RunTrace→Ω · distill D₃</text>
-  <text class="bs" x="134" y="490" fill="#6d3fd4">逻辑追加 · 仅窗口内有效、过期不静默复用（防陈旧信号幻觉）· P9</text>
+  <text class="bs" x="134" y="490" fill="#7C3AED">逻辑追加 · 仅窗口内有效、过期不静默复用（防陈旧信号幻觉）· P9</text>
 
   <path class="flow" d="M330,92 L330,104" marker-end="url(#kah)"/>
   <path class="flow" d="M330,148 L330,164" marker-end="url(#kah)"/>
@@ -458,7 +458,7 @@
   <text class="note" x="470" y="308">observe</text>
   <path class="flow" d="M330,372 L330,452" marker-end="url(#kah)"/>
   <path class="flow" d="M830,430 C830,445 600,442 540,470" marker-end="url(#kah)"/>
-  <text class="note" x="900" y="524" fill="#9a6a12">多标的并行 → 吞吐逼近 1/s（P10/P13）</text>
+  <text class="note" x="900" y="524" fill="#CA8A04">多标的并行 → 吞吐逼近 1/s（P10/P13）</text>
 </svg>
       <figcaption class="figcap"><b>Spec 调用顺序（K）：</b>多标的/多周期在规划期 <span class="figcap-hint">P13</span> dry-run 探得共享同一 <code>kronos_predict</code> 工具集闭包，可同 seed 共置并行（<span class="figcap-hint">M1/M2/M4</span>），前缀冻结 → H↑、k_max↑；预测作为<b>带有效期</b> ForecastEntry 回写，过期不静默复用；策略上只读、泄漏防护经契约（<span class="figcap-hint">P3</span>）。</figcaption>
     </figure>
@@ -479,9 +479,9 @@
     <figure class="figure fade">
       <svg viewBox="0 0 1120 460" width="100%" role="img" aria-label="FinTech 预测采样/信号 hypothesis → 多信号回测验证门 → 固化为 signal-gen skill-code 的闭环">
   <defs>
-    <marker id="kfz" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#0f7a6b"/></marker>
+    <marker id="kfz" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#0284C7"/></marker>
     <marker id="kpr" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#c2683a"/></marker>
-    <marker id="kgt" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#1474a6"/></marker>
+    <marker id="kgt" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#059669"/></marker>
   </defs>
   <style>
     .zt{font:600 12px system-ui,sans-serif}
@@ -492,11 +492,11 @@
   </style>
 
   <text class="plab2" x="200" y="26" fill="#c2683a" text-anchor="middle">概率推理 · 采样与假设</text>
-  <text class="plab2" x="560" y="26" fill="#1474a6" text-anchor="middle">多信号回测 / 验证门</text>
-  <text class="plab2" x="930" y="26" fill="#0f7a6b" text-anchor="middle">确定推理 · 跨 Kronos 版本稳定</text>
+  <text class="plab2" x="560" y="26" fill="#059669" text-anchor="middle">多信号回测 / 验证门</text>
+  <text class="plab2" x="930" y="26" fill="#0284C7" text-anchor="middle">确定推理 · 跨 Kronos 版本稳定</text>
 
   <!-- probabilistic zone -->
-  <rect x="40" y="42" width="320" height="330" rx="14" fill="#fbeee2" stroke="#c2683a" stroke-width="1.4" stroke-dasharray="6 4"/>
+  <rect x="40" y="42" width="320" height="330" rx="8" fill="#fbeee2" stroke="#c2683a" stroke-width="1.4" stroke-dasharray="6 4"/>
   <rect class="box" x="66" y="74" width="270" height="70" rx="10" fill="#fff" stroke="#c2683a"/>
   <text class="bt2" x="82" y="100" fill="#a8522a">预测采样</text>
   <text class="bs2" x="82" y="118" fill="#c2683a">predict(T, top_p, sample_count)</text>
@@ -509,36 +509,36 @@
   <text class="nt2" x="66" y="286" fill="#a8522a">同输入+种子可复现（N0 可审计）</text>
 
   <!-- verification gate -->
-  <path d="M470,150 L560,120 L650,150 L560,300 Z" fill="#e1eff6" stroke="#1474a6" stroke-width="1.6"/>
+  <path d="M470,150 L560,120 L650,150 L560,300 Z" fill="#ECFDF5" stroke="#059669" stroke-width="1.6"/>
   <text class="bt2" x="560" y="166" fill="#0f5a80" text-anchor="middle">泄漏检查</text>
-  <text class="bs2" x="560" y="184" fill="#1474a6" text-anchor="middle">y 晚于 x</text>
-  <text class="bs2" x="560" y="200" fill="#1474a6" text-anchor="middle">回测 Sharpe/回撤</text>
-  <text class="bs2" x="560" y="216" fill="#1474a6" text-anchor="middle">校准度</text>
+  <text class="bs2" x="560" y="184" fill="#059669" text-anchor="middle">y 晚于 x</text>
+  <text class="bs2" x="560" y="200" fill="#059669" text-anchor="middle">回测 Sharpe/回撤</text>
+  <text class="bs2" x="560" y="216" fill="#059669" text-anchor="middle">校准度</text>
   <text class="nt2" x="560" y="248" fill="#0f5a80" text-anchor="middle">= 实验验证</text>
 
   <!-- deterministic zone -->
-  <rect x="760" y="42" width="320" height="330" rx="14" fill="#e3f4f0" stroke="#0f7a6b" stroke-width="1.6"/>
-  <rect class="box" x="786" y="74" width="270" height="66" rx="10" fill="#fff" stroke="#0f7a6b"/>
+  <rect x="760" y="42" width="320" height="330" rx="8" fill="#F0F9FF" stroke="#0284C7" stroke-width="1.6"/>
+  <rect class="box" x="786" y="74" width="270" height="66" rx="10" fill="#fff" stroke="#0284C7"/>
   <text class="bt2" x="802" y="100" fill="#0b5f53">固定回测方法 + 泄漏规则</text>
-  <text class="bs2" x="802" y="118" fill="#0f7a6b">方法本身确定、不依赖 θ</text>
-  <text class="bs2" x="802" y="133" fill="#0f7a6b">任何交易通道 fail-closed（P3）</text>
-  <rect class="box" x="786" y="156" width="270" height="86" rx="10" fill="#d6efe8" stroke="#0f7a6b" stroke-width="1.6"/>
+  <text class="bs2" x="802" y="118" fill="#0284C7">方法本身确定、不依赖 θ</text>
+  <text class="bs2" x="802" y="133" fill="#0284C7">任何交易通道 fail-closed（P3）</text>
+  <rect class="box" x="786" y="156" width="270" height="86" rx="10" fill="#d6efe8" stroke="#0284C7" stroke-width="1.6"/>
   <text class="bt2" x="802" y="182" fill="#0b5f53">signal-gen.skill-code</text>
-  <text class="bs2" x="802" y="200" fill="#0f7a6b">已验证信号规则固化</text>
-  <text class="bs2" x="802" y="215" fill="#0f7a6b">阀值/组合逻辑 → code</text>
-  <text class="bs2" x="802" y="230" fill="#0f7a6b">κ 超阈 → 冻结（N8）</text>
+  <text class="bs2" x="802" y="200" fill="#0284C7">已验证信号规则固化</text>
+  <text class="bs2" x="802" y="215" fill="#0284C7">阀值/组合逻辑 → code</text>
+  <text class="bs2" x="802" y="230" fill="#0284C7">κ 超阈 → 冻结（N8）</text>
   <text class="nt2" x="786" y="268" fill="#0b5f53">Kronos 升级时信号规则输出不漂移（P14）</text>
   <text class="nt2" x="786" y="286" fill="#0b5f53">预测采样仍随模型版本变</text>
 
   <!-- flows -->
   <path d="M336,109 C400,109 420,135 468,146" fill="none" stroke="#c2683a" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#kpr)"/>
   <path d="M336,199 C400,199 430,210 470,208" fill="none" stroke="#c2683a" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#kpr)"/>
-  <path d="M652,190 C700,190 720,150 784,120" fill="none" stroke="#0f7a6b" stroke-width="2.6" marker-end="url(#kfz)"/>
+  <path d="M652,190 C700,190 720,150 784,120" fill="none" stroke="#0284C7" stroke-width="2.6" marker-end="url(#kfz)"/>
   <text class="zt" x="662" y="132" fill="#0b5f53">verified → freeze</text>
-  <text class="bs2" x="662" y="148" fill="#0f7a6b">N8 / P14</text>
-  <path d="M540,300 C520,340 380,330 200,245" fill="none" stroke="#1474a6" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#kgt)"/>
+  <text class="bs2" x="662" y="148" fill="#0284C7">N8 / P14</text>
+  <path d="M540,300 C520,340 380,330 200,245" fill="none" stroke="#059669" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#kgt)"/>
   <text class="nt2" x="320" y="352" fill="#0f5a80">未过 → 调 lookback/pred_len/权重重提</text>
-  <path d="M920,372 C920,410 200,410 200,254" fill="none" stroke="#0f7a6b" stroke-width="1.4" stroke-dasharray="2 4" marker-end="url(#kfz)"/>
+  <path d="M920,372 C920,410 200,410 200,254" fill="none" stroke="#0284C7" stroke-width="1.4" stroke-dasharray="2 4" marker-end="url(#kfz)"/>
   <text class="zt" x="470" y="404" fill="#0b5f53">固化信号规则回流约束下一轮假设（闭环 · 确定性梯度）</text>
 </svg>
       <figcaption class="figcap"><b>固化闭环（K）：</b><span style="color:#c2683a">概率推理</span>给出预测采样与信号 hypothesis → 经 <span class="figcap-hint">泄漏检查 + 回测(Sharpe/回撤) + 校准度</span> 多信号验证门 → 通过则<b>固化为</b> <code>signal-gen.skill-code</code>（阀值/组合逻辑）。关键：<b>Kronos 模型版本升级时，被 code 固化的信号规则输出不漂移</b>（<span class="figcap-hint">P14</span>），而预测采样部分仍随模型版本变——这正是确定性梯度。</figcaption>
@@ -558,50 +558,50 @@
   </style>
 
   <!-- offline: pretrained model as hosted capability band -->
-  <rect x="40" y="40" width="1040" height="96" rx="12" fill="#2a1809" opacity="0.05" stroke="#bc5a16" stroke-dasharray="5 4"/>
+  <rect x="40" y="40" width="1040" height="96" rx="8" fill="#2a1809" opacity="0.05" stroke="#EA580C" stroke-dasharray="5 4"/>
   <text class="lbl" x="60" y="62" fill="#8f4410">离线 · 预训练模型作为被托管能力（不在主请求路径 · P1 物理轴扩）</text>
   <rect class="box" x="60" y="72" width="230" height="52" rx="9" fill="#fff" stroke="#8a94a6"/>
   <text class="bt" x="74" y="94" fill="#3a4252">HF 权重快照</text>
   <text class="bs" x="74" y="112" fill="#6a7385">Kronos-small/base + Tokenizer<title>Kronos = 本仓库的时序基础模型（HF NeoQuasar/Kronos-*），预测 K 线</title></text>
-  <rect class="box" x="380" y="72" width="260" height="52" rx="9" fill="#fbeee0" stroke="#bc5a16"/>
+  <rect class="box" x="380" y="72" width="260" height="52" rx="9" fill="#FFF7ED" stroke="#EA580C"/>
   <text class="bt" x="394" y="94" fill="#8f4410">L1 Scaffold · GPU 托管 serving<title>GPU = 图形处理器，此处指模型推理加速卡</title></text>
-  <text class="bs" x="394" y="112" fill="#bc5a16">kronos_predict capsule（加标的=加 serving）</text>
+  <text class="bs" x="394" y="112" fill="#EA580C">kronos_predict capsule（加标的=加 serving）</text>
   <path class="flow" d="M290,98 L380,98" marker-end="url(#dkah)"/>
 
   <!-- shared forecast store D2 (central) -->
-  <rect class="box" x="720" y="66" width="300" height="64" rx="9" fill="#d3e8f2" stroke="#1474a6" stroke-width="1.8"/>
+  <rect class="box" x="720" y="66" width="300" height="64" rx="9" fill="#d3e8f2" stroke="#059669" stroke-width="1.8"/>
   <text class="bt" x="734" y="90" fill="#0f5a80">D₂ · ForecastEntry 存储（带有效期）</text>
-  <text class="bs" x="734" y="108" fill="#1474a6">claim:[t..t+N] · valid_from/to · evidence_ref</text>
-  <text class="bs" x="734" y="123" fill="#1474a6">过期窗口逻辑失效、不静默复用</text>
+  <text class="bs" x="734" y="108" fill="#059669">claim:[t..t+N] · valid_from/to · evidence_ref</text>
+  <text class="bs" x="734" y="123" fill="#059669">过期窗口逻辑失效、不静默复用</text>
 
   <!-- Harness contract layer -->
-  <rect class="box" x="300" y="215" width="520" height="72" rx="10" fill="#efe9fb" stroke="#6d3fd4" stroke-width="1.6"/>
+  <rect class="box" x="300" y="215" width="520" height="72" rx="10" fill="#F5F3FF" stroke="#7C3AED" stroke-width="1.6"/>
   <text class="bt" x="320" y="241" fill="#4a2f9e">L2 Harness（契约 / 控制面）</text>
-  <text class="bs" x="320" y="261" fill="#6d3fd4">consult D₃ 用法(lookback/pred_len/权重) · O1路由 · verifier</text>
-  <text class="bs" x="320" y="277" fill="#6d3fd4">policy gate ─▶ 只读、不授予下单（P3）· 翻译 𝓘→𝓔</text>
+  <text class="bs" x="320" y="261" fill="#7C3AED">consult D₃ 用法(lookback/pred_len/权重) · O1路由 · verifier</text>
+  <text class="bs" x="320" y="277" fill="#7C3AED">policy gate ─▶ 只读、不授予下单（P3）· 翻译 𝓘→𝓔</text>
   <!-- model call down, forecast writeback up -->
   <path class="flow" d="M560,124 L560,215" marker-end="url(#dkah)"/>
   <text class="note" x="470" y="175">kronos_predict 调用</text>
   <path class="flow" d="M760,215 C800,180 810,150 790,132" marker-end="url(#dkah)"/>
-  <text class="note" x="620" y="165" fill="#9a6a12">[19] writeback ForecastEntry（逻辑追加）</text>
+  <text class="note" x="620" y="165" fill="#CA8A04">[19] writeback ForecastEntry（逻辑追加）</text>
 
   <!-- L3 Skills (left) -->
-  <rect class="box" x="60" y="215" width="200" height="72" rx="10" fill="#e4f1e8" stroke="#1a7d52"/>
+  <rect class="box" x="60" y="215" width="200" height="72" rx="10" fill="#EFF6FF" stroke="#3B82F6"/>
   <text class="bt" x="74" y="241" fill="#136040">L3 Skills</text>
-  <text class="bs" x="74" y="261" fill="#1a7d52">stock-forecast</text>
-  <text class="bs" x="74" y="277" fill="#1a7d52">signal-gen · backtest</text>
+  <text class="bs" x="74" y="261" fill="#3B82F6">stock-forecast</text>
+  <text class="bs" x="74" y="277" fill="#3B82F6">signal-gen · backtest</text>
   <path class="flow" d="M260,251 L300,251" marker-end="url(#dkah)"/>
   <text class="note" x="252" y="207">intent/specs</text>
 
   <!-- data plane bottom: D1 fetch + backtest scaffold -->
-  <rect class="box" x="300" y="355" width="240" height="70" rx="10" fill="#e1eff6" stroke="#1474a6"/>
+  <rect class="box" x="300" y="355" width="240" height="70" rx="10" fill="#ECFDF5" stroke="#059669"/>
   <text class="bt" x="314" y="381" fill="#0f5a80">D₁ 取数 API（在线）</text>
-  <text class="bs" x="314" y="400" fill="#1474a6"><tspan class="ab">AKShare<title>AKShare = 开源 Python 金融数据接口库，取行情/基本面数据</title></tspan> / 行情商</text>
-  <text class="bs" x="314" y="415" fill="#1474a6"><tspan class="ab">OHLCV<title>OHLCV = 开盘 Open/最高 High/最低 Low/收盘 Close/成交量 Volume，K 线的五个字段</title></tspan>+amount · x/y_timestamp</text>
-  <rect class="box" x="600" y="355" width="240" height="70" rx="10" fill="#fbeee0" stroke="#bc5a16"/>
+  <text class="bs" x="314" y="400" fill="#059669"><tspan class="ab">AKShare<title>AKShare = 开源 Python 金融数据接口库，取行情/基本面数据</title></tspan> / 行情商</text>
+  <text class="bs" x="314" y="415" fill="#059669"><tspan class="ab">OHLCV<title>OHLCV = 开盘 Open/最高 High/最低 Low/收盘 Close/成交量 Volume，K 线的五个字段</title></tspan>+amount · x/y_timestamp</text>
+  <rect class="box" x="600" y="355" width="240" height="70" rx="10" fill="#FFF7ED" stroke="#EA580C"/>
   <text class="bt" x="614" y="381" fill="#8f4410">L1 Scaffold · 回测</text>
-  <text class="bs" x="614" y="400" fill="#bc5a16"><tspan class="ab">microVM<title>microVM = 微虚拟机，轻量强隔离的执行沙箱（如 Firecracker）</title></tspan> · backtest_run</text>
-  <text class="bs" x="614" y="415" fill="#bc5a16"><tspan class="ab">SSO<title>SSO = Single Sign-On 单点登录，统一身份授权访问受控资源</title></tspan> · network allowlist</text>
+  <text class="bs" x="614" y="400" fill="#EA580C"><tspan class="ab">microVM<title>microVM = 微虚拟机，轻量强隔离的执行沙箱（如 Firecracker）</title></tspan> · backtest_run</text>
+  <text class="bs" x="614" y="415" fill="#EA580C"><tspan class="ab">SSO<title>SSO = Single Sign-On 单点登录，统一身份授权访问受控资源</title></tspan> · network allowlist</text>
   <path class="flow" d="M420,287 L420,355" marker-end="url(#dkah)"/>
   <text class="note" x="428" y="325">[12] 取 K 线</text>
   <path class="flow" d="M700,287 L700,355" marker-end="url(#dkah)"/>
@@ -613,7 +613,7 @@
   <text class="bs" x="320" y="499" fill="#6a7385">泄漏检查(y晚于x) + 回测(<tspan class="ab">Sharpe<title>Sharpe = 夏普比率，单位风险的超额收益，衡量策略风险调整后表现</title></tspan>/回撤) + 校准度 · RunTrace ─▶ D₃ 更新（P9）</text>
   <path class="flow" d="M420,425 L440,455" marker-end="url(#dkah)"/>
   <path class="flow" d="M700,425 L680,455" marker-end="url(#dkah)"/>
-  <text class="note" x="855" y="490" fill="#9a6a12">预测=带有效期数据</text>
+  <text class="note" x="855" y="490" fill="#CA8A04">预测=带有效期数据</text>
 </svg>
       <figcaption class="figcap"><b>数据流（K）：</b>预训练 <b>Kronos</b> 模型作为 Scaffold 上 GPU 托管 capsule（加标的=加 serving，不动 Skill，<span class="figcap-hint">P1</span>）；在线经 <b>AKShare</b>(D₁) 取 OHLCV，预测结果作为<b>带有效期</b> ForecastEntry 落入 D₂——仅窗口内有效、过期重算；验证是<b>多信号</b>（泄漏检查 + 回测 + 校准），策略上只读（<span class="figcap-hint">P3</span>）。<br><span class="mut" style="font-size:12px">缩写：<b>AKShare</b>=开源金融数据接口库 · <b>OHLCV</b>=开/高/低/收/量（K 线五字段）· <b>Kronos</b>=时序基础模型 · <b>GPU</b>=推理加速卡 · <b>microVM</b>=微虚拟机沙箱 · <b>SSO</b>=单点登录 · <b>Sharpe</b>=夏普比率</span></figcaption>
     </figure>

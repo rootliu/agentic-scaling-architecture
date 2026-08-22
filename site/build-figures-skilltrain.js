@@ -16,15 +16,15 @@ const FIGDIR = path.join(OUT, "figures");
 fs.mkdirSync(FIGDIR, { recursive: true });
 
 const C = {
-  skillFill:"#e6f4ec", skillStroke:"#1a7d52", skillText:"#11603d",
-  harnFill:"#ece4fb", harnStroke:"#6d3fd4", harnText:"#4f2da0", harnStrong:"#f4eeff",
-  scafFill:"#fbe7d3", scafStroke:"#bc5a16", scafText:"#9a4d12",
-  dataFill:"#ddeff8", dataStroke:"#1474a6", dataText:"#0f5e87",
-  detFill:"#e3f4f0", detStroke:"#0f7a6b", detText:"#0b5e53",
-  paraFill:"#f6efdf", paraStroke:"#9a6a12", paraText:"#7a530d",
-  roseFill:"#fdecec", roseStroke:"#c14545", roseText:"#9a2f2f",
-  neutFill:"#fffdf8", neutStroke:"#cabfa8", ink:"#221f1a", mut:"#6b6357",
-  page:"#fffdf8", grid:"#efe8db", badge:"#ffffff",
+  skillFill:"#EFF6FF", skillStroke:"#3B82F6", skillText:"#1E40AF",
+  harnFill:"#F5F3FF", harnStroke:"#7C3AED", harnText:"#5B21B6", harnStrong:"#EDE9FE",
+  scafFill:"#FFF7ED", scafStroke:"#EA580C", scafText:"#C2410C",
+  dataFill:"#ECFDF5", dataStroke:"#059669", dataText:"#047857",
+  detFill:"#F0F9FF", detStroke:"#0284C7", detText:"#0369A1",
+  paraFill:"#FEFCE8", paraStroke:"#CA8A04", paraText:"#A16207",
+  roseFill:"#FEF2F2", roseStroke:"#DC2626", roseText:"#991B1B",
+  neutFill:"#FFFFFF", neutStroke:"#E5E7EB", ink:"#111827", mut:"#6B7280",
+  page:"#FFFFFF", grid:"#F9FAFB", badge:"#FFFFFF",
 };
 const CHIP_PALETTE = [
   {fill:C.dataFill, stroke:C.dataStroke, text:C.dataText},
@@ -36,7 +36,7 @@ const CHIP_PALETTE = [
 ];
 
 const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-function rect(x,y,w,h,{fill="#fff",stroke=C.neutStroke,sw=1.4,rx=12,dash=null,op=1,filter=true}={}){
+function rect(x,y,w,h,{fill="#fff",stroke=C.neutStroke,sw=1.2,rx=8,dash=null,op=1,filter=true}={}){
   return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"`
     +(dash?` stroke-dasharray="${dash}"`:"")+` opacity="${op}"`+(filter?` filter="url(#sh)"`:"")+`/>`;
 }
@@ -71,23 +71,21 @@ function badge(cx,cy,n,col){
     +`<text x="${cx}" y="${cy+1}" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="800" fill="#fff">${n}</text>`;
 }
 function defs(){
-  const m=(id,f)=>`<marker id="${id}" markerWidth="11" markerHeight="11" refX="7.5" refY="3.6" orient="auto"><path d="M0,0 L7.5,3.6 L0,7.2 Z" fill="${f}"/></marker>`;
+  const m=(id,f)=>`<marker id="${id}" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="${f}"/></marker>`;
   return `<defs>
-    <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M30 0H0V30" fill="none" stroke="${C.grid}" stroke-width="1"/></pattern>
-    <filter id="sh" x="-12%" y="-12%" width="124%" height="124%"><feDropShadow dx="0" dy="3" stdDeviation="4.5" flood-color="#3c2d14" flood-opacity=".11"/></filter>
+    <filter id="sh" x="-8%" y="-8%" width="116%" height="116%"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#000000" flood-opacity=".05"/></filter>
     ${m("a",C.harnStroke)}${m("g",C.skillStroke)}${m("o",C.scafStroke)}${m("t",C.dataStroke)}${m("k",C.mut)}${m("d",C.detStroke)}${m("p",C.paraStroke)}${m("r",C.roseStroke)}
   </defs>`;
 }
 /* title + wrapped subtitle (array of 1-2 short lines, caller pre-wraps to avoid overflow) */
 function frame(W,H,title,subLines){
-  let s = `<rect width="${W}" height="${H}" rx="20" fill="${C.page}"/>`
-    +`<rect width="${W}" height="${H}" rx="20" fill="url(#grid)" opacity=".7"/>`
-    +tline(54,50,title,{size:22,weight:800});
+  let s = `<rect width="${W}" height="${H}" fill="${C.page}"/>`
+    +tline(54,50,title,{size:21,weight:700});
   (subLines||[]).forEach((line,i)=> s += tline(54,76+i*19,line,{size:13,fill:C.mut}));
   return s;
 }
 function svgWrap(W,H,inner){
-  return `<svg viewBox="0 0 ${W} ${H}" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',Arial,sans-serif">${defs()}${inner}</svg>`;
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="'Inter','SF Pro Display',-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',Arial,sans-serif" text-rendering="geometricPrecision">${defs()}${inner}</svg>`;
 }
 
 /* ---- Org-chart helper: one root box fanning out into N leaf boxes via a bus line ---- */
@@ -256,7 +254,7 @@ function fig7(lang){
   s += leftLines(rx+34,outY+43,D.outLines,{size:10,fill:C.dataText});
 
   const procY=outY+outH+8, procH=94;
-  s += rect(rx+16,procY,rw-32,procH,{fill:"#fff2e6",stroke:C.scafStroke,sw:1.7});
+  s += rect(rx+16,procY,rw-32,procH,{fill:"#FFF7ED",stroke:C.scafStroke,sw:1.7});
   s += tline(rx+34,procY+24,D.procTitle,{size:12.5,weight:800,fill:C.scafText});
   s += leftLines(rx+34,procY+43,D.procLines,{size:10,fill:C.scafText});
 
@@ -344,7 +342,7 @@ function fig8(lang){
   s += leftLines(xs[0]+18,topY+50,D.d1Lines,{size:11,fill:C.mut});
   s += hArrow(xs[0]+boxW,xs[1],topY+boxH-24,{stroke:C.mut});
 
-  s += rect(xs[1],topY,boxW,boxH,{fill:"#fff2e6",stroke:C.scafStroke,sw:1.6});
+  s += rect(xs[1],topY,boxW,boxH,{fill:"#FFF7ED",stroke:C.scafStroke,sw:1.6});
   s += tline(xs[1]+18,topY+28,D.d2Title,{size:14,weight:800,fill:C.scafText});
   s += leftLines(xs[1]+18,topY+50,D.d2Lines,{size:11,fill:C.scafText});
   s += hArrow(xs[1]+boxW,xs[2],topY+boxH-24,{stroke:C.mut});
@@ -417,7 +415,7 @@ function fig8(lang){
 
   /* axis note at bottom */
   const yA = y6+140;
-  s += rect(54,yA,1092,44,{fill:"#f1ebe0",stroke:C.harnStroke,dash:"6 6",filter:false});
+  s += rect(54,yA,1092,44,{fill:"#F9FAFB",stroke:C.harnStroke,dash:"6 6",filter:false});
   s += tline(72,yA+26,D.axisNote,{size:11.2,weight:700,fill:C.harnText});
 
   return svgWrap(W8,H8,s);

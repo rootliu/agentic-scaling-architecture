@@ -1,9 +1,12 @@
 const fs = require("fs");
 
-// ---- extract the architecture-plate SVG from architecture.html ----
+// ---- extract the three-layer architecture SVG from architecture.html ----
+// Find the SVG with the aria-label containing "三层架构" (the main architecture plate)
 const html = fs.readFileSync(__dirname + "/../architecture.html", "utf8");
-const i = html.indexOf("architecture-plate");
-const s = html.indexOf("<svg", i);
+const marker = 'aria-label="Agentic 三层架构';
+const i = html.indexOf(marker);
+if (i === -1) { console.error("Cannot find architecture SVG marker"); process.exit(1); }
+const s = html.lastIndexOf("<svg", i);
 const e = html.indexOf("</svg>", s) + 6;
 let svgZh = html.slice(s, e);
 
@@ -14,8 +17,8 @@ const W = 1120, H = 760;
 const tx = [
   ['aria-label="Agentic 三层架构、控制数据面切分与栈外数据子系统总览图"',
    'aria-label="Overview of the Agentic three-layer architecture, control/data-plane split, and out-of-stack data subsystem"'],
-  ['A = ⟨S, H, X⟩ 之外挂接数据子系统 𝒟；三条正交切分共享同一解耦不变量',
-   'A = ⟨S, H, X⟩ with data subsystem 𝒟 attached; three orthogonal cuts share one decoupling invariant'],
+  ['A = ⟨S, H, X⟩ + 𝒟；扩展轴 · CP/DP · 数据子系统 · 并行局部性共享同一解耦不变量',
+   'A = ⟨S, H, X⟩ + 𝒟; scaling axes · CP/DP · data subsystem · parallel locality share one decoupling invariant'],
   ['task specs · I/O schema · 调用 / 终止 / 循环条件',
    'task specs · I/O schema · call / stop / loop conditions'],
   ['逻辑扩展：+Skill → 能力覆盖 𝒯↑',
@@ -48,8 +51,10 @@ const tx = [
   ['吞吐 Θ↑ · 语义覆盖不变', 'throughput Θ↑ · coverage unchanged'],
   ['>数据扩展 → 𝓛₂<', '>Data scaling → 𝓛₂<'],
   ['源增加 · 单请求成本不升', 'more sources · per-request cost flat'],
-  ['P1-P3: 扩展轴 · P4-P6: CP/DP 平面 · P7-P9: 数据子系统；核心证伪点是成本是否回流到高频在线路径。',
-   'P1-P3: scaling axis · P4-P6: CP/DP planes · P7-P9: data subsystem; key falsifier: does cost flow back to the hot online path.'],
+  ['>并行扩展 → 工具集边界<', '>Parallel scaling → toolset boundary<'],
+  ['ρ↓ · H↑ · 只传摘要', 'ρ↓ · H↑ · summary-only'],
+  ['P1-P3: 扩展轴 · P4-P6: CP/DP · P7-P9: 𝒟 · P10-P13: 并行局部性 · P14: Skill-as-Code 确定性锚 · P15: 双子目标 Reward 训练。',
+   'P1-P3: scaling axes · P4-P6: CP/DP · P7-P9: 𝒟 · P10-P13: parallel locality · P14: Skill-as-Code determinism anchor · P15: dual-subgoal reward training.'],
 ];
 
 let svgEn = svgZh;
@@ -59,25 +64,25 @@ for (const [a, b] of tx) {
 }
 // shrink the big unified-invariant headline so the longer EN text fits
 svgEn = svgEn.replace(
-  '<text x="72" y="624" fill="#221f1a" font-size="22" font-weight="700">First-order cost',
-  '<text x="72" y="624" fill="#221f1a" font-size="17" font-weight="700">First-order cost');
+  '<text x="72" y="624" fill="#111827" font-size="22" font-weight="700">First-order cost',
+  '<text x="72" y="624" fill="#111827" font-size="17" font-weight="700">First-order cost');
 // D₂ / D₃ headers: shrink so they stay inside their narrow cards
 svgEn = svgEn.replace(
-  '<text x="950" y="204" fill="#0f5e87" font-size="15" font-weight="700">D₂ Semantic Σ</text>',
-  '<text x="950" y="204" fill="#0f5e87" font-size="13" font-weight="700">D₂ Semantic Σ</text>');
+  '<text x="950" y="204" fill="#047857" font-size="15" font-weight="700">D₂ Semantic Σ</text>',
+  '<text x="950" y="204" fill="#047857" font-size="13" font-weight="700">D₂ Semantic Σ</text>');
 svgEn = svgEn.replace(
-  '<text x="812" y="306" fill="#0f5e87" font-size="15" font-weight="700">D₃ Governance</text>',
-  '<text x="812" y="306" fill="#0f5e87" font-size="13" font-weight="700">D₃ Governance</text>');
+  '<text x="812" y="306" fill="#047857" font-size="15" font-weight="700">D₃ Governance</text>',
+  '<text x="812" y="306" fill="#047857" font-size="13" font-weight="700">D₃ Governance</text>');
 // off-policy loop header: shrink to fit the dashed box width
 svgEn = svgEn.replace(
-  '<text x="812" y="420" fill="#0f5e87" font-size="15" font-weight="700">off-policy loop 𝓛₂ (out-of-stack)</text>',
-  '<text x="812" y="420" fill="#0f5e87" font-size="13" font-weight="700">off-policy loop 𝓛₂ (out-of-stack)</text>');
+  '<text x="812" y="420" fill="#047857" font-size="15" font-weight="700">off-policy loop 𝓛₂ (out-of-stack)</text>',
+  '<text x="812" y="420" fill="#047857" font-size="13" font-weight="700">off-policy loop 𝓛₂ (out-of-stack)</text>');
 
 const page = (svg, lang) => `<!DOCTYPE html>
 <html lang="${lang}"><head><meta charset="UTF-8">
 <style>
   @page { size: ${W}px ${H}px; margin: 0; }
-  html,body { margin:0; padding:0; background:#fffdf8; }
+  html,body { margin:0; padding:0; background:#FFFFFF; }
   #plate { width:${W}px; height:${H}px; }
   #plate svg { display:block; width:${W}px; height:${H}px; }
 </style></head>

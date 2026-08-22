@@ -3,7 +3,7 @@
   <defs>
     <marker id="ufz" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#0f7a6b"/></marker>
     <marker id="upr" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#c2683a"/></marker>
-    <marker id="ugt" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#1474a6"/></marker>
+    <marker id="ugt" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#059669"/></marker>
   </defs>
   <style>
     .zt{font:600 12px system-ui,sans-serif}
@@ -15,7 +15,7 @@
 
   <!-- zone headers -->
   <text class="plab2" x="200" y="26" fill="#c2683a" text-anchor="middle">概率推理 · 用 θ 内在知识泛化</text>
-  <text class="plab2" x="560" y="26" fill="#1474a6" text-anchor="middle">实验 / 验证门</text>
+  <text class="plab2" x="560" y="26" fill="#059669" text-anchor="middle">实验 / 验证门</text>
   <text class="plab2" x="930" y="26" fill="#0f7a6b" text-anchor="middle">确定推理 · 不调 θ、可复现</text>
 
   <!-- probabilistic zone (dashed warm) -->
@@ -32,10 +32,10 @@
   <text class="nt2" x="66" y="286" fill="#a8522a">下一轮 hypothesis 受已固化 skill 先验约束</text>
 
   <!-- verification gate (blue) -->
-  <path d="M470,150 L560,120 L650,150 L560,300 Z" fill="#e1eff6" stroke="#1474a6" stroke-width="1.6"/>
+  <path d="M470,150 L560,120 L650,150 L560,300 Z" fill="#ECFDF5" stroke="#059669" stroke-width="1.6"/>
   <text class="bt2" x="560" y="170" fill="#0f5a80" text-anchor="middle">DFT 筛选</text>
-  <text class="bs2" x="560" y="188" fill="#1474a6" text-anchor="middle">物性库比对</text>
-  <text class="bs2" x="560" y="204" fill="#1474a6" text-anchor="middle">引用接地</text>
+  <text class="bs2" x="560" y="188" fill="#059669" text-anchor="middle">物性库比对</text>
+  <text class="bs2" x="560" y="204" fill="#059669" text-anchor="middle">引用接地</text>
   <text class="nt2" x="560" y="238" fill="#0f5a80" text-anchor="middle">= 已知定律</text>
   <text class="nt2" x="560" y="254" fill="#0f5a80" text-anchor="middle">+ 固定方法</text>
 
@@ -61,7 +61,7 @@
   <text class="zt" x="662" y="132" fill="#0b5f53">verified → freeze</text>
   <text class="bs2" x="662" y="148" fill="#0f7a6b">N8 / P14</text>
   <!-- reject arrow: gate -> back to reflection (dashed blue) -->
-  <path d="M540,300 C520,340 380,330 200,245" fill="none" stroke="#1474a6" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#ugt)"/>
+  <path d="M540,300 C520,340 380,330 200,245" fill="none" stroke="#059669" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#ugt)"/>
   <text class="nt2" x="330" y="352" fill="#0f5a80">未过 → 回 reflection 重提 hypothesis</text>
   <!-- reuse dotted: deterministic skill -> next-round prior (down + left) -->
   <path d="M920,372 C920,410 200,410 200,254" fill="none" stroke="#0f7a6b" stroke-width="1.4" stroke-dasharray="2 4" marker-end="url(#ufz)"/>

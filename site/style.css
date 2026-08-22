@@ -6,11 +6,11 @@
 :root{
   --paper:#f7f8fb; --paper2:#eef2f7; --card:#ffffff; --ink:#1f2933; --ink2:#5b6472;
   --line:#d8dee8; --hair:#e7ebf2; --grid:rgba(84,103,137,.055);
-  --blue:#6d3fd4; --blue-d:#542fab;                 /* contract violet = primary */
-  --logic:#1a7d52; --logic-bg:#e4f1e8;
-  --phys:#bc5a16; --phys-bg:#fbeee0;
-  --contract:#6d3fd4; --contract-bg:#efe9fb;
-  --data:#1474a6; --data-bg:#e1eff6;            /* data dimension = deep teal */
+  --blue:#7C3AED; --blue-d:#5B21B6;                 /* contract violet = primary */
+  --logic:#3B82F6; --logic-bg:#EFF6FF;
+  --phys:#EA580C; --phys-bg:#FFF7ED;
+  --contract:#7C3AED; --contract-bg:#F5F3FF;
+  --data:#059669; --data-bg:#ECFDF5;            /* data dimension = deep teal */
   --para:#9a6a12; --para-bg:#f6efdf;            /* parallelism dimension = amber */
   --det:#0f7a6b; --det-bg:#e3f4f0;              /* deterministic reasoning = cool teal-green */
   --prob:#c2683a; --prob-bg:#fbeee2;            /* probabilistic reasoning = warm terracotta */
@@ -285,8 +285,8 @@ svg{max-width:100%;height:auto}
   font-weight:800;
   letter-spacing:.04em;
 }
-.runtime-blueprint .bp-plane.cp{fill:#6d3fd4}
-.runtime-blueprint .bp-plane.dp{fill:#bc5a16}
+.runtime-blueprint .bp-plane.cp{fill:#7C3AED}
+.runtime-blueprint .bp-plane.dp{fill:#EA580C}
 .runtime-blueprint .bp-small{
   fill:#6b7483;
   font-size:13px;
@@ -314,15 +314,15 @@ svg{max-width:100%;height:auto}
   font-size:12px;
   font-weight:850;
 }
-.runtime-blueprint .bp-step.logic{fill:#1a7d52}
-.runtime-blueprint .bp-step.contract{fill:#6d3fd4}
-.runtime-blueprint .bp-step.phys{fill:#bc5a16}
+.runtime-blueprint .bp-step.logic{fill:#3B82F6}
+.runtime-blueprint .bp-step.contract{fill:#7C3AED}
+.runtime-blueprint .bp-step.phys{fill:#EA580C}
 .runtime-blueprint .bp-layer.logic,
-.runtime-blueprint .bp-caption.logic{fill:#1a7d52}
+.runtime-blueprint .bp-caption.logic{fill:#3B82F6}
 .runtime-blueprint .bp-layer.phys,
-.runtime-blueprint .bp-caption.phys{fill:#bc5a16}
-.runtime-blueprint .bp-layer.contract{fill:#6d3fd4}
-.runtime-blueprint .bp-layer.data{fill:#1474a6}
+.runtime-blueprint .bp-caption.phys{fill:#EA580C}
+.runtime-blueprint .bp-layer.contract{fill:#7C3AED}
+.runtime-blueprint .bp-layer.data{fill:#059669}
 .runtime-blueprint .bp-layer.para{fill:#9a6a12}
 .runtime-blueprint .bp-line{
   fill:#536173;
@@ -335,7 +335,7 @@ svg{max-width:100%;height:auto}
   font-weight:650;
 }
 .runtime-blueprint .bp-link{
-  fill:#6d3fd4;
+  fill:#7C3AED;
   font-size:13px;
   font-weight:800;
 }
@@ -350,13 +350,13 @@ svg{max-width:100%;height:auto}
 }
 .runtime-blueprint .bp-arrow{
   fill:none;
-  stroke:#6d3fd4;
+  stroke:#7C3AED;
   stroke-width:2;
   marker-end:url(#arrowContract);
 }
 .runtime-blueprint .bp-data-arrow{
   fill:none;
-  stroke:#1474a6;
+  stroke:#059669;
   stroke-width:2;
   stroke-linecap:round;
   stroke-dasharray:6 6;
@@ -610,7 +610,7 @@ a.linkcard:hover::after{opacity:1;transform:none;color:var(--contract)}
   --blue:#4f46e5;
   --blue-d:#3730a3;
   --logic:#0d7b55;
-  --logic-bg:#e8f6ee;
+  --logic-bg:#EFF6FF;
   --phys:#b35a16;
   --phys-bg:#fff0e2;
   --contract:#5b4ad8;
