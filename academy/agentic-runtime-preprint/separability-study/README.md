@@ -1,5 +1,11 @@
 # Separability Study
 
+> **FROZEN as of 2026-08-22.** v25 merged this series back into a single manuscript at
+> `../paper_source/main.tex`; the v21/v22 split is retired because it produced four
+> inconsistencies between the two documents (identical titles, divergent contract tuple,
+> contradictory units of randomization, no cross-reference). This subproject and its v23
+> PDF are kept for the record and are no longer updated. See `../CHANGELOG.md` (v25).
+
 Focused scientific paper: one primary hypothesis (P1: Cost-Aware Separability) with a cluster-period randomized crossover experiment and six measured obligations.
 
 - **Current version**: v23 (18 pages, 2026-08-08)

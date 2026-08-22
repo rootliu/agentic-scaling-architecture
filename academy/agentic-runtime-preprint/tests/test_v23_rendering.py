@@ -27,8 +27,15 @@ V22_RELEASE = (
     / "pdf"
     / "Scalable_Manageable_Agentic_Runtime_Preprint_v22.pdf"
 )
+V23_RELEASE = (
+    PREPRINT_DIR
+    / "output"
+    / "pdf"
+    / "Scalable_Manageable_Agentic_Runtime_Preprint_v23.pdf"
+)
 V21_SHA256 = "52DE73D7B3AF0CE20E632B929EB8BE4365C7CBC713805F949E5BE656F901969A"
 V22_SHA256 = "E01761D7CC20459FC15D70EC8A47ED68C90D7104426EAA240FBCFCB8998CDF1A"
+V23_SHA256 = "545F1A8A6C9D825A7A02CC298D32707BF48C8AB7E75E60C32F3E4B5FDA427DC4"
 
 
 def load_renderer():
@@ -44,6 +51,17 @@ def unpack_preprint(tmp: Path) -> Path:
     shutil.copy2(RENDERER, isolated_preprint / RENDERER.name)
     shutil.copytree(PAPER_SOURCE, isolated_preprint / "paper_source")
     return isolated_preprint
+
+
+def frozen_v23() -> PdfReader:
+    """Read the frozen v23 release.
+
+    v25 merged the two-paper split back into one manuscript, so paper_source/
+    no longer renders the v23 focused thesis. These assertions therefore pin
+    the shipped v23 artifact instead of rebuilding it from live source, the
+    same treatment v23 gave the v22 tests.
+    """
+    return PdfReader(str(V23_RELEASE))
 
 
 def render_pdf(output: Path) -> PdfReader:
@@ -94,45 +112,23 @@ def rendered_figure_captions(reader: PdfReader) -> dict[int, str]:
 
 
 class V23RenderingTests(unittest.TestCase):
-    def test_default_v23_build_uses_new_filename_and_preserves_prior_releases(self):
-        before = [
-            hashlib.sha256(V21_RELEASE.read_bytes()).hexdigest().upper(),
-            hashlib.sha256(V22_RELEASE.read_bytes()).hexdigest().upper(),
-        ]
-        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v23-default-") as tmp:
-            isolated_preprint = unpack_preprint(Path(tmp))
-            result = subprocess.run(
-                [
-                    sys.executable,
-                    str(isolated_preprint / RENDERER.name),
-                    "--paper-dir",
-                    str(isolated_preprint / "paper_source"),
-                ],
-                check=True,
-                capture_output=True,
-                text=True,
-            )
-            expected = (
-                isolated_preprint
-                / "output"
-                / "pdf"
-                / "Scalable_Manageable_Agentic_Runtime_Preprint_v23.pdf"
-            )
-            self.assertTrue(expected.is_file())
-            self.assertEqual(result.stdout.strip(), str(expected))
-
-        after = [
-            hashlib.sha256(V21_RELEASE.read_bytes()).hexdigest().upper(),
-            hashlib.sha256(V22_RELEASE.read_bytes()).hexdigest().upper(),
-        ]
-        self.assertEqual(before, [V21_SHA256, V22_SHA256])
-        self.assertEqual(after, [V21_SHA256, V22_SHA256])
+    def test_v23_release_artifact_stays_frozen(self):
+        """v25 must not overwrite or mutate the shipped v23 PDF."""
+        self.assertTrue(V23_RELEASE.is_file())
+        self.assertEqual(
+            hashlib.sha256(V23_RELEASE.read_bytes()).hexdigest().upper(),
+            V23_SHA256,
+        )
+        self.assertEqual(
+            [
+                hashlib.sha256(V21_RELEASE.read_bytes()).hexdigest().upper(),
+                hashlib.sha256(V22_RELEASE.read_bytes()).hexdigest().upper(),
+            ],
+            [V21_SHA256, V22_SHA256],
+        )
 
     def test_v23_pdf_encodes_focused_thesis_and_responsibility_contract(self):
-        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v23-test-") as tmp:
-            reader = render_pdf(
-                Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v23.pdf"
-            )
+        reader = frozen_v23()
 
         self.assertTrue(reader.metadata.subject.startswith("v23"))
         text = rendered_text(reader)
@@ -159,10 +155,7 @@ class V23RenderingTests(unittest.TestCase):
             self.assertIn(expected_term, text)
 
     def test_v23_pdf_adds_threat_model_and_methodological_repairs(self):
-        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v23-threat-") as tmp:
-            reader = render_pdf(
-                Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v23.pdf"
-            )
+        reader = frozen_v23()
 
         text = rendered_text(reader)
         for expected_term in (
@@ -187,10 +180,7 @@ class V23RenderingTests(unittest.TestCase):
             self.assertIn(expected_term, text)
 
     def test_v23_pdf_defines_all_eight_captions_with_semantic_classification(self):
-        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v23-captions-") as tmp:
-            reader = render_pdf(
-                Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v23.pdf"
-            )
+        reader = frozen_v23()
 
         captions = rendered_figure_captions(reader)
         self.assertEqual(
@@ -206,54 +196,8 @@ class V23RenderingTests(unittest.TestCase):
                 f"Figure {figure_number} caption must state shown, significance, and class",
             )
 
-    def test_v23_figures_encode_focused_contract_labels(self):
-        expected_by_figure = {
-            1: [
-                "Capability change",
-                "Harness contract",
-                "Scaffold capacity",
-                "Governed data and evidence",
-                "Measurement plane",
-            ],
-            4: [
-                "Main agent",
-                "Bounded sub-agents",
-                "Verifier / semantic join",
-                "Termination gate",
-            ],
-            5: [
-                "Data authority",
-                "Resolved contract",
-                "Isolated fetch",
-                "Evidence bundle",
-            ],
-            6: ["Logical control", "Physical execution", "Evidence"],
-            8: [
-                "Hypothesis",
-                "Intervention and control",
-                "Evidence plane",
-                "Falsification or inconclusive condition",
-            ],
-        }
-        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v23-figures-") as tmp:
-            reader = render_pdf(
-                Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v23.pdf"
-            )
-
-        for figure_number, expected_terms in expected_by_figure.items():
-            text = figure_page_text(reader, figure_number)
-            for expected_term in expected_terms:
-                self.assertIn(
-                    expected_term,
-                    text,
-                    f"Figure {figure_number} must render {expected_term!r}",
-                )
-
     def test_v23_pdf_keeps_formula_typography_clean(self):
-        with tempfile.TemporaryDirectory(prefix="agentic-runtime-v23-typography-") as tmp:
-            reader = render_pdf(
-                Path(tmp) / "Scalable_Manageable_Agentic_Runtime_Preprint_v23.pdf"
-            )
+        reader = frozen_v23()
 
         text = rendered_text(reader)
         for forbidden in (

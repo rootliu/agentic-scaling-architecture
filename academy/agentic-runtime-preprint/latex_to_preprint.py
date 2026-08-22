@@ -30,7 +30,7 @@ TITLE = "A Contract-Centered Architecture for Scalable and Manageable Agentic Ru
 AUTHOR = "Yaxiao Liu"
 AUTHOR_EMAIL = "rootliu@gmail.com"
 FIGURE_WIDTH = 462
-PREPRINT_VERSION = "v23"
+PREPRINT_VERSION = "v26"
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 # Derived from PREPRINT_VERSION so a version bump cannot silently overwrite the
 # previous version's PDF: v20 shipped three different documents (26, 27 and 33
@@ -154,13 +154,13 @@ class FigureGraphic(Flowable):
         self.kind = kind
         self.width = width
         self.content_height = height
-        self.height = height + RESPONSIBILITY_BAND_HEIGHT
         self.hAlign = "CENTER"
         self.image_path = None
         if paper_dir and kind in FIGURE_IMAGE_MAP:
             candidate = os.path.join(paper_dir, FIGURE_IMAGE_MAP[kind])
             if os.path.exists(candidate):
                 self.image_path = candidate
+        self.height = height if self.image_path else height + RESPONSIBILITY_BAND_HEIGHT
 
     def wrap(self, availWidth, availHeight):
         self.width = min(FIGURE_WIDTH, availWidth)
@@ -174,16 +174,16 @@ class FigureGraphic(Flowable):
         canvas.setStrokeColor(hx("#cbd5e1"))
         canvas.setLineWidth(0.7)
         canvas.roundRect(0, 0, self.width, self.height, 8, stroke=1, fill=0)
-        canvas.translate(0, RESPONSIBILITY_BAND_HEIGHT)
         if self.image_path:
             self._draw_image(canvas)
         else:
+            canvas.translate(0, RESPONSIBILITY_BAND_HEIGHT)
             draw_method = getattr(self, f"_draw_{self.kind}", None)
             if draw_method is None:
                 raise ValueError(f"Unknown figure kind: {self.kind}")
             draw_method(canvas)
-        canvas.translate(0, -RESPONSIBILITY_BAND_HEIGHT)
-        self._draw_responsibility_band(canvas)
+            canvas.translate(0, -RESPONSIBILITY_BAND_HEIGHT)
+            self._draw_responsibility_band(canvas)
         canvas.restoreState()
 
     def _draw_image(self, canvas):
@@ -543,7 +543,7 @@ class FigureGraphic(Flowable):
             draw_wrapped(canvas, label, ox + 3, 42, width - 6,
                          "Helvetica-Bold", 5.4, "#334155")
             ox += width + 5
-        draw_wrapped(canvas, "No task semantics or credentials cross the path outside the resolved contract.",
+        draw_wrapped(canvas, "No undeclared task semantics or credentials cross the path.",
                      18, 19, w - 36, "Helvetica", 5.8, "#475569", TA_LEFT)
 
     def _draw_dry_run(self, canvas):
@@ -582,7 +582,7 @@ class FigureGraphic(Flowable):
                        "#64748b", 0.7, dashed=True)
         draw_wrapped(
             canvas,
-            "Vertical links are declared mappings; each lane remains independently inspectable.",
+            "Vertical links are illustrative, non-bijective mappings; each lane remains independently inspectable.",
             lane_x + 8,
             17,
             lane_w - 16,
@@ -710,8 +710,8 @@ class FigureGraphic(Flowable):
 
         secondary = [
             ("P15", "Vector gate", "proposal-bank contrasts", "margin failure or phantom violation"),
-            ("P16", "Summary reconstruction", "held-out joint contrast", "direct-reading control wins"),
-            ("P17", "Registry change control", "dependency-change oracle", "unanticipated propagation"),
+            ("P16", "Evidence-path sufficiency", "held-out joint contrast", "direct-reading control wins"),
+            ("P17", "Policy-contract decoupling", "dependency-change oracle", "unanticipated propagation"),
         ]
         row_h = 29
         for row_index, row in enumerate(secondary):
@@ -1774,10 +1774,18 @@ def build_pdf(paper_dir: str, output_pdf: str):
 
 
 def main():
+    global TITLE
     parser = argparse.ArgumentParser()
     parser.add_argument("--paper-dir", default=os.path.join(SCRIPT_DIR, "paper_source"))
     parser.add_argument("--output", default=DEFAULT_OUTPUT)
+    # v25 retired the two-paper split. --title exists so that if the series is
+    # ever split again, the sub-papers cannot silently ship under one identical
+    # title as v21/v22 did (both cover and PDF metadata read this global).
+    parser.add_argument("--title", default=None,
+                        help="override the cover and PDF-metadata title")
     args = parser.parse_args()
+    if args.title:
+        TITLE = args.title
     build_pdf(args.paper_dir, args.output)
     print(args.output)
 

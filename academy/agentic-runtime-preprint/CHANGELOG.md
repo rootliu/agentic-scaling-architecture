@@ -4,6 +4,74 @@
 >
 > ⚠️ **历史遗留**：v20 这一个文件名下曾先后存在**三个不同的文档**——26 页（`1507a5b` 初版）、27 页（`c10b895`）、33 页（`a3fa38d`，本应是 v21）。第三个已改切为 v21，`..._v20.pdf` 已回退为 `c10b895` 的 27 页状态。若他处引用过"v20 共 33 页"，指的其实是 v21。
 
+## v26 — 2026-08-22
+
+**证据审计与数据基盘重构。** 精读 2026-08-22 的 19 篇 Obsidian 笔记，并以原论文与正式元数据复核其中可证伪主张。论文贡献从散列的机制清单收束为三项：有界契约双轴运行时、保留源证据的数据基盘、可证伪的管理性测量协议。
+
+### 数据基盘
+
+- 将 canonical raw/source-native records、版本快照、来源、访问策略及确定性读取/抽取操作设为权威事实；摘要、索引和候选关系改为可审计衍生物，不再替代原始证据。
+- 将访问路径明确为“全局排序发现 → 结构化导航/操作符 → 读取版本化源证据”，并区分在线时延与索引、导航的摊销总成本。
+- Data Wiki 改为 address/index/operator catalog；Theme Wiki 改为版本化任务族输出与质量契约；IR 记录来源、快照、操作符、证据、回退和兼容性范围。
+- `Why` 仅记录声明的集成理由或因果假设；Memory 记录可观察工具轨迹、工件和证据指针，不保存或要求私有 chain-of-thought。
+- 永久保留、摘要即隐私保护、SQLite 单写者等实现性假设被移除；保留期、删除、授权、后端和重放语义现在由治理契约决定。
+
+### 命题与证据
+
+- P16 收窄为“任务族证据路径充分性”，必须在固定任务族、预算、来源快照和回退规则下与直接读取、metadata-only、错配索引及消融对照联合比较。
+- P17 收窄为“有界策略契约解耦”，仅在兼容范围、界面复杂度、可替换性、无隐藏共享状态和迁移规则明确时成立。
+- 新增 `2606.29251`、`2607.26497`、`2608.06305` 三项数据访问证据，并逐项写明任务、样本、成本和外推边界。
+- 将 coding-agent 生产轨迹限定为工作负载与失效放大证据，不再把单一领域的工具比例写成通用架构定律。
+
+### 版本与测试
+
+- `PREPRINT_VERSION` 升为 v26；v25 PDF 以 SHA-256 冻结，不再由活动源码重建。
+- Figure 8 的 P16/P17 行同步改为 `Evidence-path sufficiency` 与 `Policy-contract decoupling`。
+- 修复 7 张 PNG 已内含责任带、排版器又重复绘制一次的问题；图注同时限定来源权威、非双射逻辑/物理映射及“无未声明任务语义”的准确边界。
+- 新增 v26 渲染、冻结版本、引用闭合、数据权威、隐私边界、图表标签和责任带去重回归测试。
+
+## v25 — 2026-08-22
+
+**两篇合回一篇。** 撤销 2026-08-05 的 v21/v22 拆分，`paper_source/` 现为单篇 37 页合并稿。计划见 `docs/superpowers/plans/2026-08-22-v25-remerge-and-review-deck.md`，大纲见 `academy/v25-outline.md`。`separability-study/` 与 `enterprise-architecture/` 两个子项目及其 v23 产物**冻结保留**，不再更新。
+
+### 拆分期四处硬不一致（合并后消除）
+
+- **标题字面相同**：`latex_to_preprint.py` 只有一个硬编码 `TITLE`（封面 + PDF 元数据共用），两篇顶着同一题目，投稿会被判重复提交。合并后自然消失；另新增 `--title` 参数，避免将来再拆时复发。
+- **契约元组冲突**：聚焦篇 `⟨I,O,G,A,B,V⟩` vs 企业篇 `⟨I,O,G,B,E,T⟩`。**统一为 `⟨I,O,G,A,B,V⟩`**（原 `E`→`A`、原 `T`→`V`），含 AI4Science 字段级 walkthrough 逐字段改写。
+- **随机化单位互相矛盾**：企业篇 "the unit of randomization is one independent run" vs 聚焦篇 "requests inside a period are repeated observations, not independent randomized units"。**以 cluster-period 为准**，企业篇整句删除。
+- **零交叉引用**：两篇无任何互锚。合并后消失；§2 末新增一段说明本版与两份前身的关系。
+
+### 判决规则与方法学
+
+- **四态判决**：`supported` / `falsified` / **`conditional-engineering`** / `inconclusive`。第三态原仅企业篇有，聚焦篇的六义务合取因此无降级档；现升为全局第四态，使单个难测渠道（如调度独立性）不再永久锁死研究线。
+- **margin 推导规则全局化**：企业篇原有的"每个 margin 须由具名决策推导并记录 owner"扩展到全部 margin。reset 哨兵原先的裸数字 `±log(1.05)` / `−0.025` 无任何推导，本版**改为显式留空**并声明注册前必须由具名决策补齐。
+- **`E(c,s)` 声明为边际量**：配对回放固定 model/tool 输出，故"准入拒绝改变模型后续轨迹"的机会成本不计入 `E`，而归入 `Q(c,s)`。此前两篇均无此声明，易被读成低估执法成本。
+
+### 引用
+
+- 合并两篇 bib 取并集去重（33 + 21 → 37），新增 4 条经 PDF 元数据核验的条目，共 **41 条**，正文 41 处 `\cite` 与之一一对应（零缺失、零未用）。
+- **`2605.26112`（Shangding Gu, UC Berkeley）** 此前两篇 bib 均未引用，而其真实标题为 *From Model Scaling to System Scaling: **Scaling the Harness in Agentic AI***，摘要即主张把 harness 当作 "a first-class object of design, evaluation, and optimization" —— 与本文前提高度重合。§4 新增专段承认"把 harness 认定为可扩展性关键层不是本文贡献"，本文剩余贡献收窄为那条可证伪的 separability 推论。
+- 另补 `2607.13987`（Agent Skill Security，支撑 semi-trusted Skills 假设）、`2605.22781`（DeltaBox，Scaffold 隔离与 reset 可行性机制）、`2605.18747`（Code as Agent Harness，Skill-as-Code 背景）。
+- **`academy/papers/README.md` 按 PDF `/Title` 元数据全量重建**：33 篇中 8 篇的文件名标题与原文不符，其中 5 篇为实质性错误（`2605.26112`、`2605.22781`、`2606.12835`、`2606.15376`、`2605.08715`）。此前清单由文件名生成，若照此写 bib 即为伪造元数据。
+
+### 图与篇幅
+
+- 单套 8 图（两篇此前各有一套同名 8 图，纯重复）。图注统一采用聚焦篇的结构化格式 `Shown: … Why it matters: … Class: architecture|protocol|proposed measurement design`。
+- 37 页（v23 两篇合计 55 页）。`FIGURE_IMAGE_MAP` 按图身份而非位置索引，故本版把 dry-run 排在 external-data 之前不产生图文错位。
+
+### 测试
+
+- 全套 **39 项通过**。
+- 新增 `test_v25_rendering.py`（13 项）：默认构建写 v25 文件名且 v21/v22/v23 校验和不变、`--title` 存在、R1–R4 四条规则各自的断言、`E` 边际声明、`2605.26112` 已被正面处理、8 条结构化图注、7 张图像内嵌、引用双向闭合、三条 standing risk 未被软化。
+- `test_v23_rendering.py` 改为读取**冻结的 v23 PDF**（校验和 `545F1A8A…`）而非从 live source 构建，与 v23 当初对 v22 测试的处理一致。
+- 移除 `test_v23_figures_encode_focused_contract_labels`：它断言 PNG 图内的文字，而 `c09fea2` 把图改为内嵌 PNG 后图内已无文本层 —— 该测试自那次提交起即为坏测试，与本次合并无关。
+
+### 仍未解决（不因合并改变）
+
+1. **架构至今零实测结果**，v22/v23 复核连续两轮列为首要风险。下一步应为 §11.5 的单集群 2×2 可行性 pilot，而非继续扩写。
+2. 组织与治理侧实证薄弱：owner 划分、争议升级、跨企业可迁移性未经组织研究验证。
+3. 与 LangGraph 等现有系统的逐项对比表仍未落地（v20 评审第 6 条），本版在 §13.4 登记为评估程序中最显眼的缺口。
+
 ## v24 — 2026-08-18
 
 本轮仅更新企业白皮书；聚焦论文与 separability-study 保持 v23 不变。
