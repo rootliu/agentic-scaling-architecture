@@ -187,9 +187,9 @@ def s01_cover(prs):
     band.shadow.inherit = False
     textbox(s, Inches(0.95), Inches(2.10), Inches(11.2), Inches(0.5),
             [("架构评审 · v25", 15, True, C("contract", 2))])
-    textbox(s, Inches(0.95), Inches(2.62), Inches(11.4), Inches(1.5),
-            [("契约中心的可扩展 · 可管理", 40, True, INK),
-             ("Agentic Runtime 参考架构", 40, True, INK)])
+    textbox(s, Inches(0.95), Inches(2.56), Inches(11.4), Inches(1.62),
+            [("契约中心的可扩展 · 可管理", 38, True, INK),
+             ("Agentic Runtime 参考架构", 38, True, INK)])
     textbox(s, Inches(0.95), Inches(4.34), Inches(11.0), Inches(0.9),
             [("A Contract-Centered Architecture for Scalable and Manageable Agentic Runtimes", 13, False, MUT),
              ("本次评审议题：撤销 v21/v22 拆分，合回单篇 v25", 13, False, C("phys", 2))])
