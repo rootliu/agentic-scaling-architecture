@@ -1,7 +1,7 @@
 # PPT 架构页内容：数据层三阶记忆子架构（v2.0）
 
 > **用途**：可直接填入商业版/技术版 PPT 的架构页（Slides 8–11 区域）
-> **来源**：[08-数据层修订-三阶记忆子架构](08-%E6%95%B0%E6%8D%AE%E5%B1%82%E4%BF%AE%E8%AE%A2-%E4%B8%89%E9%98%B6%E8%AE%B0%E5%BF%86%E5%AD%90%E6%9E%B6%E6%9E%84.md) · [01-C5-双扩展解耦形式化与命题](01-C5-%E5%8F%8C%E6%89%A9%E5%B1%95%E8%A7%A3%E8%80%A6%E5%BD%A2%E5%BC%8F%E5%8C%96%E4%B8%8E%E5%91%BD%E9%A2%98.md) §3quater
+> **来源**：[[08-数据层修订-三阶记忆子架构]] · [[01-C5-双扩展解耦形式化与命题]] §3quater
 > **适配**：中英文对照，保留技术术语，商业版取中文为主、英文括号标注；技术版可全英文
 
 ---
@@ -227,9 +227,9 @@ Intent (ℐ) ──consult Theme──→ Plan ──Index──→ Locate Facts
 
 | 命题 | 实验设计 | 自变量 | 因变量 | 通过判据 |
 |------|---------|--------|--------|---------|
-| **P10** 索引充分性 | 四臂对比（裸扫描 / 人工元数据 / 无结构摘要 / 5W1H+Which） | 取数方式 | precision / recall / last-mile 成功率 / token 成本 | (d) precision≈(b) 且 coverage≈(a) 且 cost<(c) |
-| **P11** Theme 收敛 | 重复同类 use case n=1..50 | 重复次数 n | Theme 命中率 / 决策熵 ℋ / 成本方差 | 命中率↑、熵↓、方差→0 |
-| **P12** 双螺旋增益 | 三臂对比（仅 Raw / Raw+Index / Raw+Index+Theme） | 记忆层级 | 复杂 use case 成功率 / token 成本 / 耗时 | (c) > (b) > (a) |
+| **P18** 索引充分性 | 四臂对比（裸扫描 / 人工元数据 / 无结构摘要 / 5W1H+Which） | 取数方式 | precision / recall / last-mile 成功率 / token 成本 | (d) precision≈(b) 且 coverage≈(a) 且 cost<(c) |
+| **P19** Theme 收敛 | 重复同类 use case n=1..50 | 重复次数 n | Theme 命中率 / 决策熵 ℋ / 成本方差 | 命中率↑、熵↓、方差→0 |
+| **P20** 双螺旋增益 | 三臂对比（仅 Raw / Raw+Index / Raw+Index+Theme） | 记忆层级 | 复杂 use case 成功率 / token 成本 / 耗时 | (c) > (b) > (a) |
 | **P7** 取数解耦 | 固定 use case，数据源数 1→N | \|src\| | 单请求 token 成本 ℓ | ℓ 基本不随 \|src\| 上升 |
 | **P8** 语义摘要充分性 | 三臂对比（裸发现 / 人工元数据 / off-policy Σ） | 取数方式 | precision / recall / last-mile / cost | (c) precision≈(b) 且 coverage≈(a) |
 | **P9** 治理收敛 | 重复同类 use case n 次 | n | 决策熵 ℋ(π_data)、成本方差 | 熵与方差随 n 单调不增 |

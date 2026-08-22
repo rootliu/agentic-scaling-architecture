@@ -1,6 +1,6 @@
-# 13 — 数据子系统落地：Data Wiki / Theme Wiki / IR 中间关系层
+# 17 — 13 — 数据子系统落地：Data Wiki / Theme Wiki / IR 中间关系层
 
-> **来源**: 2026-07-17 研究讨论。承 [06-数据平面四组成架构](06-%E6%95%B0%E6%8D%AE%E5%B9%B3%E9%9D%A2%E5%9B%9B%E7%BB%84%E6%88%90%E6%9E%B6%E6%9E%84.md)（$D_1$–$D_4$ 形式化）与 [12-Skill作为可训练激活层-双子目标Reward](12-Skill%E4%BD%9C%E4%B8%BA%E5%8F%AF%E8%AE%AD%E7%BB%83%E6%BF%80%E6%B4%BB%E5%B1%82-%E5%8F%8C%E5%AD%90%E7%9B%AE%E6%A0%87Reward.md)（σ_out 结果子域、双子目标 reward）。
+> **来源**: 2026-07-17 研究讨论。承 [[06-数据平面四组成架构]]（$D_1$–$D_4$ 形式化）与 [[12-Skill作为可训练激活层-双子目标Reward]]（σ_out 结果子域、双子目标 reward）。
 > **类型**: 论文核心理论扩展 —— 把 06 号的 $D_2$（语义摘要平面）与 $D_3$（治理 memory）落地为**两个具名 wiki + 一个中间关系层**，并把它们与 12 号的 σ_out 结果子域缝合成完整的"数据→产出"闭环。
 > **状态**: 草稿 v0.1
 > **定位**: 06 号回答"数据子系统四组成是什么"（偏形式化）；本文回答"**这四组成在工程上落成什么系统、彼此怎么松耦合对接**"。核心手段：把 $D_2$ 具名为 **Data Wiki**（数据是什么），把 $D_3$ 的"复用产出物"半分离出一个新的 **Theme Wiki**（产出是什么），中间插一层 **IR（Intermediate Relation）** 做 5W+1H 描述 + semantic join，是 06 号"$D_2$/$D_3$ 松耦合"论断的具体实现。
@@ -18,7 +18,7 @@
 | 新组件 | 承接的旧记号 | 差异/新增点 |
 |---|---|---|
 | **Data Wiki** | $D_2$（off-policy 语义总结平面 $\Sigma$） | 06 号只定义了 $\Sigma=\langle\text{schema}^*,\text{content-profile},\text{latent-fields},\text{rels}\rangle$ 四段；本文把它**具名化为一个可浏览、可增量维护的 wiki**，并新增第五段——**复杂报表的人机协同构建 + reflection 校验**（06 号未覆盖，是本文的主要 delta） |
-| **Theme Wiki** | $D_3$（数据治理 memory）的**产出侧分身** | 06 号的 $D_3$ 讲"如何用数据最好"（data-usage skill）；本文把"用数据产出了什么、且被验证复用"这部分**独立出一个新 wiki**——它的内容来自 [12-Skill作为可训练激活层-双子目标Reward](12-Skill%E4%BD%9C%E4%B8%BA%E5%8F%AF%E8%AE%AD%E7%BB%83%E6%BF%80%E6%B4%BB%E5%B1%82-%E5%8F%8C%E5%AD%90%E7%9B%AE%E6%A0%87Reward.md) §3.1 的 **σ_out 结果子域**（报表/图表/PPT/分析报告/数据模型程序……各是一类子域），经双子目标 Reward 验证收敛后才登记 |
+| **Theme Wiki** | $D_3$（数据治理 memory）的**产出侧分身** | 06 号的 $D_3$ 讲"如何用数据最好"（data-usage skill）；本文把"用数据产出了什么、且被验证复用"这部分**独立出一个新 wiki**——它的内容来自 [[12-Skill作为可训练激活层-双子目标Reward]] §3.1 的 **σ_out 结果子域**（报表/图表/PPT/分析报告/数据模型程序……各是一类子域），经双子目标 Reward 验证收敛后才登记 |
 | **IR（Intermediate Relation）** | 06 号 §3.2 的 $H$ 契约映射 $H:\mathcal{I}\xrightarrow{\text{consult }D_3,D_4}\text{plan}\xrightarrow{D_1,D_2}\mathcal{E}$ 中"plan"这一步 | 06 号只说"consult $D_3,D_4$ 生成 plan"，未定义 plan 的内部结构；本文把这个 plan **实体化**为 IR：一个 theme → 数据源集合的映射，**必须显式携带 5W+1H**，是 06 号"$D_2$/$D_3$ 松耦合"的具体机制 |
 
 > **为什么要拆成两个 wiki 而不是一个**：Data Wiki 回答"数据本身是什么"，与任何具体产出无关，理应能被**任意** theme 复用；Theme Wiki 回答"某类产出该长什么样"，与具体数据源无关（同一份 PPT 模板可能配不同季度的数据）。**把二者放进同一个 wiki 会让数据语义随产出需求漂移、或让产出格式绑死在某个数据源上**——这正是 06 号"$D_2$ 与 $D_3$ 平面分离"论断在产出侧的延伸，二者的正交性靠 IR 这层显式关系保持。
@@ -43,7 +43,7 @@ $$\text{src} \xrightarrow{\ \text{read}\ } \langle\ \underbrace{\text{summary}_{
 2. **记录人常用报表作为参照物**：把人在日常工作中**实际使用**的报表（而非任意样例）记为 ground-truth 参照；
 3. **还原式 reflection**：agent 尝试**部分还原**参照报表中的表格（给定总结反推能否重建原表结构/数值),用还原成功率作为 Data Wiki 总结质量的验证信号。
 
-> **与 [12-Skill作为可训练激活层-双子目标Reward](12-Skill%E4%BD%9C%E4%B8%BA%E5%8F%AF%E8%AE%AD%E7%BB%83%E6%BF%80%E6%B4%BB%E5%B1%82-%E5%8F%8C%E5%AD%90%E7%9B%AE%E6%A0%87Reward.md) 的结构对应**：还原式 reflection 本质是给 Data Wiki 的总结过程装了一个**局部 r_proc**——不是验证"总结格式对不对"（那是 r_out 的事），而是验证"总结有没有正确捕捉到能重建原表的信息"，即**过程/内容正确性**。这把 12 号的双子目标框架从"产出验证"复用到了"数据理解验证"，是 Data Wiki 与 Skill 训练机制的一个隐藏同构点。
+> **与 [[12-Skill作为可训练激活层-双子目标Reward]] 的结构对应**：还原式 reflection 本质是给 Data Wiki 的总结过程装了一个**局部 r_proc**——不是验证"总结格式对不对"（那是 r_out 的事），而是验证"总结有没有正确捕捉到能重建原表的信息"，即**过程/内容正确性**。这把 12 号的双子目标框架从"产出验证"复用到了"数据理解验证"，是 Data Wiki 与 Skill 训练机制的一个隐藏同构点。
 
 ### 2.3 命题 P16（拟）· 还原式 reflection 是摘要充分性的可操作判据
 
@@ -57,7 +57,7 @@ $$\text{src} \xrightarrow{\ \text{read}\ } \langle\ \underbrace{\text{summary}_{
 
 ### 3.1 内容来源：σ_out 各结果子域
 
-Theme Wiki 收录的不是"数据"，而是**验证过的输出物**——直接对应 [12-Skill作为可训练激活层-双子目标Reward](12-Skill%E4%BD%9C%E4%B8%BA%E5%8F%AF%E8%AE%AD%E7%BB%83%E6%BF%80%E6%B4%BB%E5%B1%82-%E5%8F%8C%E5%AD%90%E7%9B%AE%E6%A0%87Reward.md) §3.1 里 σ_out 沿输出格式拆出的各子域，只是这里的子域粒度是"产出**类型**"而不是"字段类型"：
+Theme Wiki 收录的不是"数据"，而是**验证过的输出物**——直接对应 [[12-Skill作为可训练激活层-双子目标Reward]] §3.1 里 σ_out 沿输出格式拆出的各子域，只是这里的子域粒度是"产出**类型**"而不是"字段类型"：
 
 $$\sigma^{out}_{\text{theme}} \in \{\text{报表},\ \text{图表},\ \text{PPT},\ \text{数据分析报告},\ \text{数据模型程序},\ \dots\}$$
 
@@ -118,7 +118,7 @@ $$H:\ \mathcal{I}\ \xrightarrow{\ \text{IR}(\text{theme})\ }\ \langle\{\Sigma\},
 
 **可证伪**：模拟场景——(a) 只换数据源（如 ERP 系统迁移）、(b) 只换产出格式（如报表模板换季）。测两种变更各自波及的改动范围。P17 预期改动只落在 IR 记录本身；若改动扩散进 Data Wiki 的 $\Sigma$ schema 或 Theme Wiki 的模板结构，则耦合并未真正解开。
 
-> **与 [01-C5-双扩展解耦形式化与命题](01-C5-%E5%8F%8C%E6%89%A9%E5%B1%95%E8%A7%A3%E8%80%A6%E5%BD%A2%E5%BC%8F%E5%8C%96%E4%B8%8E%E5%91%BD%E9%A2%98.md) P2（契约充分性）的对齐**：P2 说良定义契约 $H$ 使 $S$ 与 $X$ 无直接依赖；P17 是 P2 在**数据/产出双 wiki 场景下的实例**——IR 就是这里的"契约层"，Data Wiki ≈ $X$（物理侧资源），Theme Wiki ≈ $S$（逻辑侧规格），IR 承担 $H$ 的翻译职能。
+> **与 [[01-C5-双扩展解耦形式化与命题]] P2（契约充分性）的对齐**：P2 说良定义契约 $H$ 使 $S$ 与 $X$ 无直接依赖；P17 是 P2 在**数据/产出双 wiki 场景下的实例**——IR 就是这里的"契约层"，Data Wiki ≈ $X$（物理侧资源），Theme Wiki ≈ $S$（逻辑侧规格），IR 承担 $H$ 的翻译职能。
 
 ---
 
@@ -147,7 +147,7 @@ $$H:\ \mathcal{I}\ \xrightarrow{\ \text{IR}(\text{theme})\ }\ \langle\{\Sigma\},
 
 - [ ] **还原式 reflection 的成本**：对每份复杂报表都做还原测试，calls 数可能不小，需要评估是否只需抽样字段还原而非全表还原。
 - [ ] **5W1H 六要素的完整性**：是否存在第七个必要维度（如"数据质量/置信度"）？需要在实际 theme 落地时观察是否有信息缺口。
-- [ ] **IR 记录本身的维护成本**：谁负责在数据源或产出格式变更时同步更新 IR？可能需要一个专门的 IR 维护 sub-agent（呼应 [03-Harness-System-SubAgents清单](03-Harness-System-SubAgents%E6%B8%85%E5%8D%95.md) 的 $M$ 维护子系统）。
+- [ ] **IR 记录本身的维护成本**：谁负责在数据源或产出格式变更时同步更新 IR？可能需要一个专门的 IR 维护 sub-agent（呼应 [[03-Harness-System-SubAgents清单]] 的 $M$ 维护子系统）。
 - [ ] **P17 的证伪场景设计**：需要构造真实的"只换数据源"和"只换产出格式"两类变更场景，工程量不小。
 - [ ] **Theme Wiki 与 D3 的边界**：Theme Wiki 存"产出物模板"，$D_3$ 存"数据使用策略"，二者都可能涉及"某 theme 该怎么做"的经验——需要明确谁存"怎么用数据"、谁存"怎么呈现结果"，避免重复存储（呼应 06 号已有的 $D_3$/$\Omega$ 边界风险）。
 
@@ -158,9 +158,9 @@ $$H:\ \mathcal{I}\ \xrightarrow{\ \text{IR}(\text{theme})\ }\ \langle\{\Sigma\},
 1. 把 §2.1 Data Wiki 的四段 $\Sigma$ 展开（summary_NL/σ/κ/FK）与 06 号原始 $\Sigma$ 四段（schema*/content-profile/latent-fields/rels）做逐项对照表，确认是展开而非冲突。
 2. 把 IR 的 5W1H schema 落成一个最小可执行的记录格式（类比 06 号 §9 建议的 $\Sigma$ schema），供阶段 2 实验使用。
 3. 设计还原式 reflection 的具体评测协议（抽样字段还原 vs 全表还原的成本/信度权衡）。
-4. 把 P16/P17 回填进 [07-创新点总结](07-%E5%88%9B%E6%96%B0%E7%82%B9%E6%80%BB%E7%BB%93.md) 命题总表与 novelty 全表（N10–N12）。
-5. 把本文 §4.3 的 $H$ 契约映射回填进 [06-数据平面四组成架构](06-%E6%95%B0%E6%8D%AE%E5%B9%B3%E9%9D%A2%E5%9B%9B%E7%BB%84%E6%88%90%E6%9E%B6%E6%9E%84.md) §3.2。
+4. 把 P16/P17 回填进 [[07-创新点总结]] 命题总表与 novelty 全表（N10–N12）。
+5. 把本文 §4.3 的 $H$ 契约映射回填进 [[06-数据平面四组成架构]] §3.2。
 
 ---
 
-相关：[06-数据平面四组成架构](06-%E6%95%B0%E6%8D%AE%E5%B9%B3%E9%9D%A2%E5%9B%9B%E7%BB%84%E6%88%90%E6%9E%B6%E6%9E%84.md) · [12-Skill作为可训练激活层-双子目标Reward](12-Skill%E4%BD%9C%E4%B8%BA%E5%8F%AF%E8%AE%AD%E7%BB%83%E6%BF%80%E6%B4%BB%E5%B1%82-%E5%8F%8C%E5%AD%90%E7%9B%AE%E6%A0%87Reward.md) · [10-Skill-as-Code与确定性固化](10-Skill-as-Code%E4%B8%8E%E7%A1%AE%E5%AE%9A%E6%80%A7%E5%9B%BA%E5%8C%96.md) · [01-C5-双扩展解耦形式化与命题](01-C5-%E5%8F%8C%E6%89%A9%E5%B1%95%E8%A7%A3%E8%80%A6%E5%BD%A2%E5%BC%8F%E5%8C%96%E4%B8%8E%E5%91%BD%E9%A2%98.md) · [03-Harness-System-SubAgents清单](03-Harness-System-SubAgents%E6%B8%85%E5%8D%95.md) · [07-创新点总结](07-%E5%88%9B%E6%96%B0%E7%82%B9%E6%80%BB%E7%BB%93.md)
+相关：[[06-数据平面四组成架构]] · [[12-Skill作为可训练激活层-双子目标Reward]] · [[10-Skill-as-Code与确定性固化]] · [[01-C5-双扩展解耦形式化与命题]] · [[03-Harness-System-SubAgents清单]] · [[07-创新点总结]]
