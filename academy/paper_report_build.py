@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""论文报告 deck 构建器 — 对应合并稿 v27。
+"""论文报告 deck 构建器 — 对应合并稿 v28。
 
-产物: academy/paper-report-v27-zh.pptx (16:9, 中文)
+产物: academy/paper-report-v28-zh.pptx (16:9, 中文)
 用法: python3 academy/paper_report_build.py
 
 与 review_deck_build.py 的分工：
   - review deck  : 架构评审用，重心在责任边界、契约、判决规则的取舍
   - 本 deck      : 论文报告用，按论文章节顺序讲，并内嵌论文的 7 张真实插图
     （agentic-runtime-preprint/paper_source/{1..7}.png，与 PDF 中所见一致），
-    论文没有配图的部分（P1 端点、六义务、四态判决、v27 形式化附录）改为矢量绘制。
+    论文没有配图的部分（P1 端点、六义务、四态判决、形式化附录）改为矢量绘制。
 
 配色沿用 site/style.css 迁移后的 Tailwind 系。
 """
@@ -37,7 +37,7 @@ PAL = {
 INK = RGBColor(0x11, 0x18, 0x27)
 MUT = RGBColor(0x6B, 0x72, 0x80)
 PAGE = RGBColor(0xFF, 0xFF, 0xFF)
-TOTAL = 19
+TOTAL = 20
 
 
 def C(name, i):
@@ -235,13 +235,13 @@ def s01(prs):
     band.line.fill.background()
     band.shadow.inherit = False
     textbox(s, Inches(0.95), Inches(1.95), Inches(11.2), Inches(0.44),
-            [("论文报告 · 合并稿 v27", 14, True, C("contract", 2))])
+            [("论文报告 · 合并稿 v28", 14, True, C("contract", 2))])
     textbox(s, Inches(0.95), Inches(2.44), Inches(11.5), Inches(1.7),
             [("A Contract-Centered Architecture for", 33, True, INK),
              ("Scalable and Manageable Agentic Runtimes", 33, True, INK)])
     textbox(s, Inches(0.95), Inches(4.22), Inches(11.2), Inches(0.9),
             [("契约中心的可扩展 · 可管理 Agentic Runtime 参考架构", 13, False, MUT),
-             ("Yaxiao Liu · 37 页 · 8 图 · 45 条引用 · 无实测结果（research-program paper）", 12, False, MUT)])
+             ("Yaxiao Liu · 39 页 · 8 图 · 48 条引用 · 无实测结果（research-program paper）", 12, False, MUT)])
     card(s, Inches(0.95), Inches(5.42), Inches(3.42), Inches(1.16), "contract",
          title="唯一主命题", lines=["P1 cost-aware", "capability-capacity separability"])
     card(s, Inches(4.60), Inches(5.42), Inches(3.42), Inches(1.16), "logic",
@@ -391,9 +391,11 @@ def s08(prs):
              "前六维只在孤立状态下限定一个 fact；Which 把它放进 semantic join 应当展开的可导航邻域 —— "
              "时间窗内共现的 temporal links 与 typed cross-references。",
              "缺 When 可能过期、缺 Who 可能越权、缺 How 不可达、缺 Which 则上下文孤立。同一份七维记录兼作 agent 侧记忆的索引原子。"])
-    card(s, Inches(0.62), Inches(6.06), Inches(12.1), Inches(0.76), "warn",
+    card(s, Inches(0.62), Inches(6.02), Inches(12.1), Inches(0.94), "warn",
          lines=[("P17 已在 v26 收窄为「有界策略契约解耦」：仅在兼容范围、界面复杂度、可替换性、"
-                 "无隐藏共享状态与迁移规则均明确时成立。", 10.5)])
+                 "无隐藏共享状态与迁移规则均明确时成立。", 10.5),
+                ("缩写消歧（v28）：相邻文献里 IR 更常指 intermediate **representation**（编译器式产物）。"
+                 "本文的 IR 是 theme 与其准入源集合之间版本化、可审计的 **relation**，由 Harness 在准入时读取，不被编译成产物。", 10)])
     footer(s, 8, "论文 §8.2 · 此节不提出新的检索或数据集成算法，贡献是把底座已有信息重组为可审计的关系层")
     return s
 
@@ -531,8 +533,8 @@ def s13(prs):
 
 def s14(prs):
     s = blank(prs)
-    heading(s, "v27 形式化附录：四条命题", "回答一个很窄的问题：查询尚未知晓时，写时固定的表示能保住什么",
-            tag="v27 新增", tagpal="contract")
+    heading(s, "形式化附录：四条命题", "回答一个很窄的问题：查询尚未知晓时，写时固定的表示能保住什么",
+            tag="v27 引入", tagpal="contract")
     props = [("contract", "① 解码器无关的错误下界",
               ["亏损 Δ(f) = H(Y | Z, Q)；条件 Fano 给出 Δ(f) ≤ H_b(P_e) + P_e·log₂(M−1)。",
                "故 Δ(f) > 0 时，任何**仅用 (Z, Q)** 的解码器都有一个由该表示与任务共同决定的正错误下界。",
@@ -564,7 +566,7 @@ def s14(prs):
 
 def s15(prs):
     s = blank(prs)
-    heading(s, "形式化附录导出的五条设计约束", "以及一条明确的证伪边界", tag="v27 新增", tagpal="contract")
+    heading(s, "形式化附录导出的五条设计约束", "以及一条明确的证伪边界", tag="v27 引入", tagpal="contract")
     cons = [("① 每个衍生物都必须保留可解析的来源与快照身份", "logic"),
             ("② 系统必须声明某个表示或策略被主张充分的**任务族**", "logic"),
             ("③ 索引与摘要应按其保留的**区分与证据路径**评价，而不是只看压缩比", "contract"),
@@ -618,6 +620,37 @@ def s16(prs):
 
 def s17(prs):
     s = blank(prs)
+    heading(s, "v28 补引的三处，以及各自的划界", "起因是审计本地 PDF 库与 bib 的差集：33 份 PDF 中 16 份未被引用",
+            tag="v28 新增", tagpal="data")
+    rows = [("logic", "§4 harness 演化簇 — MemoHarness（2607.14159）",
+             ["缺口：该段已引 Harness Handbook、GSME、WML、Phantom Guardrails，独缺同簇这篇，读起来像漏检。",
+              "划界：引作「harness 状态是受治资产」的证据，**不作为任何具体累积策略安全的证据** ——",
+              "后者正是 §8.3 把保留、删除、授权交给治理契约而非写成架构性质的理由。"]),
+            ("contract", "§8.3 决议 2 + §10 shared-state isolation — CoAgent（2606.15376）",
+             ["缺口：v26 已把并发写入改为「后端中立的幂等与排序契约、不假设任何通用单写者设计」，但该决议零外部支撑。",
+              "划界：引以论证**把排序契约当作声明式接口**是合理的，**而非采纳其任何具体机制**；",
+              "并明写「本文不提出自己的吞吐或争用主张」。§10 处用它说明未声明的争用不是假想的。"]),
+            ("phys", "§6.4 audit — AgentForesight（2605.08715）",
+             ["缺口：论文反复主张「自报 trace 不能自证完备」，此前无最接近的外部工作对照。",
+              "划界：**在线预测某次运行可能失败 ≠ 证明监测器覆盖了声明渠道集中的每个事件**。",
+              "早期预警可以很准而威胁模型覆盖率仍未被测量 —— 这正是六义务要求独立事件清单、不接受预测器置信度的原因。"])]
+    y = Inches(1.68)
+    for pal, t, body in rows:
+        card(s, Inches(0.62), y, Inches(12.1), Inches(1.28), pal, title=t,
+             title_size=12.5, lines=body, body_size=9.6)
+        y += Inches(1.36)
+    card(s, Inches(0.62), Inches(5.80), Inches(12.1), Inches(0.72), "neut",
+         title="引用卫生", lines=[
+             ("三条 bib 的标题与完整作者列表均取自各 PDF 的 /Title、/Author 元数据，未据本地文件名转写 —— "
+              "本轮审计证明文件名不可靠：33 份中 8 份标题与原文不符，5 份为实质性错误。", 9.6)])
+    card(s, Inches(0.62), Inches(6.62), Inches(12.1), Inches(0.56), "warn",
+         lines=[("新增的 10 项 v28 测试把这三处的**划界措辞本身**一起断言，防止后续编辑把有限定的引用悄悄改成无限定背书。", 10)])
+    footer(s, 17, "评估记录见 vault 02-2026相关论文清单 §3 · 可选 4 篇与低优先 2 篇未引入，7 篇领域应用判定离题")
+    return s
+
+
+def s18(prs):
+    s = blank(prs)
     heading(s, "证据边界：本文没有实测结果", "这一页不能从报告里删掉", tag="必读", tagpal="warn")
     card(s, Inches(0.62), Inches(1.72), Inches(12.1), Inches(1.16), "warn",
          title="本文不提供什么", title_size=14, lines=[
@@ -636,11 +669,11 @@ def s17(prs):
         card(s, Inches(0.62), y, Inches(12.1), Inches(0.80), "neut", title=t,
              title_size=12, lines=[(body, 9.6)], body_size=9.6)
         y += Inches(0.90)
-    footer(s, 17, "论文 §14 · 证据基础是分层的：经典基础是稳定锚点，同期文献只支撑动机，不验证本架构")
+    footer(s, 18, "论文 §14 · 证据基础是分层的：经典基础是稳定锚点，同期文献只支撑动机，不验证本架构")
     return s
 
 
-def s18(prs):
+def s19(prs):
     s = blank(prs)
     heading(s, "下一步：最小可行研究", "目的不是检验 P1，而是先验证协议可执行", tag="行动", tagpal="data")
     card(s, Inches(0.62), Inches(1.72), Inches(5.92), Inches(2.60), "data",
@@ -665,11 +698,11 @@ def s18(prs):
          title="这个规模能与不能回答什么", lines=[
              "**不能**建立可分离性，也不应声称建立了。",
              "**能**回答「六项义务在一个运行中的系统里究竟是否可仪器化」—— 这一点目前未知，且是所有更大规模研究的前提。"])
-    footer(s, 18, "论文 §11.5")
+    footer(s, 19, "论文 §11.5")
     return s
 
 
-def s19(prs):
+def s20(prs):
     s = blank(prs)
     band = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, Inches(0.22), SH)
     band.fill.solid()
@@ -679,12 +712,12 @@ def s19(prs):
     textbox(s, Inches(0.95), Inches(2.60), Inches(11.2), Inches(1.0),
             [("讨论", 38, True, INK)])
     textbox(s, Inches(0.95), Inches(3.70), Inches(11.4), Inches(2.0),
-            [("论文    academy/agentic-runtime-preprint/output/pdf/…_v27.pdf（37 页 / 8 图 / 45 引用）", 12, False, MUT),
+            [("论文    academy/agentic-runtime-preprint/output/pdf/…_v28.pdf（39 页 / 8 图 / 48 引用）", 12, False, MUT),
              ("正文    academy/agentic-runtime-preprint/paper_source/main.tex", 12, False, MUT),
-             ("变更史  academy/agentic-runtime-preprint/CHANGELOG.md（v25 合回单篇 → v26 证据审计 → v27 形式化附录）", 12, False, MUT),
+             ("变更史  academy/agentic-runtime-preprint/CHANGELOG.md（v25 合回单篇 → v26 证据审计 → v27 形式化附录 → v28 补引与 IR 消歧）", 12, False, MUT),
              ("大纲    academy/v25-outline.md", 12, False, MUT),
              ("评审 deck  academy/architecture-review-v25-zh.pptx", 12, False, MUT),
-             ("本 deck    academy/paper-report-v27-zh.pptx（构建脚本 paper_report_build.py）", 12, False, MUT),
+             ("本 deck    academy/paper-report-v28-zh.pptx（构建脚本 paper_report_build.py）", 12, False, MUT),
              ("笔记    Obsidian / Agentic-Runtime-参考架构（唯一权威，repo notes/ 为镜像）", 12, False, MUT)])
     return s
 
@@ -693,9 +726,9 @@ def main():
     prs = Presentation()
     prs.slide_width, prs.slide_height = SW, SH
     for fn in (s01, s02, s03, s04, s05, s06, s07, s08, s09,
-               s10, s11, s12, s13, s14, s15, s16, s17, s18, s19):
+               s10, s11, s12, s13, s14, s15, s16, s17, s18, s19, s20):
         fn(prs)
-    out = os.path.join(HERE, "paper-report-v27-zh.pptx")
+    out = os.path.join(HERE, "paper-report-v28-zh.pptx")
     prs.save(out)
     print(f"wrote {out}  ({len(prs.slides._sldIdLst)} slides)")
 
