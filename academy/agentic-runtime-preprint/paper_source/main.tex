@@ -51,7 +51,7 @@ This paper makes three contributions.
 
 \begin{enumerate}
 \item We define a contract-bounded dual-axis responsibility architecture: reusable business capability, runtime governance, physical execution and NFR ownership, and enterprise data governance remain distinguishable, while the Harness resolves a typed contract $C=\langle I,O,G,A,B,V\rangle$ and places probabilistic planning inside deterministic admission, effect, and evidence enforcement.
-\item We specify a source-preserving address/index/operator data substrate. Canonical sources and versioned provenance remain authoritative; derived summaries are auditable metadata rather than replacements; and versioned Theme/IR policies state task-family output, access, evidence, fallback, and compatibility requirements.
+\item We specify a source-preserving address/index/operator data substrate. Canonical sources and versioned provenance remain authoritative; derived summaries are auditable metadata rather than replacements; and versioned Theme/IR policies state task-family output, access, evidence, fallback, and compatibility requirements. A technical appendix formalizes the boundary for deterministic query-agnostic write-time representations through a decoder-independent Fano bound, a partition-lattice sufficiency criterion, and a linear-logarithmic write/read separation.
 \item We turn six familiar design conditions into measured obligations and specify a cluster-period randomized crossover that estimates the capability-by-capacity interaction, semantic non-inferiority, and enforcement overhead without treating an expected Scaffold main effect as evidence of separability. The resulting evidence protocol makes the architecture rejectable rather than presenting its mechanisms as observed results.
 \end{enumerate}
 
@@ -269,6 +269,7 @@ Path safety / mediation & Proposition & Complete mediation enables path-level ad
 P15 & Hypothesis & Output-plus-process gates improve discrimination, attribution, or training & Cited external evidence; proposed experiment (\S\ref{sec:secondary}) \\
 P16 & Hypothesis & A pinned address/index policy with source fallback supports task-family reconstruction & Proposed experiment (\S\ref{sec:secondary}) \\
 P17 & Proposition & Compatible source and output changes remain bounded by versioned policy contracts & Analytic argument; cited external evidence; proposed experiment (\S\ref{sec:secondary}) \\
+Write-time representation foundation & Analytic result & Query-agnostic deterministic representations are sufficient exactly when their induced partition preserves every distinction required by the declared task family & Self-contained finite-alphabet derivation (\S\ref{sec:formal-data-foundations}); no empirical validation \\
 Dry-run / locality & Hypothesis & Planning cost is offset by avoided work or movement & Proposed experiment (\S\ref{sec:secondary}) \\
 Skill lifecycle / training & Design pattern & Train, validate, freeze, monitor, and roll back Skills & Cited external evidence; proposed experiment; future work \\
 Prefix stability / seed affinity & Design pattern & Tool-set cohesion and same-seed co-location improve cache reuse and locality & No protocol in this paper; measurement is future work \\
@@ -476,6 +477,8 @@ The stack-external data substrate preserves canonical raw or source-native recor
 
 \paragraph{The Intermediate Relation.}
 The \textit{Data Wiki} is an address/index/operator catalog over those authoritative records. Each entry identifies the source, snapshot or validity interval, provenance, format, access boundary, deterministic read or extraction operations, retrieval terms, typed cross-source relations, and any derived natural-language description together with its producer, version, confidence, and evidence spans. The operational path is layered: global ranked discovery narrows the candidate set; hierarchical navigation or compiled operators resolve fields and relations; and the agent reads the versioned source evidence needed for the decision. A summary may improve discovery or planning, but it cannot be the only retained representation and its presence does not imply task-family sufficiency.
+
+Section~\ref{sec:formal-data-foundations} states the formal reason for this boundary without assuming that every summary fails. For a fixed finite task family, a deterministic write-time representation is exactly sufficient only when its induced partition preserves every source distinction needed by every admitted query. Enlarging the future query family can only refine that minimal sufficient partition and weakly increase its entropy. A coordinate-query construction then separates a $k$-bit query-agnostic sufficient representation from a $ceil(log_2 k)+1$ bit read-time request-and-return path when the versioned source remains addressable. The comparison deliberately separates persistent representation cost from online communication cost; storage, indexing, authorization, freshness, and latency remain explicit system costs. P16 therefore tests bounded task-family evidence-path sufficiency with governed fallback, not universal sufficiency of an index or summary.
 
 \begin{proposition}[Hypothesis P16: task-family evidence-path sufficiency]
 \label{prop:p16}
@@ -756,6 +759,8 @@ Separability may hold only within a bounded operating region. A new capability c
 
 Equivalence, non-inferiority, and interaction conclusions depend on chosen margins and achieved power. Margins can be chosen too loosely, and enforcement budgets can omit organizational or operational cost. The crossover improves efficiency when clusters can return to a comparable state; it is unsuitable for irreversible learning, persistent user adaptation, or infrastructure changes with long carryover, which need parallel clusters or longer stepped designs. P15, P16, and P17 likewise remain hypotheses or propositions with preregistered controls, not observed results.
 
+The formal data appendix has a narrower scope than the architecture. It assumes finite alphabets, deterministic query-agnostic encoders, exact task answers, and separate accounting for persistent representation and online communication. Randomized encoders, approximate or continuous tasks, learned-retrieval calibration, changing source distributions, and total lifecycle cost require additional analysis. Its impossibility statements apply only when an interface merges source states that the declared task family must distinguish; they do not establish that one retrieval technology is universally superior or that retaining a source by itself makes the source accessible, correct, fresh, authorized, or auditable.
+
 \section{Conclusion}
 \label{sec:conclusion}
 
@@ -764,6 +769,63 @@ Enterprise AI needs a contract across groups that change different things at dif
 The scientific core is cost-aware capability-capacity separability. P1 asks whether activated independently deployable behavior on admitted paths preserves the capacity-response relationship, whether compatible capacity changes preserve semantic outcomes, and whether the required controls fit an enforcement budget. A cluster-period randomized crossover, six measured obligations, explicit decision-derived margins, and a four-state verdict make that question answerable. Deterministic gates and trace identity make departures detectable, auditable, and attributable; they do not cause independence.
 
 The paper therefore asks enterprises to demand two forms of proof. Business/use-case evidence must show that a Skill produces the intended workflow outcome. System/runtime evidence must show that the admitted path and its execution satisfy contract and NFR obligations. Neither substitutes for the other. The next scientific step is not a further architectural elaboration but the minimal study of Section~\ref{sec:eval-minimal}: implement the monitors, run one small crossover, and publish the result including the cases that end as falsified, conditional-engineering, or inconclusive.
+
+\section{Technical Appendix: Information-Theoretic and Discrete Foundations}
+\label{sec:formal-data-foundations}
+
+This appendix formalizes one narrow question raised by the external data substrate: what can a representation fixed at write time preserve when the eventual query is not yet known? The results justify retaining governed source evidence and treating indexes, summaries, and relations as task-bounded derivatives. They do not prove the empirical superiority of the proposed Data Wiki, and they do not remove storage, governance, or retrieval costs.
+
+\subsection{Scope, Notation, and Deficiency}
+
+Let $X$ be a source record on a finite alphabet, $Q$ a query from a finite declared task family, and $Y=y(X,Q)$ the exact answer. A deterministic write-time encoder produces $Z=f(X)$ before the realized query is available. A read-time decoder produces $\widehat{Y}=g(Z,Q)$. Entropy and the conditional Fano step use standard information-theoretic definitions \cite{cover2006elements}. The query-conditional information deficiency of the representation is
+\begin{equation}
+\Delta(f)=H(Y\mid Z,Q).
+\end{equation}
+The encoder is exactly sufficient for the declared task family when $\Delta(f)=0$, equivalently when some decoder recovers $Y$ for every source-query pair in scope. All conclusions are relative to that task family and support. A randomized encoder, a query-conditioned materialization, an approximate answer relation, or a continuous source requires a different sufficiency notion and is outside the propositions below.
+
+\begin{proposition}[Decoder-independent error floor for a fixed representation]
+Let $M$ be the answer-alphabet size and let $P_e$ be the error probability of any decoder using only $(Z,Q)$. Then $\Delta(f)\leq H_b(P_e)+P_e log_2(M-1)$. Consequently, when $\Delta(f)>0$, every decoder has a positive inverse-Fano error lower bound determined by the fixed representation and task. A stronger agent may reduce decoder suboptimality, but it cannot reconstruct distinctions absent from $(Z,Q)$. Proof: apply the conditional Fano inequality given $Q$ and average over $Q$. The inequality supplies a lower bound, not a point estimate of observed error, and equality need not hold.
+\end{proposition}
+
+\subsection{Partitions and the Minimal Sufficient Representation}
+
+Every deterministic encoder induces a partition $\pi_f$ of the source alphabet: two source states share a block exactly when the encoder maps them to the same value. Each query $q$ induces a task partition $\pi_q$ whose blocks contain source states with the same answer to that query. Let $\pi^\star$ be the common refinement of all $\pi_q$ in the declared task family; it is the coarsest partition that still preserves every task-relevant distinction.
+
+\begin{proposition}[Partition criterion, rate bound, and query monotonicity]
+The encoder is exactly sufficient if and only if every block of $\pi_f$ is contained in a block of $\pi^\star$. Therefore every sufficient deterministic representation satisfies $H(Z)\geq H(\pi^\star)$, and the block identifier of $\pi^\star$ achieves equality, so $R_{\min}=H(\pi^\star)$. Enlarging the admitted query family adds task partitions to the common refinement, can only make $\pi^\star$ finer, and can never reduce $R_{\min}$. Proof: if two source states share an encoder value, exact decoding requires them to have the same answer for every query; this is precisely the refinement condition. Conversely, the condition defines a decoder on each encoder block. The $\pi^\star$ block identifier is a function of every sufficient $Z$, which gives the entropy bound, and adding queries can only add distinctions.
+\end{proposition}
+
+This proposition makes ``the codebook was designed for the wrong task'' precise. A representation may be sufficient for a narrow family and insufficient after the family expands even if its bit length does not change. Bit count alone is therefore not a fidelity guarantee: the induced distinctions must align with the declared query family.
+
+\subsection{Linear-Logarithmic Write-Time and Read-Time Separation}
+
+Consider $X=(X_1,\ldots,X_k)$ with independent uniform bits, let $Q$ identify one of the $k$ coordinates, and let $Y=X_Q$. A write-time encoder does not observe the realized coordinate.
+
+\begin{proposition}[Linear-logarithmic separation under source fallback]
+Any deterministic write-time representation that answers every coordinate query exactly satisfies $H(Z)\geq k$ bits. If the original versioned source remains addressable at read time, an exact path can instead send a coordinate address using $ceil(log_2 k)$ bits and return one evidence bit, for $R_{\mathrm{roundtrip}}=ceil(log_2 k)+1$. Hence
+$R_{\mathrm{write}}/R_{\mathrm{roundtrip}}\geq k/(1+ceil(log_2 k))=Theta(k/log_2 k)$.
+Proof: any two distinct bit vectors differ in some coordinate, so a representation sufficient for all coordinate queries must distinguish all source vectors and has entropy at least $H(X)=k$. The read-time path encodes the requested coordinate and returns its source bit. The comparison is between persistent query-agnostic representation and one online request-and-return exchange; it does not count the raw source store, index maintenance, authorization checks, or access latency as zero.
+\end{proposition}
+
+The result is linear-logarithmic in the number of fields $k$, not exponential in $k$. It becomes exponential only if the address length $n=log_2 k$ is chosen as the independent parameter, in which case the write-time lower bound is $2^n$ and the online exchange is $n+1$. The architectural implication is limited but useful: preserving a governed source-fallback path can avoid forcing one derivative representation to anticipate the joint distinctions of every future query.
+
+\subsection{Indistinguishability, Addressability, Order, and Slicing}
+
+\begin{proposition}[Interface indistinguishability]
+Any storage or retrieval interface induces an equivalence relation over source states: two states are equivalent when every accessible result presented to the decoder is identical. If equivalent states have different answers for some admitted query, no downstream decoder restricted to that interface can be exactly sufficient. Proof: the decoder receives the same input for both states and therefore must return the same output for both.
+\end{proposition}
+
+This elementary proposition covers several discrete failure modes without claiming that they occur in every implementation. A lexical, positional, relational, or embedding-based index is adequate only to the extent that its complete accessible state preserves the distinctions required by the task family. A coarse retrieval cell that merges task-distinguishable values is insufficient; an embedding system that retains stable source identifiers and supports exact fallback need not have that defect. Addressability is thus a property of the whole interface and fallback path, not a label attached to one algorithm.
+
+Order loss is the same phenomenon under a group action. If $Z(x)=Z(gx)$ for a permutation $g$ but an admitted task assigns different answers to $x$ and $gx$, the representation is insufficient. For $n$ distinct items under a uniform unknown ordering, a permutation-invariant representation discards $log_2(n!)$ bits of order identity. This lower bound applies only when order is task-relevant; invariant tasks legitimately quotient it away.
+
+Slicing can be represented as an evidence hypergraph. Atomic source spans are vertices and each query has one or more sufficient evidence sets. Under a retrieval budget of at most $b$ slices, a fixed partition fails for a query whenever every sufficient evidence set intersects more than $b$ independently retrievable slices or contains a relation the interface does not expose. Larger chunks can change that incidence pattern but do not guarantee repair; the relevant object is the query-evidence structure, not chunk size alone.
+
+\subsection{Architectural Consequences and Falsification Boundary}
+
+The formal results support five design constraints for the proposed substrate. First, every derivative must retain resolvable source and snapshot identity. Second, the system must declare the task family for which a representation or policy is claimed sufficient. Third, indexes and summaries should be evaluated by the distinctions and evidence paths they preserve, not by compression ratio alone. Fourth, fallback requires executable access, authorization, freshness, provenance, and version compatibility in addition to retained bytes. Fifth, a widened task family or changed source distribution triggers revalidation because the minimal sufficient partition may have changed.
+
+What remains empirical is at least as important. The appendix does not show that the Data Wiki reduces latency or cost, that its indexes outperform direct reading, that embedding retrieval is generally inferior, or that source fallback is operationally reliable. Those questions belong to P16's held-out comparison and to lifecycle-cost measurement. The proofs establish only a boundary: under the stated finite deterministic assumptions, once an interface merges two source states that an admitted task must distinguish, downstream intelligence alone cannot restore exactness.
 
 \bibliographystyle{plain}
 \bibliography{references}

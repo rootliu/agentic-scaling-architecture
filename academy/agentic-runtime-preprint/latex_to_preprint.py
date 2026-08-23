@@ -30,7 +30,7 @@ TITLE = "A Contract-Centered Architecture for Scalable and Manageable Agentic Ru
 AUTHOR = "Yaxiao Liu"
 AUTHOR_EMAIL = "rootliu@gmail.com"
 FIGURE_WIDTH = 462
-PREPRINT_VERSION = "v26"
+PREPRINT_VERSION = "v27"
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 # Derived from PREPRINT_VERSION so a version bump cannot silently overwrite the
 # previous version's PDF: v20 shipped three different documents (26, 27 and 33
