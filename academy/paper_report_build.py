@@ -37,7 +37,7 @@ PAL = {
 INK = RGBColor(0x11, 0x18, 0x27)
 MUT = RGBColor(0x6B, 0x72, 0x80)
 PAGE = RGBColor(0xFF, 0xFF, 0xFF)
-TOTAL = 18
+TOTAL = 19
 
 
 def C(name, i):
@@ -531,34 +531,63 @@ def s13(prs):
 
 def s14(prs):
     s = blank(prs)
-    heading(s, "v27 形式化附录：写时表示的信息论边界", "四条命题 + 一条不可外推的边界声明",
+    heading(s, "v27 形式化附录：四条命题", "回答一个很窄的问题：查询尚未知晓时，写时固定的表示能保住什么",
             tag="v27 新增", tagpal="contract")
-    props = [("contract", "① 解码器无关错误下界",
-              ["固定 query-agnostic 写时表示 Z 对任务族 Q 的亏损为 H(Y | Z, Q)；",
-               "经条件 Fano 不等式，任何解码器的错误率都被该亏损从下方界住 —— 与解码器实现无关。"]),
-             ("logic", "② 划分判据与最小码率",
-              ["写时编码器等价于源空间的一个划分；充分性 ⟺ 编码划分细化最小充分划分 π*。",
-               "由此得 R_min = H(π*)，且查询族扩张时该下界单调不减。"]),
-             ("phys", "③ 线性—对数分离",
-              ["对坐标查询族：写时充分表示至少需 k bit；",
-               "而保留可寻址源数据时，一次读时请求与返回仅需 ⌈log₂ k⌉ + 1 bit。"]),
-             ("data", "④ 接口不可区分性",
-              ["粗寻址、顺序不变聚合与超预算切片可用同一不可区分性框架统一描述 ——",
-               "不把任何一种检索技术写成普遍优劣结论。"])]
-    y = Inches(1.68)
+    props = [("contract", "① 解码器无关的错误下界",
+              ["亏损 Δ(f) = H(Y | Z, Q)；条件 Fano 给出 Δ(f) ≤ H_b(P_e) + P_e·log₂(M−1)。",
+               "故 Δ(f) > 0 时，任何**仅用 (Z, Q)** 的解码器都有一个由该表示与任务共同决定的正错误下界。",
+               "更强的 agent 只能减少解码器的次优性，无法重建 (Z, Q) 中已不存在的区分。",
+               "注意：不等式给的是**下界，不是观测错误的点估计**，等号也不必成立。"]),
+             ("logic", "② 划分判据、最小码率与查询单调性",
+              ["确定编码器诱导源字母表的划分 π_f；每个查询诱导任务划分 π_q，π★ 是全部 π_q 的共同细化。",
+               "**充分 ⟺ π_f 的每个块都被包含在 π★ 的某个块内**（即 π_f 细化 π★）；由此 H(Z) ≥ H(π★)，",
+               "且 π★ 的块标识达到等号，故 R_min = H(π★)。扩大准入查询族只会让 π★ 更细，R_min 不可能下降。",
+               "推论：**比特数本身不是保真保证** —— 表示的位长不变，任务族扩张后仍可能变得不充分。"]),
+             ("phys", "③ 线性—对数分离（在源回退可用的前提下）",
+              ["坐标查询族：任何精确回答全部坐标查询的写时表示满足 H(Z) ≥ k bit；",
+               "若原始版本化源在读时仍可寻址，则一次「发地址 + 返回一个证据位」为 ⌈log₂k⌉ + 1 bit，比值 ≥ Θ(k / log₂k)。",
+               "**是 k 的线性—对数关系，不是 k 的指数关系** —— 只有把地址长度 n = log₂k 当作独立参数时才呈指数。",
+               "比较的是两种不同资源：未把原始存储、索引维护、授权检查与访问时延记作零成本。"]),
+             ("data", "④ 接口不可区分性（统一多种失效模式）",
+              ["任何存储/检索接口在源状态上诱导一个等价关系；若等价的两个状态对某准入查询答案不同，",
+               "则受限于该接口的下游解码器不可能精确充分。粗检索单元、顺序丢失、超预算切片都是它的实例：",
+               "顺序丢失是同一现象的群作用版本 —— n 个不同项在未知均匀排序下，置换不变表示丢弃 log₂(n!) bit 顺序身份（仅当顺序与任务相关时才算不足）。",
+               "**可寻址性是整个接口与回退路径的性质，不是贴在某个算法上的标签** —— 保留稳定源标识并支持精确回退的 embedding 系统就没有该缺陷。"])]
+    y = Inches(1.62)
     for pal, t, body in props:
-        card(s, Inches(0.62), y, Inches(12.1), Inches(1.06), pal, title=t,
-             title_size=13, lines=body, body_size=10)
-        y += Inches(1.16)
-    card(s, Inches(0.62), Inches(6.32), Inches(12.1), Inches(0.62), "warn",
-         title="附录不做什么（必须一起讲）", lines=[
-             ("不替代 held-out 对照实验，不证明 Data Wiki 在时延/成本/检索质量上占优；③ 比较的是不同资源，"
-              "未把原始存储、索引、授权与时延写成零成本。", 9.5)])
-    footer(s, 14, "论文附录 · 结论依赖有限字母表、确定编码器、精确答案与持久化/在线通信分账；随机编码、连续任务、近似答案留待扩展")
+        card(s, Inches(0.62), y, Inches(12.1), Inches(1.27), pal, title=t,
+             title_size=12.5, lines=body, body_size=9.3)
+        y += Inches(1.34)
+    footer(s, 14, "论文附录 §A.1–A.4 · 随机编码、查询条件化物化、近似答案关系与连续源都需要不同的充分性定义，均在这些命题范围之外")
     return s
 
 
 def s15(prs):
+    s = blank(prs)
+    heading(s, "形式化附录导出的五条设计约束", "以及一条明确的证伪边界", tag="v27 新增", tagpal="contract")
+    cons = [("① 每个衍生物都必须保留可解析的来源与快照身份", "logic"),
+            ("② 系统必须声明某个表示或策略被主张充分的**任务族**", "logic"),
+            ("③ 索引与摘要应按其保留的**区分与证据路径**评价，而不是只看压缩比", "contract"),
+            ("④ 回退不只需要留下字节 —— 还需可执行访问、授权、新鲜度、来源与版本兼容", "phys"),
+            ("⑤ 任务族扩大或源分布改变即触发重新验证，因为最小充分划分可能已变", "data")]
+    y = Inches(1.70)
+    for t, pal in cons:
+        card(s, Inches(0.62), y, Inches(12.1), Inches(0.62), pal,
+             lines=[(t, 11)], body_size=11)
+        y += Inches(0.70)
+    card(s, Inches(0.62), Inches(5.28), Inches(12.1), Inches(1.14), "warn",
+         title="附录明确不主张的四件事（必须一起讲）", lines=[
+             "① 不证明 Data Wiki 降低时延或成本；② 不证明其索引优于直接读取；",
+             "③ **不证明 embedding 检索普遍更差**；④ 不证明源回退在运维上可靠。",
+             "这四件事属于 P16 的 held-out 对照与全生命周期成本测量，不属于证明。"])
+    card(s, Inches(0.62), Inches(6.54), Inches(12.1), Inches(0.62), "neut",
+         lines=[("证明只建立一条边界：在所述有限、确定性假设下，一旦接口合并了某个准入任务必须区分的两个源状态，"
+                 "下游智能本身无法恢复精确性。", 10.5)])
+    footer(s, 15, "论文附录 §A.5")
+    return s
+
+
+def s16(prs):
     s = blank(prs)
     heading(s, "novelty 边界", "最该主动承认的一篇，就在本文前提上", tag="划界", tagpal="warn")
     card(s, Inches(0.62), Inches(1.70), Inches(12.1), Inches(1.52), "warn",
@@ -583,11 +612,11 @@ def s15(prs):
         card(s, Inches(0.62), y, Inches(12.1), Inches(0.66), pal,
              lines=[(t, 10.5), (body, 9.4)], body_size=9.4)
         y += Inches(0.72)
-    footer(s, 15, "论文 §4 · 2605.26112 长期未被识别，直接原因是本地 PDF 文件名标题写错（详见 papers/README.md 的核验说明）")
+    footer(s, 16, "论文 §4 · 2605.26112 长期未被识别，直接原因是本地 PDF 文件名标题写错（详见 papers/README.md 的核验说明）")
     return s
 
 
-def s16(prs):
+def s17(prs):
     s = blank(prs)
     heading(s, "证据边界：本文没有实测结果", "这一页不能从报告里删掉", tag="必读", tagpal="warn")
     card(s, Inches(0.62), Inches(1.72), Inches(12.1), Inches(1.16), "warn",
@@ -607,11 +636,11 @@ def s16(prs):
         card(s, Inches(0.62), y, Inches(12.1), Inches(0.80), "neut", title=t,
              title_size=12, lines=[(body, 9.6)], body_size=9.6)
         y += Inches(0.90)
-    footer(s, 16, "论文 §14 · 证据基础是分层的：经典基础是稳定锚点，同期文献只支撑动机，不验证本架构")
+    footer(s, 17, "论文 §14 · 证据基础是分层的：经典基础是稳定锚点，同期文献只支撑动机，不验证本架构")
     return s
 
 
-def s17(prs):
+def s18(prs):
     s = blank(prs)
     heading(s, "下一步：最小可行研究", "目的不是检验 P1，而是先验证协议可执行", tag="行动", tagpal="data")
     card(s, Inches(0.62), Inches(1.72), Inches(5.92), Inches(2.60), "data",
@@ -636,11 +665,11 @@ def s17(prs):
          title="这个规模能与不能回答什么", lines=[
              "**不能**建立可分离性，也不应声称建立了。",
              "**能**回答「六项义务在一个运行中的系统里究竟是否可仪器化」—— 这一点目前未知，且是所有更大规模研究的前提。"])
-    footer(s, 17, "论文 §11.5")
+    footer(s, 18, "论文 §11.5")
     return s
 
 
-def s18(prs):
+def s19(prs):
     s = blank(prs)
     band = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, Inches(0.22), SH)
     band.fill.solid()
@@ -664,7 +693,7 @@ def main():
     prs = Presentation()
     prs.slide_width, prs.slide_height = SW, SH
     for fn in (s01, s02, s03, s04, s05, s06, s07, s08, s09,
-               s10, s11, s12, s13, s14, s15, s16, s17, s18):
+               s10, s11, s12, s13, s14, s15, s16, s17, s18, s19):
         fn(prs)
     out = os.path.join(HERE, "paper-report-v27-zh.pptx")
     prs.save(out)
