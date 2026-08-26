@@ -1,0 +1,38 @@
+================================================================
+arXiv 提交页字段（v28，复制粘贴到 arXiv 提交表单）
+================================================================
+
+【Title】
+A Contract-Centered Architecture for Scalable and Manageable Agentic Runtimes
+
+【Authors】（按序，affiliation 均填 PwC China AI Center）
+1. Yaxiao Liu        yaxiao.y.liu@cn.pwc.com / rootliu@gmail.com
+2. Pengbo Liu        liupengbo@mails.neu.edu.cn
+3. Yiwen Liu         202383049@uibe.edu.cn
+4. Yihua Guan        202311260036@mail.bnu.edu.cn
+
+【Abstract】（1864 字符，已压到 ≤1920 限制；原文 2180 超限）
+Enterprise AI deployment is a coordination problem across business units, application and AI teams, testing, platform engineering, infrastructure, security, operations, and data governance. Use-case benchmarks show whether one agent completes one task, but not how changing capabilities, models, runtime mechanisms, capacity, and enterprise data should be owned, changed, admitted, or evidenced together.
+
+We present four responsibility objects as shared organizational contracts: Skill (reusable, versioned capability and workflow asset), Harness (runtime compiler and governor), Scaffold (execution/control boundary and NFR owner), and a stack-external data substrate under independent CIO-governed semantics and telemetry. The runtime core is A = <S, H, X>, with the data substrate outside that stack.
+
+The central contribution is one bounded, falsifiable hypothesis, P1 (cost-aware capability-capacity separability): within a declared operating region, changing activated capability preserves the capacity-response interaction within a preregistered equivalence margin, while changing compatible Scaffold capacity preserves capability semantics up to a non-inferiority margin, and the required controls stay within a declared enforcement budget. Six design conditions become measured obligations whose coverage, violations, uncertainty, cost, and exclusions determine whether P1 is decidable.
+
+We propose a cluster-period randomized crossover experiment (balanced order, reset/washout, repeated seeds and failure regimes, cluster-aware uncertainty) with a four-state verdict: supported, falsified, conditional-engineering, or inconclusive. This paper contributes a contract-bounded runtime architecture, a source-preserving data substrate, and a falsifiable measurement protocol. It reports no completed implementation, experiment, dataset, or measured result.
+
+【Comments】48 pages, 7 figures
+
+【License】Creative Commons Attribution 4.0 (CC BY 4.0)
+
+【Primary Subject】Computer Science > Artificial Intelligence (cs.AI)
+【Cross-list】Computer Science > Software Engineering (cs.SE); Computer Science > Multiagent Systems (cs.MA)
+
+================================================================
+提交前检查清单（需你线下完成）
+================================================================
+[ ] endorsement：新账号首投 cs.AI 需该分类已有作者背书（建议 PwC 同事/上级，或三位实习生学校导师）
+[ ] PwC 发表审批：署名单位写 PwC，确认所内对外发表 clearance 政策
+[ ] 在 arXiv 后台上传 arxiv-submit-v28.tar.gz（解压即编译）
+[ ] 首次提交可能进 1–3 天人工审核
+[ ] 拿到 ID 后，后续修订用 replace（v1→v2），不要新发
+================================================================
