@@ -5,11 +5,13 @@ arXiv 提交页字段（v28，复制粘贴到 arXiv 提交表单）
 【Title】
 A Contract-Centered Architecture for Scalable and Manageable Agentic Runtimes
 
-【Authors】（按序，affiliation 均填 PwC China AI Center）
-1. Yaxiao Liu        yaxiao.y.liu@cn.pwc.com / rootliu@gmail.com
-2. Pengbo Liu        liupengbo@mails.neu.edu.cn
-3. Yiwen Liu         202383049@uibe.edu.cn
-4. Yihua Guan        202311260036@mail.bnu.edu.cn
+【Authors】（按序）
+1. Yaxiao Liu        PwC China AI Center    yaxiao.y.liu@cn.pwc.com / rootliu@gmail.com
+2. Pengbo Liu        PwC China AI Center    liupengbo@mails.neu.edu.cn
+3. Yiwen Liu         PwC China AI Center    202383049@uibe.edu.cn
+4. Yihua Guan        PwC China AI Center    202311260036@mail.bnu.edu.cn
+5. Zhenghe Hou       PwC China AI Center    zh3773@nyu.edu
+6. Jiaxing Song      Tsinghua University     jxsong@tsinghua.edu.cn
 
 【Abstract】（1864 字符，已压到 ≤1920 限制；原文 2180 超限）
 Enterprise AI deployment is a coordination problem across business units, application and AI teams, testing, platform engineering, infrastructure, security, operations, and data governance. Use-case benchmarks show whether one agent completes one task, but not how changing capabilities, models, runtime mechanisms, capacity, and enterprise data should be owned, changed, admitted, or evidenced together.
