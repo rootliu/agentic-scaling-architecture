@@ -32,9 +32,9 @@ We propose a cluster-period randomized crossover experiment (balanced order, res
 ================================================================
 提交前检查清单（需你线下完成）
 ================================================================
-[ ] endorsement：新账号首投 cs.AI 需该分类已有作者背书（建议 PwC 同事/上级，或三位实习生学校导师）
-[ ] PwC 发表审批：署名单位写 PwC，确认所内对外发表 clearance 政策
-[ ] 在 arXiv 后台上传 arxiv-submit-v28.tar.gz（解压即编译）
+[x] endorsement：新账号首投 cs.AI 已收到背书（2026-08-27 邮件，help@arxiv.org）
+[x] PwC 发表审批：已确认（2026-08-27 用户确认可发表）；署名单位含 PwC China AI Center
+[ ] 在 arXiv 后台上传 arxiv-submit-v28.tar.gz（解压即编译）← 当前待做
 [ ] 首次提交可能进 1–3 天人工审核
 [ ] 拿到 ID 后，后续修订用 replace（v1→v2），不要新发
 ================================================================
