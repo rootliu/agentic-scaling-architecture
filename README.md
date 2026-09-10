@@ -130,3 +130,10 @@ site/    可视化 worktree（Apple 风格 HTML 站点，可直接用浏览器�
 2. **证解耦** — 物理轴 throughput 曲线（baseline=Helium/vLLM）；逻辑轴覆盖 vs 成本；数据轴 P7–P9 实验；消融去 Harness / 平面泄漏注入
 3. **保安全/可靠** — 组合性安全（对标 SCR-Bench）；Scaffold 隔离；概率性控制面可审计性指标
 4. **开源系统化** — 多租户 agent 云、按层 NFR、digital-worker；数据子系统 𝒟 落地
+
+
+## 2026-09-10 v29 研究与内部分享
+
+- [今日精读、研究总览与投稿路线](notes/2026-09-10-v29/README.md)
+- [中文与英文 PPT、逐页讲稿及 PDF 预览](academy/v29-internal-sharing/README.md)
+- [v29 论文、验证与提交说明](academy/agentic-runtime-preprint/V29_REVIEW.md)

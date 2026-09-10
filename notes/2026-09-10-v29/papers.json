@@ -1,0 +1,56 @@
+[
+  {
+    "arxiv": "2608.23552",
+    "title": "Prime Agent",
+    "first_arxiv_date": "2026-08-24",
+    "authors_display": "Seth Karten et al.",
+    "repository": "https://github.com/PrimeIntellect-ai/prime-agent",
+    "read_version": "v1",
+    "discovery": "HF Trending"
+  },
+  {
+    "arxiv": "2608.17906",
+    "title": "AutoResearch",
+    "first_arxiv_date": "2026-08-18",
+    "authors_display": "Yiming Ren et al.",
+    "repository": "https://github.com/EvoMap/AutoResearch",
+    "read_version": "v1",
+    "discovery": "HF Trending"
+  },
+  {
+    "arxiv": "2608.23283",
+    "title": "Apodex 1.1",
+    "first_arxiv_date": "2026-08-24",
+    "authors_display": "Apodex Team",
+    "repository": "https://github.com/ApodexAI/FrontierAgent",
+    "read_version": "v1",
+    "discovery": "HF Trending"
+  },
+  {
+    "arxiv": "2608.26005",
+    "title": "VoiceMem",
+    "first_arxiv_date": "2026-08-26",
+    "authors_display": "Zhifei Xie et al.",
+    "repository": "https://github.com/xzf-thu/VoiceMem",
+    "read_version": "v1",
+    "discovery": "HF Trending"
+  },
+  {
+    "arxiv": "2609.08183",
+    "title": "NeoHorse-1",
+    "first_arxiv_date": "2026-09-08",
+    "authors_display": "NeoHorse Team",
+    "repository": "https://github.com/TokenRhythm/NeoHorse",
+    "read_version": "v1",
+    "discovery": "HF Trending"
+  },
+  {
+    "arxiv": "2608.06305",
+    "title": "Beyond Top-K",
+    "first_arxiv_date": "2026-08-06",
+    "authors_display": "Sagar Tamang, Ayush Vyas, Tabarakul Hazarika",
+    "repository": "",
+    "read_version": "v1",
+    "discovery": "existing v28 citation recheck"
+  }
+]

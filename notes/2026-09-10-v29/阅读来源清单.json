@@ -1,0 +1,36 @@
+{
+  "date": "2026-09-10",
+  "vault_remote_sync": "not established; local snapshot read",
+  "paper_base_commit": "da689cad9a877ee54d7d066f632f4ccaf0325ab2",
+  "reading_scope": "targeted core notes; not an assertion that every post-July note was fully read",
+  "source_notes": [
+    {
+      "path": "2026-07-10.md",
+      "sha256": "12147a70cb8e100f8104d799b4ef0dc48b128e4878e5e9020e73fb2ed03189d5"
+    },
+    {
+      "path": "2026-08-22-今日笔记证据审计与论文改进清单.md",
+      "sha256": "da8d9ec7a3cb5fedbfb0b4b4067658cde97ad4850a99c01d217d231080e412c6"
+    },
+    {
+      "path": "Agentic-Runtime-参考架构/2026-07-撞车月综述与边界重划.md",
+      "sha256": "3ec7a03a41d2928193b7d9f8986dc51f852cd84ab65f3873710b4412022b493b"
+    },
+    {
+      "path": "Agentic-Runtime-参考架构/17-DataWiki-ThemeWiki-IR中间关系层.md",
+      "sha256": "069ed99a9c3e92ffc31650974dcf7840553bf4b404fdf0a080c7af6cafcb2624"
+    },
+    {
+      "path": "Agentic-Runtime-参考架构/06-数据平面四组成架构.md",
+      "sha256": "2c0c5334dbf4b8b144cc00ed9144ad6b8221b201d2e9bfebbb7a16602f7da015"
+    },
+    {
+      "path": "Agentic-Runtime-参考架构/12-Skill作为可训练激活层-双子目标Reward.md",
+      "sha256": "f7db3fc9b6fb1973f6b7042e57369ed2f500d9cbfd39312bf74e8ae74f6ae3d2"
+    },
+    {
+      "path": "研究原则-情景记忆与WhatIf-HowAbout双引擎.md",
+      "sha256": "9a74fb05dafad90c771bcbdb7237cd5511726b218fc5884106888a7cd0361b04"
+    }
+  ]
+}
