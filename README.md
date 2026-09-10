@@ -1,3 +1,5 @@
+> 最新修订：**v29**。见 [修订与证据记录](academy/agentic-runtime-preprint/V29_REVIEW.md)、[PDF](academy/agentic-runtime-preprint/output/pdf/Scalable_Manageable_Agentic_Runtime_Preprint_v29.pdf) 与 [有限契约参考实现](academy/agentic-runtime-preprint/artifact_v29/README.md)。已有 arXiv：2608.27086；本轮 replacement 尚未提交。
+
 # Agentic Scaling Architecture
 
 一个 agentic runtime 的三层参考架构研究 —— **Scaffold · Harness · Skills**，

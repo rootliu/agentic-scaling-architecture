@@ -1,0 +1,21 @@
+{
+  "study": "finite synthetic contract conformance",
+  "python": "3.14.6",
+  "fault_dimensions": 10,
+  "cases": 1024,
+  "accepted": 1,
+  "rejected": 1023,
+  "oracle_disagreements": 0,
+  "runtime_scaling_measured": false,
+  "P1_verdict": "not evaluated",
+  "limitations": [
+    "single trusted in-process registry",
+    "one source fixture",
+    "no LLM, distributed service, retrieval or adversarial evaluation",
+    "finite enumeration is not an estimate of production failure probability"
+  ],
+  "sha256": {
+    "evaluate.py": "b06169c048f5910f7955f5444bb135b77902aa10ae220b686ffe5da2ee4038b7",
+    "ir_contract.py": "892d3a8df65b89bf92a283bb2ff93073ffef58e668aedd08b0bb1372e574ef26"
+  }
+}

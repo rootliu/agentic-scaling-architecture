@@ -1,0 +1,38 @@
+arXiv replacement preparation — internal manuscript v29
+
+Existing article: 2608.27086
+Action: Replace the existing article. Internal v29 does not mean arXiv v29.
+Submission status: NOT SUBMITTED by this session.
+
+Title:
+A Contract-Centered Architecture for Scalable and Manageable Agentic Runtimes
+
+Authors, in preserved order:
+Yaxiao Liu; Pengbo Liu; Yiwen Liu; Yihua Guan; Zhenghe Hou; Jiaxing Song
+Affiliations: PwC China AI Center (first five); Tsinghua University (sixth).
+The full author/contact block is preserved from the existing remote source.
+
+Abstract:
+Enterprise agentic systems must coordinate changing capabilities, execution capacity, and independently governed data. We define Skill, Harness, Scaffold, and an external data substrate as responsibility contracts. The central hypothesis, cost-aware capability-capacity separability, asks whether compatible capacity changes preserve semantic outcomes while capability changes preserve the capacity-response relationship within declared margins and enforcement budgets.
+
+We operationalize the data boundary through a source-oriented Data Wiki, an output-oriented Theme Wiki, and a versioned Intermediate Relation. Executable 5W1H+Which predicates bind source identity, validity, authorization, semantics, operations, relations, and evidence requirements. Request-bound tickets add execution-time revalidation and typed rejection. A conditional soundness argument states the required trust and atomicity assumptions; dependency invalidation makes change propagation explicit.
+
+A single-process reference model agrees with a declared specification oracle on all 1,024 combinations in a finite synthetic fault domain and passes five lifecycle checks. These are conformance results, not measurements of retrieval quality, production safety, or scaling. We specify a held-out data study and a cluster-period crossover with distinct supported, falsified, conditional-engineering, and inconclusive verdicts. The core separability hypothesis remains empirically untested.
+
+Comments:
+Internal revision v29: added executable data-use contract specification and finite conformance artifact; updated related work; clarified decision rules and power planning. Runtime scaling remains unmeasured.
+
+Categories: preserve existing cs.AI, cs.SE, cs.MA unless the author changes them.
+License: preserve the existing CC BY 4.0 selection.
+Source archive: arxiv-submit-v29.tar.gz
+
+Checks remaining at arXiv:
+- Authenticated author session and Replace workflow.
+- Compile the source archive and inspect the arXiv-generated PDF; local validation
+  uses ReportLab and does not establish TeX compilation success.
+- Check title, all six authors/affiliations, abstract, figure order and references.
+- Confirm the Comments describe the changes; submit and verify the resulting
+  replacement receipt/version. No receipt exists yet for this revision.
+
+Existing v28 repository record says endorsement and publication approval were
+completed. This file does not introduce a new approval requirement.

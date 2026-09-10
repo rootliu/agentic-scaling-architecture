@@ -1,3 +1,20 @@
+## v29 — 2026-09-10
+
+Executable 5W1H+Which data-use contracts, a finite conformance artifact, and a
+focused August–September literature update. See `V29_REVIEW.md` for technical
+changes, evidence boundaries, build instructions and conference recommendations.
+
+- Added admission tickets, execution-time revalidation, typed rejection,
+  source evidence envelopes and conditional boundary soundness.
+- Added 1,024-case synthetic enumeration and five lifecycle checks; no runtime
+  scaling, natural retrieval quality or production-safety result is claimed.
+- Fixed four-state decision precedence, p95 power planning, illustrative margins,
+  the full-support condition for partition sufficiency, and metadata consistency.
+- Added five current papers and rechecked Beyond Top-K; retained prior PDFs.
+- Preserved all six authors from the arXiv source in the local PDF as well.
+- Prepared `arxiv/arxiv-submit-v29.tar.gz`; submission and arXiv compilation remain
+  pending. Internal version v29 is distinct from the arXiv replacement number.
+
 # CHANGELOG
 
 > **版本号与文件名规则**：`latex_to_preprint.py` 的 `PREPRINT_VERSION` 现在同时决定输出文件名（`..._{version}.pdf`）。两者已绑定，故版本升号不会再静默覆盖上一版 PDF。

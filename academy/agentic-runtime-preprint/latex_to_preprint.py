@@ -27,10 +27,10 @@ from reportlab.platypus import (
 
 
 TITLE = "A Contract-Centered Architecture for Scalable and Manageable Agentic Runtimes"
-AUTHOR = "Yaxiao Liu"
+AUTHOR = "Yaxiao Liu, Pengbo Liu, Yiwen Liu, Yihua Guan, Zhenghe Hou, Jiaxing Song"
 AUTHOR_EMAIL = "rootliu@gmail.com"
 FIGURE_WIDTH = 462
-PREPRINT_VERSION = "v28"
+PREPRINT_VERSION = "v29"
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 # Derived from PREPRINT_VERSION so a version bump cannot silently overwrite the
 # previous version's PDF: v20 shipped three different documents (26, 27 and 33
@@ -685,9 +685,9 @@ class FigureGraphic(Flowable):
             ),
             (
                 "",
-                "Falsified within Omega if a semantic, runtime, or enforcement interaction exceeds "
-                "its preregistered margin. Inconclusive if operating-region, condition, or detectable-"
-                "interaction requirements fail. Otherwise supported within Omega.",
+                "Insufficient evidence: inconclusive. Clearly violated obligations: conditional-"
+                "engineering. Only after all obligation gates pass, resolve runtime interaction, "
+                "semantic non-inferiority, and cost bounds as supported, falsified, or inconclusive.",
             ),
         ]
         for index, (x, width, (_, text)) in enumerate(zip(xs, widths, primary)):
@@ -1394,6 +1394,7 @@ def build_story(tex: str, bib: str, styles, paper_dir: str | None = None) -> lis
         Paragraph(escape(TITLE), styles["Title"]),
         Spacer(1, 10),
         Paragraph(escape(f"{AUTHOR}"), styles["Author"]),
+        Paragraph("PwC China AI Center (first five authors); Tsinghua University (Jiaxing Song)", styles["Affiliation"]),
         Paragraph(escape(AUTHOR_EMAIL), styles["Affiliation"]),
         Spacer(1, 8),
         Paragraph(

@@ -1,6 +1,49 @@
-\begin{document}
+\documentclass[11pt]{article}
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{array}
+\usepackage{float}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
 
-\section{Abstract}
+\newtheorem{proposition}{Proposition}
+\sloppy
+
+\title{A Contract-Centered Architecture for Scalable and Manageable Agentic Runtimes}
+\author{%
+Yaxiao Liu\\
+PwC China AI Center\\
+\texttt{yaxiao.y.liu@cn.pwc.com}\\
+\texttt{rootliu@gmail.com}
+\and
+Pengbo Liu\\
+PwC China AI Center\\
+\texttt{liupengbo@mails.neu.edu.cn}
+\and
+Yiwen Liu\\
+PwC China AI Center\\
+\texttt{202383049@uibe.edu.cn}
+\and
+Yihua Guan\\
+PwC China AI Center\\
+\texttt{202311260036@mail.bnu.edu.cn}
+\and
+Zhenghe Hou\\
+PwC China AI Center\\
+\texttt{zh3773@nyu.edu}
+\and
+Jiaxing Song\\
+Tsinghua University\\
+\texttt{jxsong@tsinghua.edu.cn}
+}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
 
 Enterprise AI deployment is a coordination problem across business units, application and AI teams, testing, platform engineering, cloud or server-farm infrastructure, security, operations, and enterprise data governance. Use-case benchmarks can show whether one agent completes one task, but they do not define how rapidly changing capabilities, models, runtime mechanisms, physical capacity, and enterprise data should be owned, changed, admitted, or evidenced together.
 
@@ -9,6 +52,8 @@ We present four responsibility objects as shared organizational contracts: Skill
 The central scientific contribution is one bounded, falsifiable hypothesis, P1, which we state as cost-aware capability-capacity separability. Within a declared operating region, changing activated capability should preserve the capacity-response interaction within a preregistered two-sided equivalence margin, while changing compatible Scaffold capacity should preserve capability semantics up to a preregistered directional non-inferiority margin, and the controls required to establish either result should remain within a declared enforcement budget. Six familiar design conditions become measured obligations whose coverage, violations, uncertainty, cost, and exclusions determine whether P1 is decidable at all.
 
 We propose a cluster-period randomized crossover experiment with balanced order, reset or washout, repeated seeds and failure regimes, and cluster-aware uncertainty. Its verdict has four states: supported, falsified, conditional-engineering, or inconclusive. This paper contributes a contract-bounded runtime architecture, a source-preserving data substrate, and a falsifiable measurement protocol. We additionally provide an executable reference model of the data-use boundary and a finite synthetic conformance study: all 1,024 declared fault combinations agree with an independent specification oracle. This result establishes only finite-domain conformance, not retrieval quality or runtime scaling; P1 remains empirically untested.
+
+\end{abstract}
 
 \section{Introduction}
 \label{sec:introduction}
@@ -39,6 +84,8 @@ where $\mathcal{S}$ is a versioned set of Skills, $\mathcal{H}$ is the Harness t
 
 \begin{figure}[t]
 \centering
+\includegraphics[width=\linewidth]{1.png}
+
 \caption{Shown: business capability enters as a versioned Skill contract, the Harness admits and binds an activated path, the Scaffold supplies the execution and control boundary, and the CIO-governed semantic and telemetry substrate remains stack-external; any derived index or summary in that substrate is discovery metadata rather than source authority. Why it matters: the diagram separates the two interventions whose independence P1 tests and identifies the boundary at which recoupling and enforcement cost must be observed. Class: architecture.}
 \label{fig:dual-scaling}
 \end{figure}
@@ -313,6 +360,8 @@ where $I$ and $O$ are the run-level typed inputs and outputs, $G$ is the activat
 
 \begin{figure}[t]
 \centering
+\includegraphics[width=\linewidth]{2.png}
+
 \caption{Shown: a request and activated bundle pass deterministic admission gates to become a resolved Harness contract with typed data, path, authority, budgets, versions, binding, and trace identity. Why it matters: the contract is the inspectable unit on which complete mediation, replay, and capability-to-capacity binding are tested. Class: architecture.}
 \label{fig:harness-contract}
 \end{figure}
@@ -328,6 +377,8 @@ The control plane owns Skill registration, contract compilation, policy versions
 
 \begin{figure}[t]
 \centering
+\includegraphics[width=\linewidth]{3.png}
+
 \caption{Shown: the control plane holds the registry, policy, admission, and placement logic, while the data plane receives only the resolved contract and executes accepted work; the leaking variant injects every schema and policy into the request path. Why it matters: keeping inactive registry state and mutable control metadata off the request path limits unmeasured coupling between capability growth and runtime load. Class: architecture.}
 \label{fig:control-data}
 \end{figure}
@@ -429,6 +480,8 @@ When every $V_d$ is deterministic or version-pinned with a preregistered error t
 
 \begin{figure}[t]
 \centering
+\includegraphics[width=\linewidth]{4.png}
+
 \caption{Shown: a main agent derives bounded sub-agents for unmet dependencies, then a separate verifier or semantic join checks their returned evidence before a termination gate closes the path. Why it matters: capability expansion during a run remains a sequence of admitted contracts rather than an invisible increase in ambient authority. Class: protocol.}
 \label{fig:derivation-closure}
 \end{figure}
@@ -443,6 +496,8 @@ A planning-time dry-run resolves graph structure, candidate bindings, budget env
 
 \begin{figure}[t]
 \centering
+\includegraphics[width=\linewidth]{6.png}
+
 \caption{Shown: logical control validates and binds a graph, physical execution runs it in compatible isolation and locality zones, and an evidence path records both decisions and effects; the vertical links are illustrative, potentially many-to-many contract mappings rather than a one-to-one logical-to-physical correspondence. Why it matters: placement optimization remains distinguishable from semantic policy while still exposing the resource channels that could recouple capability and capacity. Class: architecture.}
 \label{fig:dry-run}
 \end{figure}
@@ -458,6 +513,8 @@ External data should not be a privileged side channel into the agent. It is a Ha
 
 \begin{figure}[t]
 \centering
+\includegraphics[width=\linewidth]{5.png}
+
 \caption{Shown: the data authority resolves a semantic request into a governed contract, the Scaffold performs an isolated fetch, and the run receives an evidence bundle rather than source credentials; the figure's shorthand means that no \emph{undeclared} task semantics or credentials cross the boundary, while declared request fields and evidence obligations necessarily do. Why it matters: data policy and snapshot identity remain fixed experimental inputs instead of hidden properties of the capability or capacity treatment. Class: architecture.}
 \label{fig:external-data}
 \end{figure}
@@ -604,6 +661,8 @@ Treating a Skill as a prompt file makes capability growth difficult to review. S
 
 \begin{figure}[t]
 \centering
+\includegraphics[width=\linewidth]{7.png}
+
 \caption{Shown: a Skill moves through versioned validation, staged activation, monitored release, rollback, and retirement, with evidence attached to each transition and a freeze step where a converged Skill becomes code. Why it matters: the experiment can identify the capability configuration precisely and can repeat or reverse an intervention without conflating it with registry churn. Class: protocol.}
 \label{fig:skill-as-code}
 \end{figure}
@@ -725,6 +784,23 @@ A mean-based design-effect formula is not an adequate power calculation for a pe
 
 \begin{figure}[t]
 \centering
+\renewcommand{\arraystretch}{1.25}
+\small
+\begin{tabular}{p{0.15\linewidth}p{0.26\linewidth}p{0.22\linewidth}p{0.22\linewidth}}
+\hline
+\textbf{Hypothesis} & \textbf{Intervention and control} & \textbf{Evidence plane} & \textbf{Falsification or inconclusive condition} \\
+\hline
+\textbf{P1} (primary): capability $\times$ Scaffold separability &
+Cluster-period randomized crossover. Independently vary activated capability configuration $c$ and Scaffold capacity configuration $s$; hold workload and data snapshot fixed; preregister reset or washout. &
+Semantic outcome $Q(c,s)$; runtime response $R(c,s)$; enforcement overhead $E(c,s)$; six condition-violation rates; cluster-aware uncertainty; capability-by-Scaffold interaction estimand. &
+Insufficient evidence: inconclusive. Clearly violated obligations: conditional-engineering. Only after all obligation gates pass, resolve runtime interaction, semantic non-inferiority, and cost bounds as supported, falsified, or inconclusive. \\
+\hline
+P15: vector gate & proposal-bank contrasts & -- & margin failure or phantom violation \\
+P16: evidence-path sufficiency & held-out joint contrast & -- & direct-reading control wins \\
+P17: policy-contract decoupling & dependency-change oracle & -- & unanticipated propagation \\
+\hline
+\end{tabular}
+
 \caption{Shown: P1 maps to cluster-period interventions on capability and capacity, six measured obligations, semantic and runtime estimands, enforcement cost, and the conditions distinguishing supported, falsified, conditional-engineering, and inconclusive verdicts. Why it matters: the matrix ties every architectural claim to an observation and prevents missing coverage or low power from being reported as separability. Class: proposed measurement design.}
 \label{fig:evaluation-matrix}
 \end{figure}
