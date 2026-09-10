@@ -1,6 +1,6 @@
 # 2026-09-10 研究更新
 
-本目录保留今天写入本地 Obsidian vault 的研究笔记副本，便于与 v29 论文和分享材料一起审阅。Vault 尚未连接到可认证的远端；这里不代表 vault 同步已经完成。
+本目录保留今天写入本地 Obsidian vault 的研究笔记副本，便于与 v29 论文和分享材料一起审阅。对应 vault 仓库已确认为 [rootliu/obsidian-vault](https://github.com/rootliu/obsidian-vault/tree/research/v29-data-contracts/研究更新-v29)，本轮更新使用同名研究分支。
 
 - [研究总览与投稿路线](v29研究总览与投稿路线.md)
 - [v29 论文修订与验证](../../academy/agentic-runtime-preprint/V29_REVIEW.md)
