@@ -1,16 +1,16 @@
-arXiv replacement preparation — internal manuscript v29
-
+arXiv replacement handoff - prepared 2026-09-11
 Existing article: 2608.27086
-Action: Replace the existing article. Internal v29 does not mean arXiv v29.
-Submission status: NOT SUBMITTED by this session.
+Internal manuscript revision: v29 (not the arXiv version number)
+Submission status: NOT SUBMITTED by this session
 
 Title:
 A Contract-Centered Architecture for Scalable and Manageable Agentic Runtimes
 
-Authors, in preserved order:
-Yaxiao Liu; Pengbo Liu; Yiwen Liu; Yihua Guan; Zhenghe Hou; Jiaxing Song
+Authors:
+Yaxiao Liu, Pengbo Liu, Yiwen Liu, Yihua Guan, Zhenghe Hou, Jiaxing Song
+
 Affiliations: PwC China AI Center (first five); Tsinghua University (sixth).
-The full author/contact block is preserved from the existing remote source.
+Full author/contact block preserved in standalone main.tex.
 
 Abstract:
 Enterprise agentic systems must coordinate changing capabilities, execution capacity, and independently governed data. We define Skill, Harness, Scaffold, and an external data substrate as responsibility contracts. The central hypothesis, cost-aware capability-capacity separability, asks whether compatible capacity changes preserve semantic outcomes while capability changes preserve the capacity-response relationship within declared margins and enforcement budgets.
@@ -20,19 +20,23 @@ We operationalize the data boundary through a source-oriented Data Wiki, an outp
 A single-process reference model agrees with a declared specification oracle on all 1,024 combinations in a finite synthetic fault domain and passes five lifecycle checks. These are conformance results, not measurements of retrieval quality, production safety, or scaling. We specify a held-out data study and a cluster-period crossover with distinct supported, falsified, conditional-engineering, and inconclusive verdicts. The core separability hypothesis remains empirically untested.
 
 Comments:
-Internal revision v29: added executable data-use contract specification and finite conformance artifact; updated related work; clarified decision rules and power planning. Runtime scaling remains unmeasured.
+8 figures; revised data-use contracts with an executable reference model and finite synthetic conformance artifact; updated related work and experimental decision rules. Runtime scaling remains empirically untested.
 
-Categories: preserve existing cs.AI, cs.SE, cs.MA unless the author changes them.
-License: preserve the existing CC BY 4.0 selection.
-Source archive: arxiv-submit-v29.tar.gz
+Primary category: cs.AI
+Cross-lists: cs.MA, cs.SE
+License: preserve existing CC BY 4.0
+Journal reference, journal DOI, institution report number: leave blank unless applicable.
+Upload: arxiv-submit-v29.zip OR arxiv-submit-v29.tar.gz
+Top-level file: main.tex
+Processor: LaTeX in PDF mode / PDFLaTeX; plain bibliography with BibTeX.
 
-Checks remaining at arXiv:
-- Authenticated author session and Replace workflow.
-- Compile the source archive and inspect the arXiv-generated PDF; local validation
-  uses ReportLab and does not establish TeX compilation success.
-- Check title, all six authors/affiliations, abstract, figure order and references.
-- Confirm the Comments describe the changes; submit and verify the resulting
-  replacement receipt/version. No receipt exists yet for this revision.
+Complete handoff: ../arxiv-release-v29/v29-arxiv-complete.zip
+Extract the handoff ZIP and upload arxiv-submit-v29.zip from inside it.
+The outer handoff ZIP also contains a reading PDF and instructions; do not upload it.
 
-Existing v28 repository record says endorsement and publication approval were
-completed. This file does not introduce a new approval requirement.
+Validation: static source and archive checks; 53 citation entries; 7 PNGs and
+8 figure environments (one native TeX matrix); abstract matches source and
+reading PDF. Repository tests: 40 passed; lifecycle checks: 5 passed.
+The 44-page reading PDF is ReportLab-generated, NOT a TeX compilation preview.
+TeX compilation and final pagination must be checked in the arXiv submission UI.
+Select Replace, inspect arXiv's generated PDF, submit, and retain the receipt.

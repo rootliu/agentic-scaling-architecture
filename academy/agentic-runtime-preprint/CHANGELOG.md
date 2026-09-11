@@ -571,3 +571,12 @@ v10 曾把并发工作 Skillware / GRACE 两行加入 Table 1，v11 已按原文
 - 7 篇精读文献（[1][3][4][5][6][7][9][20]）的观点表述与 vault 精读笔记一致。
 - Tool Forge "99.2% task-flow tool context reduction" 与精读笔记逐字一致。
 - 核心思想谱系（A=⟨S,H,X⟩、条件解耦四假设、CP/DP、KV 前缀冻结四机制、off-policy loop、Skill-as-Code、dry-run、7 条可证伪协议）与 vault 原始笔记保真对应。
+
+
+## 2026-09-11 — v29 arXiv handoff
+
+- Unified source, reading PDF and metadata abstract (1,463 ASCII characters).
+- Added plain-style-visible identifiers to five new preprint references.
+- Added deterministic, allowlisted ZIP/TAR uploads and a complete download bundle.
+- Added static packaging validation, checksums and Chinese replacement instructions.
+- Preserved earlier release PDFs; arXiv compilation/preview remains pending.

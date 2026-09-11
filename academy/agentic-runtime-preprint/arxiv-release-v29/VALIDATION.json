@@ -1,0 +1,126 @@
+{
+  "prepared_date": "2026-09-11",
+  "existing_article": "2608.27086",
+  "internal_revision": "v29",
+  "arxiv_submission_performed": false,
+  "validation": "static source checks and repository ReportLab PDF; NOT TeX compilation",
+  "tex_compilation": "pending arXiv processing and preview",
+  "abstract_characters": 1463,
+  "abstract_identical_across_source_pdf_metadata": true,
+  "authors": [
+    "Yaxiao Liu",
+    "Pengbo Liu",
+    "Yiwen Liu",
+    "Yihua Guan",
+    "Zhenghe Hou",
+    "Jiaxing Song"
+  ],
+  "citation_entries": 53,
+  "unresolved_citation_or_reference_keys": [],
+  "figure_environments": 8,
+  "image_files_in_manuscript_order": [
+    "1.png",
+    "2.png",
+    "3.png",
+    "4.png",
+    "6.png",
+    "5.png",
+    "7.png"
+  ],
+  "upload_file_count": 15,
+  "pdf_pages_reportlab_only": 44,
+  "archived_files": [
+    {
+      "path": "1.png",
+      "bytes": 1530958,
+      "sha256": "aa88e5e6deeb6f0544e2f30169542d35e9c7083c865cca1c052803b6cb903366"
+    },
+    {
+      "path": "2.png",
+      "bytes": 1574301,
+      "sha256": "1312de335662ce6ee075385d6ba83497cbbb492d4d5b792a6a31ce879ec2c2ca"
+    },
+    {
+      "path": "3.png",
+      "bytes": 1452330,
+      "sha256": "6d059f1184403492fd8ddc4870e18131979d759586290aa0e0d18e1094326bce"
+    },
+    {
+      "path": "4.png",
+      "bytes": 1412964,
+      "sha256": "22cbf48882c6200560b5d9efd02e0329b6c7ca0d293047f304a35217f8d9e4f6"
+    },
+    {
+      "path": "5.png",
+      "bytes": 1584481,
+      "sha256": "53199dadffc33aaac910183267d922b2a4488ab481d86ee383d9b8b77b508fe1"
+    },
+    {
+      "path": "6.png",
+      "bytes": 1646586,
+      "sha256": "f5f2c014037df1d382efec421c2fb90c9e45fdfeaa98af4b97c64a6a935ae5fa"
+    },
+    {
+      "path": "7.png",
+      "bytes": 1278684,
+      "sha256": "54026ba940372f0a0942f6b4c09413e55f6746e771f7a049d5249ded400be388"
+    },
+    {
+      "path": "anc/artifact_v29/README.md",
+      "bytes": 1810,
+      "sha256": "bdd5ddec8d6f382002046bc70f94726f7f5f6df42d58b38e9260877f6b5840cb"
+    },
+    {
+      "path": "anc/artifact_v29/evaluate.py",
+      "bytes": 2816,
+      "sha256": "b06169c048f5910f7955f5444bb135b77902aa10ae220b686ffe5da2ee4038b7"
+    },
+    {
+      "path": "anc/artifact_v29/ir_contract.py",
+      "bytes": 3451,
+      "sha256": "892d3a8df65b89bf92a283bb2ff93073ffef58e668aedd08b0bb1372e574ef26"
+    },
+    {
+      "path": "anc/artifact_v29/results/fault-cases.csv",
+      "bytes": 76443,
+      "sha256": "f89e215dc005803d5c91494fed14ee0829306905ddf3566040db2d28c75f092c"
+    },
+    {
+      "path": "anc/artifact_v29/results/summary.json",
+      "bytes": 693,
+      "sha256": "5dab9966d4b4c7c714bcb270c2a7637614847ad2f7fd641c850e517fd092b05e"
+    },
+    {
+      "path": "anc/artifact_v29/test_contract.py",
+      "bytes": 1616,
+      "sha256": "d6df897a9ddaa5ac085d2e2a3c17dce48dc0719293546a2d7765199a78bb4e57"
+    },
+    {
+      "path": "main.tex",
+      "bytes": 175050,
+      "sha256": "05d786ed11b356c817a9296e4cfa13646dbbb306ebfc46582fc05cb2eb51aa93"
+    },
+    {
+      "path": "references.bib",
+      "bytes": 17970,
+      "sha256": "6ce51cd86f600c862a53af67e17b9bc84f1774225a4551ba6efd072757b71534"
+    }
+  ],
+  "deliverables": [
+    {
+      "path": "arxiv/arxiv-submit-v29.tar.gz",
+      "bytes": 10552786,
+      "sha256": "fcbf742fdc5455fbade201f8ec7d82d0c2903e8dfeb0c16b33a92dd40410e50f"
+    },
+    {
+      "path": "arxiv/arxiv-submit-v29.zip",
+      "bytes": 10552169,
+      "sha256": "969f2c0caf8774fdcaa65d614a70d515e8a5d170faaa6cd380eb13a2e5b11694"
+    },
+    {
+      "path": "output/pdf/Scalable_Manageable_Agentic_Runtime_Preprint_v29.pdf",
+      "bytes": 14089220,
+      "sha256": "62d4dedc44b79034dd5f17a38b689173ed2d8b003201fd73cdeb09ec082f62a3"
+    }
+  ]
+}

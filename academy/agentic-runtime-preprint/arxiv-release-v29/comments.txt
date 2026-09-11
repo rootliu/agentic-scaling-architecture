@@ -1,0 +1,1 @@
+8 figures; revised data-use contracts with an executable reference model and finite synthetic conformance artifact; updated related work and experimental decision rules. Runtime scaling remains empirically untested.

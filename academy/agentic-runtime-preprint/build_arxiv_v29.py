@@ -7,6 +7,8 @@ from pathlib import Path
 import re
 import shutil
 import tarfile
+import zipfile
+import gzip
 
 ROOT = Path(__file__).resolve().parent
 
@@ -50,12 +52,32 @@ def main():
     for name in ["ir_contract.py", "evaluate.py", "test_contract.py", "README.md"]:
         shutil.copy2(ROOT / "artifact_v29" / name, artifact / name)
     shutil.copytree(ROOT / "artifact_v29/results", artifact / "results", dirs_exist_ok=True)
+    # Explicit allowlist keeps stale build files and unrelated local data out.
+    names = ["main.tex", "references.bib"] + [f"{i}.png" for i in range(1, 8)]
+    names += [f"anc/artifact_v29/{n}" for n in
+              ["ir_contract.py", "evaluate.py", "test_contract.py", "README.md",
+               "results/summary.json", "results/fault-cases.csv"]]
     archive = ROOT / "arxiv" / "arxiv-submit-v29.tar.gz"
-    with tarfile.open(archive, "w:gz") as tar:
-        for path in sorted(out.rglob("*")):
-            if path.is_file():
-                tar.add(path, arcname=str(path.relative_to(out)))
+    with archive.open("wb") as raw:
+        with gzip.GzipFile(filename="", mode="wb", fileobj=raw, mtime=0) as gz:
+            with tarfile.open(fileobj=gz, mode="w") as tar:
+                for name in sorted(names):
+                    info = tar.gettarinfo(str(out / name), arcname=name)
+                    info.uid = info.gid = 0
+                    info.uname = info.gname = ""
+                    info.mtime = 0
+                    info.mode = 0o644
+                    with (out / name).open("rb") as source:
+                        tar.addfile(info, source)
+    upload_zip = archive.with_name("arxiv-submit-v29.zip")
+    with zipfile.ZipFile(upload_zip, "w", zipfile.ZIP_DEFLATED) as z:
+        for name in sorted(names):
+            entry = zipfile.ZipInfo(name, date_time=(2026, 9, 11, 0, 0, 0))
+            entry.compress_type = zipfile.ZIP_DEFLATED
+            entry.external_attr = 0o644 << 16
+            z.writestr(entry, (out / name).read_bytes())
     print(archive)
+    print(upload_zip)
 
 
 if __name__ == "__main__":

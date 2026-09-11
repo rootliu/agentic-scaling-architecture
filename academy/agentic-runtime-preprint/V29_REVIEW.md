@@ -80,3 +80,19 @@ Use Replace on that article; do not create a new arXiv identifier.
 
 The package is prepared for review; no arXiv replacement has been submitted by
 this session. The source archive's metadata file states remaining checks.
+
+
+## Complete arXiv handoff (2026-09-11)
+
+[Download the complete handoff](arxiv-release-v29/v29-arxiv-complete.zip), then upload
+the inner `arxiv-submit-v29.zip`. [Chinese submission guide](arxiv-release-v29/README-提交说明.md)
+and separate ASCII metadata files are included. The standalone source, reading PDF
+and metadata now share the same 1,463-character abstract. New preprint citations
+include explicit arXiv identifiers visible to the plain BibTeX style.
+
+The allowlisted upload contains 15 files: main source, bibliography, seven images,
+and six ancillary artifact files. Static validation covers references, figures,
+authors, source/metadata/PDF abstract alignment, archive equality and artifact hashes.
+The reading PDF remains 44 pages; its layout is not an arXiv compilation preview.
+40 paper tests and five lifecycle checks passed. TeX compilation remains pending
+in the arXiv UI, as required by the workspace build restrictions.

@@ -137,3 +137,10 @@ site/    可视化 worktree（Apple 风格 HTML 站点，可直接用浏览器�
 - [今日精读、研究总览与投稿路线](notes/2026-09-10-v29/README.md)
 - [中文与英文 PPT、逐页讲稿及 PDF 预览](academy/v29-internal-sharing/README.md)
 - [v29 论文、验证与提交说明](academy/agentic-runtime-preprint/V29_REVIEW.md)
+
+
+## v29 arXiv 完整投稿包（2026-09-11）
+
+- [完整下载包](academy/agentic-runtime-preprint/arxiv-release-v29/v29-arxiv-complete.zip)
+- [直接上传 arXiv 的源码 ZIP](academy/agentic-runtime-preprint/arxiv/arxiv-submit-v29.zip)
+- [替换投稿说明](academy/agentic-runtime-preprint/arxiv-release-v29/README-提交说明.md)
